@@ -502,15 +502,18 @@ class Component extends DCLogic {
   setSound(on) {
     const src = this.mp3();
     if (src) {
-      if (!this.audio) { this.audio = new Audio(src); this.audio.loop = true; this.audio.volume = 0; }
+      if (!this.audio) { this.audio = new Audio(src); this.audio.loop = true; this.audio.setAttribute('playsinline', ''); this.audio.volume = 0; }
       clearInterval(this.fade);
       const target = on ? 0.9 : 0, a = this.audio;
       if (on) { window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: this.id })); a.play().catch(() => {}); }
+      let n = 0;
       this.fade = setInterval(() => {
+        n++;
         const v = a.volume + (target - a.volume) * 0.15;
         a.volume = Math.abs(target - v) < 0.01 ? target : v;
-        if (a.volume === target) { clearInterval(this.fade); if (!on) a.pause(); }
+        if (a.volume === target || n > 30) { clearInterval(this.fade); if (!this.state.sound) a.pause(); }
       }, 40);
+      if (!on) setTimeout(() => { if (!this.state.sound) a.pause(); }, 700);
       this.setState({ sound: on, hint: false });
       return;
     }
