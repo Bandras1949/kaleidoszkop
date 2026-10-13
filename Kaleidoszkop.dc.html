@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet"><title>Kaleidoszkóp – Bánky András</title><style>html,body{margin:0;height:100%;background:#0f0f0f;overflow:hidden;-webkit-tap-highlight-color:transparent}a{color:#FBFAF7}a:hover{color:#E0C25A}</style></helmet>
+<div style="position:fixed;inset:0;background:#0f0f0f">
+  <div style="position:relative;width:100%;height:100%;overflow:hidden;background:#0f0f0f">
+    <canvas ref="{{ cvRef }}" onClick="{{ toggleSound }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer"></canvas>
+    <sc-if value="{{ splashMounted }}" hint-placeholder-val="{{ true }}">
+      <div onClick="{{ enter }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:120px 32px 56px;box-sizing:border-box;cursor:pointer;background:radial-gradient(ellipse 70% 42% at 50% 46%,rgba(10,10,10,.88) 0%,rgba(10,10,10,.6) 60%,rgba(10,10,10,.15) 100%);transition:opacity 1.4s ease;opacity:{{ splashOpacity }}">
+        <div style="font:500 14px 'DM Sans',system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;color:rgba(251,250,247,.75)">Bánky András bemutatja</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+          <div style="width:44px;height:1px;background:rgba(251,250,247,.6)"></div>
+          <div style="font:italic 500 46px/0.92 'Cormorant Garamond',Georgia,serif;color:#FBFAF7">Kaleidoszkóp</div>
+          <div style="width:44px;height:1px;background:rgba(251,250,247,.6)"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:22px">
+          <div style="font:500 13px 'DM Sans',system-ui,sans-serif;color:#0f0f0f;background:#FBFAF7;padding:12px 26px;border-radius:24px">Érintsd meg a kezdéshez ♪</div>
+          <div style="font:400 12px 'DM Sans',system-ui,sans-serif;letter-spacing:.08em;white-space:nowrap;color:rgba(251,250,247,.7)">© 2026 Bánky András</div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showCtl }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:14px">
+        <div onPointerUp="{{ togglePause }}" title="Megállítás / folytatás" style="touch-action:manipulation;user-select:none;width:48px;height:48px;border-radius:24px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(15,15,15,.55);cursor:pointer;box-shadow:inset 0 0 0 1px rgba(251,250,247,.35)">
+          <sc-if value="{{ playing }}" hint-placeholder-val="{{ true }}">
+            <div style="pointer-events:none;width:5px;height:16px;background:#FBFAF7;border-radius:1px"></div>
+            <div style="pointer-events:none;width:5px;height:16px;background:#FBFAF7;border-radius:1px"></div>
+          </sc-if>
+          <sc-if value="{{ paused }}" hint-placeholder-val="{{ false }}">
+            <div style="pointer-events:none;width:0;height:0;margin-left:4px;border-left:15px solid #FBFAF7;border-top:9px solid transparent;border-bottom:9px solid transparent"></div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ paused }}" hint-placeholder-val="{{ false }}">
+          <div onPointerUp="{{ saveImg }}" title="Kép mentése" style="touch-action:manipulation;user-select:none;height:48px;padding:0 20px;border-radius:24px;display:flex;align-items:center;background:rgba(15,15,15,.55);cursor:pointer;box-shadow:inset 0 0 0 1px rgba(251,250,247,.35);font:500 14px 'DM Sans',system-ui,sans-serif;color:#FBFAF7">Kép mentése</div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ gearOn }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ togglePanel }}" title="Beállítások" style="position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:14px;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;background:rgba(15,15,15,.55);box-shadow:inset 0 0 0 1px rgba(251,250,247,.35);cursor:pointer"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23FBFAF7%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%226.6%22%2F%3E%3Cpath%20d%3D%22M12%202.4v2.8M12%2018.8v2.8M2.4%2012h2.8M18.8%2012h2.8M5.2%205.2l2%202M16.8%2016.8l2%202M5.2%2018.8l2-2M16.8%207.2l2-2%22%2F%3E%3C%2Fsvg%3E" alt="" style="width:22px;height:22px;display:block"></div>
+    </sc-if>
+    <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:0;max-height:74%;overflow-y:auto;background:rgba(18,17,15,.94);border-radius:22px 22px 0 0;padding:18px 20px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box;color:#FBFAF7;font:400 14px 'DM Sans',system-ui,sans-serif;display:flex;flex-direction:column;gap:6px;box-shadow:0 -10px 30px rgba(0,0,0,.4)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="font:italic 500 26px 'Cormorant Garamond',Georgia,serif">Beállítások</div>
+          <div onClick="{{ togglePanel }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:rgba(251,250,247,.12);color:#FBFAF7">Kész</div>
+        </div>
+        <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Minta</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Minta</div><select value="{{ sel.minta }}" onChange="{{ on.minta }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.minta }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Festés</div><select value="{{ sel.festes }}" onChange="{{ on.festes }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.festes }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Tükrözés</div><div onClick="{{ tg.tukor.click }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:{{ tg.tukor.bg }};color:{{ tg.tukor.fg }}">{{ tg.tukor.txt }}</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Tükörszelet</div><div style="display:flex;gap:6px"><sc-for list="{{ szelet }}" as="z" hint-placeholder-count="3"><div onClick="{{ z.click }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;min-width:44px;background:{{ z.bg }};color:{{ z.fg }}">{{ z.v }}</div></sc-for></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Lyukszín</div><div style="display:flex;gap:8px"><sc-for list="{{ lyuk }}" as="c" hint-placeholder-count="5"><div onClick="{{ c.click }}" style="width:30px;height:30px;border-radius:15px;cursor:pointer;background:{{ c.color }};box-shadow:{{ c.ring }}"></div></sc-for></div></div>
+        <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Mozgás</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Irány</div><select value="{{ sel.irany }}" onChange="{{ on.irany }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.irany }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Lágyság</div><div style="display:flex;align-items:center;gap:10px"><input type="range" min="0" max="50" step="1" value="{{ rg.lagy }}" onChange="{{ on.lagy }}" style="width:130px;accent-color:#E0C25A"><div style="width:34px;text-align:right;font-variant-numeric:tabular-nums">{{ rg.lagy }}</div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Hullám (mp)</div><div style="display:flex;align-items:center;gap:10px"><input type="range" min="2" max="16" step="0.5" value="{{ rg.hullam }}" onChange="{{ on.hullam }}" style="width:130px;accent-color:#E0C25A"><div style="width:34px;text-align:right;font-variant-numeric:tabular-nums">{{ rg.hullam }}</div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Szünet (mp)</div><div style="display:flex;align-items:center;gap:10px"><input type="range" min="0" max="4" step="0.5" value="{{ rg.szunet }}" onChange="{{ on.szunet }}" style="width:130px;accent-color:#E0C25A"><div style="width:34px;text-align:right;font-variant-numeric:tabular-nums">{{ rg.szunet }}</div></div></div>
+        <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Színek</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Paletta</div><select value="{{ sel.paletta }}" onChange="{{ on.paletta }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.paletta }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <sc-if value="{{ ownColors }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Színek</div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><sc-for list="{{ szinek }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.click }}" style="width:30px;height:30px;border-radius:15px;cursor:pointer;background:{{ c.color }};opacity:{{ c.op }};box-shadow:{{ c.ring }}"></div></sc-for></div></div>
+        </sc-if>
+        <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Zene</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Zene</div><div onClick="{{ tg.zene.click }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:{{ tg.zene.bg }};color:{{ tg.zene.fg }}">{{ tg.zene.txt }}</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Dal</div><select value="{{ sel.dal }}" onChange="{{ on.dal }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.dal }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div onClick="{{ resetAll }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;margin-top:14px;height:44px;background:rgba(251,250,247,.12);color:#FBFAF7">Alapértékek visszaállítása</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ tooFew }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;background:rgba(10,10,10,.82)">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+          <div style="font:italic 500 30px/1.1 'Cormorant Garamond',Georgia,serif;color:#FBFAF7;text-wrap:pretty">Válassz minimum 3 színt</div>
+          <div style="font:400 13px 'DM Sans',system-ui,sans-serif;color:rgba(251,250,247,.75)">Most {{ colorCount }} szín van bekapcsolva.</div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:384,&quot;height&quot;:800},&quot;ALAPÉRTELMEZÉSEK&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;A (vé, vé, Ha, 6)&quot;,&quot;B (kK, vé, Rh, 235)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;irány&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;balról&quot;,&quot;jobbról&quot;,&quot;fentről&quot;,&quot;lentről&quot;,&quot;átlósan&quot;,&quot;körKifelé&quot;,&quot;körBefelé&quot;,&quot;szembe&quot;,&quot;szembeFentLent&quot;,&quot;szembeBalJobb&quot;,&quot;szembeNagyátló&quot;,&quot;szembeKisátló&quot;,&quot;szembeX&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;lágyság&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:50,&quot;step&quot;:1,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;hullámMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0.5,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;szünetMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;default&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;minta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;O-01&quot;,&quot;L15&quot;,&quot;L23&quot;,&quot;L24&quot;,&quot;L31&quot;,&quot;L39&quot;,&quot;L43&quot;,&quot;L44&quot;,&quot;L50&quot;,&quot;L55&quot;,&quot;P-01&quot;,&quot;P-02&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;festés&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;automatikus&quot;,&quot;lyukfestés&quot;,&quot;mintafestés&quot;],&quot;default&quot;:&quot;automatikus&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;Tükrözés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;tükörSzelet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;8&quot;,&quot;12&quot;,&quot;16&quot;],&quot;default&quot;:&quot;12&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;lyukSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#ffffff&quot;,&quot;#f5efe4&quot;,&quot;#0f0f0f&quot;,&quot;#8a0303&quot;,&quot;#6e7d4f&quot;],&quot;default&quot;:&quot;#ffffff&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;reklámGyakoriság&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:1,&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;tüllháló&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;alapSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;zene&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;dal&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Handcraft&quot;,&quot;Rhubarb&quot;,&quot;Lazy Days&quot;],&quot;default&quot;:&quot;Handcraft&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;paletta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;Mediterrán (3)&quot;,&quot;Rét (4)&quot;,&quot;Vidám (5)&quot;,&quot;Éjfél és arany (3)&quot;,&quot;Ősz (4)&quot;,&quot;Skandináv (5)&quot;,&quot;Neon éj (6)&quot;,&quot;Mélykék (6)&quot;,&quot;Bordó–rózsa (6)&quot;,&quot;Erdő (6)&quot;,&quot;Homok (6)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín1&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6b69f2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be1&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín2&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3ea805&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín3&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#dc0efb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be3&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín4&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffb300&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be4&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín5&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00c2c7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be5&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín6&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4d6d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be6&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín7&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8E8A85&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be7&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;bpm&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:0.1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;hullámÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:32,&quot;step&quot;:1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;szünetÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:16,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;ütemEltolás&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.01,&quot;default&quot;:0,&quot;unit&quot;:&quot;mp&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;nyitókép&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;csempeMéret&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:120,&quot;max&quot;:720,&quot;step&quot;:10,&quot;default&quot;:360,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;}}">
+class Component extends DCLogic {
+  KEYS = {"direction":"irány","meetShare":"szembeArány","radialShare":"körArány","softness":"lágyság","waveSec":"hullámMp","pauseSec":"szünetMp","pattern":"minta","adEvery":"reklámGyakoriság","net":"tüllháló","laceColor":"alapSzín","music":"zene","track":"dal","bpm":"bpm","waveBeats":"hullámÜtem","pauseBeats":"szünetÜtem","beatOffset":"ütemEltolás","showSplash":"nyitókép","lace4Tile":"csempeMéret","lace4Src":"lace4Src","color1":"szín1","use1":"be1","color2":"szín2","use2":"be2","color3":"szín3","use3":"be3","color4":"szín4","use4":"be4","color5":"szín5","use5":"be5","color6":"szín6","use6":"be6","color7":"szín7","use7":"be7","palette":"paletta","paint":"festés","mirror":"Tükrözés","mirrorN":"tükörSzelet","holeColor":"lyukSzín"};
+  VALS = { paint: { 'lyukfestés': 'hole', 'mintafestés': 'figure', 'automatikus': 'auto' }, direction: {"véletlen":"auto","balról":"left","jobbról":"right","fentről":"top","lentről":"bottom","átlósan":"diag","körKifelé":"out","körBefelé":"in","szembe":"meet","szembeFentLent":"meetV","szembeBalJobb":"meetH","szembeNagyátló":"meetD1","szembeKisátló":"meetD2","szembeX":"meetX"}, pattern: { 'véletlen': 'auto', 'O-01': '3', 'L15': '4', 'L23': '5', 'L24': '6', 'L31': '7', 'L39': '8', 'L43': '9', 'L44': '10', 'L50': '11', 'L55': '12', 'P-01': '13', 'P-02': '14' } };
+  mode = /[?&]beallitas/.test(location.search) ? 'phone' : 'demo';
+  ov = (() => { if (this.mode !== 'phone') return {}; try { return JSON.parse(localStorage.getItem('kaleido-beallitas') || '{}'); } catch (e) { return {}; } })();
+  ovv = 0;
+  FIX = { 'Tükrözés': true, 'dal': 'Handcraft', 'zene': true, 'nyitókép': true };
+  mapProps(p) {
+    if (p === this._p0 && this._ovv === this.ovv) return this._p1;
+    const o = {}, ov = this.ov || {}, fix = this.mode === 'demo' ? this.FIX : {};
+    for (const k in this.KEYS) { const hk = this.KEYS[k]; let v = hk in fix ? fix[hk] : hk in ov ? ov[hk] : (p[hk] ?? this.DEFS[hk]); const m = this.VALS[k]; if (m && v != null && m[v] != null) v = m[v]; o[k] = v; }
+    this._p0 = p; this._ovv = this.ovv; this._p1 = o; return o;
+  }
+  raw(hk) { return hk in this.ov ? this.ov[hk] : (this.props[hk] ?? this.DEFS[hk]); }
+  setOv(k, v) {
+    const old = this.P; this.ov = Object.assign({}, this.ov, { [k]: v }); this.ovv++;
+    try { localStorage.setItem('kaleido-beallitas', JSON.stringify(this.ov)); } catch (e) {}
+    this.react(old); this.forceUpdate();
+  }
+  resetOv() {
+    const old = this.P; this.ov = {}; this.ovv++;
+    try { localStorage.removeItem('kaleido-beallitas'); } catch (e) {}
+    this.react(old); this.forceUpdate();
+  }
+  DEFS = {"irány":"véletlen","lágyság":20,"hullámMp":8,"szünetMp":0.5,"minta":"véletlen","reklámGyakoriság":4,"tüllháló":true,"alapSzín":"#0f0f0f","zene":true,"dal":"Handcraft","szín1":"#6b69f2","be1":true,"szín2":"#3ea805","be2":true,"szín3":"#dc0efb","be3":true,"szín4":"#ffb300","be4":true,"szín5":"#00c2c7","be5":true,"szín6":"#ff4d6d","be6":true,"szín7":"#8E8A85","be7":false,"paletta":"saját","festés":"automatikus","Tükrözés":true,"tükörSzelet":"12","lyukSzín":"#ffffff","bpm":0,"hullámÜtem":0,"szünetÜtem":2,"ütemEltolás":0,"nyitókép":true,"csempeMéret":360};
+  PRESETS = {
+    A: { 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Handcraft', be1: true, be2: true, be3: true, be4: true, be5: true, be6: true },
+    B: { 'irány': 'körKifelé', 'minta': 'véletlen', 'dal': 'Rhubarb', be1: false, be2: true, be3: true, be4: false, be5: true, be6: false },
+  };
+  get P() { return this.mapProps(this.props); }
+  autoPattern() { const v = this.P.pattern; return v == null || v === 'auto'; }
+  startLace() {
+    if (!this.autoPattern()) return +this.P.pattern;
+    const defs = this.imgDefs(), pool = defs.map((d, i) => d.ad || d.off ? -1 : i + 3).filter(k => k >= 0);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  state = { sound: false, hint: true };
+  cvRef = React.createRef();
+  e = { base: 0, phase: 'rest', el: 0, waves: 0, lace: null, swap: null, ang: 0 };
+  id = Math.random();
+  DEF = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d', '#8E8A85'];
+  PALS = {"Mediterrán (3)":["#0E7C86","#F4B942","#E85D3F"],"Rét (4)":["#8DB255","#F2C14E","#F78154","#4D9DE0"],"Vidám (5)":["#EF476F","#FFD166","#06D6A0","#118AB2","#8E6CCB"],"Éjfél és arany (3)":["#1B2A49","#C9A227","#E9E3D5"],"Ősz (4)":["#7A2E2E","#C8553D","#E0A458","#588157"],"Skandináv (5)":["#2F4858","#86BBD8","#EDE7E3","#F6AE2D","#F26419"],"Neon éj (6)":["#261447","#7B2FF7","#2DE2E6","#FDF500","#FF9F1C","#FF2E88"],"Mélykék (6)":["#0B1F3A","#133C6B","#1F5FA0","#3D85C6","#7FB3E6","#C7E0F7"],"Bordó–rózsa (6)":["#3A0A14","#6E1423","#A4243B","#D8576B","#F08FA0","#FBD3DA"],"Erdő (6)":["#0B2E1F","#14532D","#1F7A44","#3FA864","#86D19C","#CFEED8"],"Homok (6)":["#3B2A1A","#6B4B2E","#9C7348","#C69C6D","#E3C69E","#F5E8D3"]};
+  DIRS = { left: 0, top: 90, right: 180, bottom: 270, diag: 315 };
+
+  colorCount() { const pl = this.PALS[this.P.palette]; if (pl) return pl.length; let c = 0; for (let i = 1; i <= 7; i++) if ((this.P['use' + i] ?? (i <= 6)) !== false) c++; return c; }
+  colors() {
+    const pl = this.PALS[this.P.palette]; if (pl) return pl;
+    const out = [];
+    for (let i = 1; i <= 7; i++) if ((this.P['use' + i] ?? (i <= 6)) !== false) out.push(this.P['color' + i] ?? this.DEF[i - 1]);
+    return out.length ? out : [this.P.color1 ?? this.DEF[0]];
+  }
+
+  panelVals() {
+    if (this.mode !== 'phone') return { gearOn: false, panelOpen: false };
+    const r = k => this.raw(k), on = {}, sel = {}, opts = {}, tg = {}, rg = {};
+    const S = (key, hk, list) => { sel[key] = String(r(hk)); opts[key] = list; on[key] = ev => this.setOv(hk, ev.target.value); };
+    S('minta', 'minta', ['véletlen', ...this.imgDefs().map(d => d.name)]);
+    S('festes', 'festés', ['automatikus', 'lyukfestés', 'mintafestés']);
+    S('irany', 'irány', Object.keys(this.VALS.direction));
+    S('paletta', 'paletta', ['saját', ...Object.keys(this.PALS)]);
+    S('dal', 'dal', Object.keys(this.TRACKS));
+    const T = (key, hk) => { const v = r(hk) === true; tg[key] = { txt: v ? 'Be' : 'Ki', bg: v ? '#E0C25A' : 'rgba(251,250,247,.12)', fg: v ? '#151412' : '#FBFAF7', click: () => this.setOv(hk, !v) }; };
+    T('tukor', 'Tükrözés'); T('zene', 'zene');
+    const G = (key, hk) => { rg[key] = r(hk); on[key] = ev => this.setOv(hk, +ev.target.value); };
+    G('lagy', 'lágyság'); G('hullam', 'hullámMp'); G('szunet', 'szünetMp');
+    const sz = String(r('tükörSzelet'));
+    const ring = a => a ? '0 0 0 2px #151412, 0 0 0 4px #E0C25A' : 'inset 0 0 0 1px rgba(251,250,247,.35)';
+    return {
+      gearOn: !((this.P.showSplash ?? true) !== false && !this.state.splashGone),
+      panelOpen: !!this.state.panel,
+      togglePanel: ev => { ev && ev.stopPropagation(); this.setState(st => ({ panel: !st.panel })); },
+      resetAll: () => this.resetOv(),
+      sel, opts, on, tg, rg,
+      szelet: ['8', '12', '16'].map(v => ({ v, bg: v === sz ? '#E0C25A' : 'rgba(251,250,247,.12)', fg: v === sz ? '#151412' : '#FBFAF7', click: () => this.setOv('tükörSzelet', v) })),
+      lyuk: ['#ffffff', '#f5efe4', '#0f0f0f', '#8a0303', '#6e7d4f'].map(c => ({ color: c, ring: ring(c === r('lyukSzín')), click: () => this.setOv('lyukSzín', c) })),
+      ownColors: r('paletta') === 'saját',
+      szinek: [1, 2, 3, 4, 5, 6, 7].map(i => { const u = r('be' + i) !== false; return { color: r('szín' + i), op: u ? 1 : 0.28, ring: ring(u), click: () => this.setOv('be' + i, !u) }; }),
+    };
+  }
+  componentDidMount() {
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.W = 0; this.H = 0;
+    this.last = performance.now();
+    this.pickDir();
+    const tick = (now) => {
+      const cv = this.cvRef.current;
+      if (cv) {
+        const w = cv.clientWidth, h = cv.clientHeight;
+        if (w > 0 && h > 0 && (w !== this.W || h !== this.H)) {
+          this.W = w; this.H = h; cv.width = w * this.dpr; cv.height = h * this.dpr;
+          this.ctx = cv.getContext('2d'); this.buildLace();
+        }
+        if (this.W > 0 && this.colorCount() >= 3 && !this.state.paused) this.step(now); else this.last = now;
+      }
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+    this.onSolo = ev => { if (ev.detail !== this.id && this.state.sound) this.setSound(false); };
+    window.addEventListener('kaleido-solo', this.onSolo);
+  }
+  componentDidUpdate(pp) { if (pp !== this.props) { const a = this.mapProps(pp); this._p0 = null; this.react(a); } }
+  react(pp) {
+    if (pp.pattern !== this.P.pattern && !this.autoPattern()) { const k = +this.P.pattern; this.e.lace = k; this.e.swap = null; this.reqImg(k - 3); }
+    if (pp.lace4Tile !== this.P.lace4Tile) this.buildLace();
+    if (pp.laceColor !== this.P.laceColor || pp.net !== this.P.net) this.buildLace();
+    if (pp.direction !== this.P.direction) this.pickDir();
+    if (pp.track !== this.P.track) this.switchTrack();
+    if (pp.music !== this.P.music && this.P.music === false) this.setSound(false);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); window.removeEventListener('kaleido-solo', this.onSolo); if (this.ac) this.ac.close(); if (this.audio) this.audio.pause(); clearInterval(this.fade); }
+  imgDefs() {
+    return [{ src: 'mintak/O-01.svg', mode:'cut',cat:'organikus',own:true,name:'O-01',key:'lin' },
+      { src: 'mintak/L15.png', mode:'cut',cat:'figura',name:'L15' },
+      { src: 'mintak/L23.png', mode:'cut',cat:'organikus',name:'L23' },
+      { src: 'mintak/L24.png', mode:'cut',cat:'geo',name:'L24' },
+      { src: 'mintak/L31.png', mode:'cut',cat:'flora',season:'nyar',name:'L31' },
+      { src: 'mintak/L39.png', mode:'cut',cat:'geo',name:'L39' },
+      { src: 'mintak/L43.png', mode:'tone',cat:'sotet',name:'L43' },
+      { src: 'mintak/L44.png', mode:'cut',cat:'figura',season:'halloween',name:'L44' },
+      { src: 'mintak/L50.png', mode:'cut',cat:'geo',name:'L50' },
+      { src: 'mintak/L55.png', mode:'mask',cat:'geo',lo:0.76,kw:0.12,scale:1.3,net:false,name:'L55' },
+      { src: 'mintak/P-01.jpg', mode:'tone',cat:'festoi',name:'P-01' },
+      { src: 'mintak/P-02.png', mode:'tone',cat:'festoi',name:'P-02' }];
+  }
+  loadImg() {
+    if (this.imgs) return;
+    const n = this.imgDefs().length; this.imgs = Array(n).fill(null); this.imgReq = Array(n).fill(false);
+  }
+  reqImg(i) {
+    if (i < 0 || !this.imgReq || this.imgReq[i]) return; this.imgReq[i] = true;
+    const im = new Image(); im.onload = () => { this.imgs[i] = im; }; im.src = this.imgDefs()[i].src;
+  }
+  warm() {
+    const un = this.imgReq.map((_, i) => i).filter(i => !this.imgReq[i] && !this.imgDefs()[i].off);
+    let busy = this.imgReq.filter((r, i) => r && !this.imgs[i]).length;
+    while (busy < 3 && un.length) { this.reqImg(un.splice(Math.floor(Math.random() * un.length), 1)[0]); busy++; }
+  }
+  lace(k) {
+    if (this.laces[k]) return this.laces[k];
+    let L;
+    if (k < 3) L = this.makeLace(k);
+    else {
+      const i = k - 3, im = this.imgs[i], d = this.imgDefs()[i];
+      if (!d) return null;
+      if (!im) { this.reqImg(i); return null; }
+      L = d.mode === 'tone' ? this.toneLace(im) : d.mode === 'cut' ? this.cutLace(im, d.single, d) : this.imgLace(im, d);
+    }
+    const e = this.e, keep = new Set([k, e.lace, e.swap && e.swap.from, e.swap && e.swap.to]);
+    Object.keys(this.laces).forEach(x => { if (!keep.has(+x)) delete this.laces[x]; });
+    if (L && L.cov == null) { const sc = document.createElement('canvas'); sc.width = sc.height = 48; const sx = sc.getContext('2d'); sx.drawImage(L, 0, 0, 48, 48); const dd = sx.getImageData(0, 0, 48, 48).data; let c = 0; for (let i = 3; i < dd.length; i += 4) if (dd[i] > 128) c++; L.cov = c / (48 * 48); }
+    return (this.laces[k] = L);
+  }
+  toneLace(im) {
+    const { W, H, dpr } = this;
+    const T = Math.round((this.P.lace4Tile ?? 360) * dpr);
+    const t = document.createElement('canvas'); t.width = T; t.height = T;
+    const tx = t.getContext('2d'); tx.imageSmoothingQuality = 'high'; tx.drawImage(im, 0, 0, T, T);
+    const id = tx.getImageData(0, 0, T, T), d = id.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const lum = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255;
+      const v = Math.round(255 * Math.pow(Math.min(1, Math.max(0, (lum - 0.1) / 0.72)), 1.15));
+      d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+    }
+    tx.putImageData(id, 0, 0);
+    const L = document.createElement('canvas'); L.width = W * dpr; L.height = H * dpr;
+    const l = L.getContext('2d');
+    const ox = Math.round((L.width - T) / 2) % T - T, oy = Math.round((L.height - T) / 2) % T - T;
+    for (let y = oy; y < L.height; y += T) for (let x = ox; x < L.width; x += T) l.drawImage(t, x, y);
+    L.blend = 'multiply';
+    return L;
+  }
+  cutLace(im, single, def) {
+    const dark = def && def.key === 'dark', lo = (def && def.lo) ?? 0.55, kw = (def && def.w) ?? 0.13;
+    const { W, H, dpr } = this;
+    const T = single ? Math.round(Math.min(W, H) * dpr * 1.05) : Math.round((this.P.lace4Tile ?? 360) * dpr);
+    const t = document.createElement('canvas'); t.width = T; t.height = T;
+    const tx = t.getContext('2d'); tx.imageSmoothingQuality = 'high'; tx.drawImage(im, 0, 0, T, T);
+    const id = tx.getImageData(0, 0, T, T), d = id.data;
+    for (let i = 0; i < d.length; i += 4) {
+      if (def && def.key === 'lin') { d[i + 3] = Math.round(255 - (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11)); continue; }
+      if (def && def.key === 'black') {
+        const lum = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255, k = Math.min(1, Math.max(0, (lum - lo) / kw));
+        d[i + 3] = Math.round(d[i + 3] * (1 - k * k * (3 - 2 * k))); continue;
+      }
+      if (dark) {
+        const lum = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255, k = Math.min(1, Math.max(0, (lum - lo) / kw));
+        d[i + 3] = Math.round(d[i + 3] * k * k * (3 - 2 * k)); continue;
+      }
+      const w = Math.min(d[i], d[i + 1], d[i + 2]) / 255;
+      const k = Math.min(1, Math.max(0, (w - ((def && def.wlo) ?? 0.8)) / 0.14));
+      d[i + 3] = Math.round(d[i + 3] * (1 - k * k * (3 - 2 * k)));
+    }
+    tx.putImageData(id, 0, 0);
+    const L = document.createElement('canvas'); L.width = W * dpr; L.height = H * dpr;
+    const l = L.getContext('2d');
+    const ox = Math.round((L.width - T) / 2) % T - T, oy = Math.round((L.height - T) / 2) % T - T;
+    if (single) l.drawImage(t, Math.round((L.width - T) / 2), Math.round((L.height - T) / 2));
+    else for (let y = oy; y < L.height; y += T) for (let x = ox; x < L.width; x += T) l.drawImage(t, x, y);
+    const c = document.createElement('canvas'); c.width = L.width; c.height = L.height;
+    const x = c.getContext('2d');
+    x.shadowColor = 'rgba(40,30,20,.35)'; x.shadowBlur = (single ? 14 : 6) * dpr; x.shadowOffsetY = (single ? 4 : 2) * dpr;
+    x.drawImage(L, 0, 0);
+    return c;
+  }
+  nextLace() {
+    const e = this.e, defs = this.imgDefs(), isAd = k => k >= 3 && defs[k - 3] && defs[k - 3].ad;
+    e.swaps = (e.swaps || 0) + 1;
+    const every = this.P.adEvery ?? 4;
+    const pool = defs.map((_, i) => i + 3).filter(k => this.imgs[k - 3] && !this.isOff(k)).filter(k => k !== e.lace && (this.P.paint !== 'figure' || this.canInv(k) || isAd(k)));
+    this.warm();
+    const ads = pool.filter(isAd), normal = pool.filter(k => !isAd(k));
+    const list = every > 0 && ads.length && e.swaps % every === 0 && !isAd(e.lace) ? ads : (normal.length ? normal : pool);
+    const pick = list[Math.floor(Math.random() * list.length)]; if (e.pick) delete e.pick[pick]; return pick;
+  }
+  speedMul() { const k = this.e.lace, d = k >= 3 ? this.imgDefs()[k - 3] : null; return ((d && d.wave) || 1) * (this.invFor(k) ? 0.7 : 1); }
+  restMul() { const k = this.e.lace, d = k >= 3 ? this.imgDefs()[k - 3] : null; return (d && d.rest) || 1; }
+  imgLace(im, def) {
+    const { W, H, dpr } = this, lo = (def && def.lo) ?? 0.42;
+    const T = Math.round((this.P.lace4Tile ?? 360) * dpr * ((def && def.scale) || 1)), TH = Math.round(T * im.height / im.width);
+    const t = document.createElement('canvas'); t.width = T; t.height = TH;
+    const tx = t.getContext('2d'); tx.imageSmoothingQuality = 'high'; tx.drawImage(im, 0, 0, T, TH);
+    const id = tx.getImageData(0, 0, T, TH), d = id.data;
+    const lc = this.P.laceColor ?? '#0f0f0f', n = parseInt(lc.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    for (let i = 0; i < d.length; i += 4) {
+      const lum = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255;
+      const al = d[i + 3] / 255, lw = lum * al + (1 - al);
+      const k = Math.min(1, Math.max(0, (lw - lo) / ((def && def.kw) || 0.22)));
+      d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = Math.round(255 * (1 - k * k * (3 - 2 * k)));
+    }
+    tx.putImageData(id, 0, 0);
+    const L = document.createElement('canvas'); L.width = W * dpr; L.height = H * dpr;
+    const l = L.getContext('2d');
+    const ox = Math.round((L.width - T) / 2) % T - T, oy = Math.round((L.height - TH) / 2) % TH - TH;
+    for (let y = oy; y < L.height; y += TH) for (let x = ox; x < L.width; x += T) l.drawImage(t, x, y);
+    if (((def && def.net) ?? this.P.net ?? true) !== false) {
+      l.setTransform(dpr, 0, 0, dpr, 0, 0); l.globalCompositeOperation = 'destination-out';
+      const s = 8, h = s * Math.sqrt(3) / 2; l.beginPath();
+      for (let j = 0, yy = 0; yy < H + s; j++, yy = j * h) for (let xx = (j % 2) * s / 2; xx < W + s; xx += s) { l.moveTo(xx + 1.25, yy); l.arc(xx, yy, 1.25, 0, Math.PI * 2); }
+      l.fill();
+    }
+    const c = document.createElement('canvas'); c.width = L.width; c.height = L.height;
+    const x = c.getContext('2d');
+    x.shadowColor = 'rgba(40,30,20,.3)'; x.shadowBlur = 5 * dpr; x.shadowOffsetY = 1.5 * dpr;
+    x.drawImage(L, 0, 0);
+    return c;
+  }
+  buildLace() {
+    if (!this.W) return;
+    this.loadImg();
+    this.laces = {};
+    if (this.e.lace == null) this.e.lace = this.startLace();
+    if (this.e.lace >= 3 + this.imgDefs().length) this.e.lace = 2;
+    this.reqImg(this.e.lace - 3); this.warm();
+  }
+  pickDir() {
+    const d = this.P.direction ?? 'auto';
+    const AX = { meetV: 'v', meetH: 'h', meetD1: 'd1', meetD2: 'd2', meetX: 'x' };
+    const rax = () => { const o = ['v', 'h', 'd1', 'd2', 'x']; return o[Math.floor(Math.random() * o.length)]; };
+    if (AX[d]) { this.e.kind = 'meet'; this.e.axis = AX[d]; return; }
+    if (d === 'meet') { this.e.kind = 'meet'; this.e.axis = rax(); return; }
+    if (d === 'out' || d === 'in') { this.e.kind = d; return; }
+    this.e.kind = 'lin';
+    if (d !== 'auto') { this.e.ang = this.DIRS[d] ?? 0; return; }
+    const all = [0, 45, 90, 135, 180, 225, 270, 315].map(a => 'lin:' + a).concat(['out', 'in'], this.colors().length >= 3 ? ['meet:v', 'meet:h', 'meet:d1', 'meet:d2', 'meet:x'] : []);
+    const opts = all.filter(o => o !== this.e.last), pick = opts[Math.floor(Math.random() * opts.length)];
+    this.e.last = pick;
+    const [k, v] = pick.split(':');
+    this.e.kind = k;
+    if (k === 'lin') this.e.ang = +v; else if (k === 'meet') this.e.axis = v;
+  }
+
+  makeLace(kind) {
+    const { W, H, dpr } = this;
+    const ops = [], net = [];
+    const E = (cx, cy, rx, ry, rot, t) => ops.push({ t: t || 'h', f: g => g.ellipse(cx, cy, rx, ry, rot || 0, 0, Math.PI * 2) });
+    const C = (cx, cy, r, t) => E(cx, cy, r, r, 0, t);
+    const P = (cx, cy, r, n, rot, t) => ops.push({ t: t || 'h', f: g => { for (let k = 0; k < n; k++) { const a = rot + k * Math.PI * 2 / n; const X = cx + Math.cos(a) * r, Y = cy + Math.sin(a) * r; k ? g.lineTo(X, Y) : g.moveTo(X, Y); } g.closePath(); } });
+    const cx0 = W / 2, cy0 = H / 2;
+    const ring = (ox, oy, r, n, off, fn) => { for (let k = 0; k < n; k++) { const a = off + k * Math.PI * 2 / n; fn(ox + Math.cos(a) * r, oy + Math.sin(a) * r, a); } };
+    const R = (r, n, off, fn) => ring(cx0, cy0, r, n, off, fn);
+    const rosette = (x, y, s) => { C(x, y, 3 * s); ring(x, y, 9 * s, 6, 0, (px, py, a) => E(px, py, 5 * s, 2 * s, a)); };
+
+    if ((this.P.net ?? true) !== false) {
+      const s = 8, h = s * Math.sqrt(3) / 2;
+      for (let j = 0, y = 0; y < H + s; j++, y = j * h) for (let x = (j % 2) * s / 2; x < W + s; x += s) net.push([x, y]);
+    }
+
+    if (kind === 2) {
+      const T = Math.PI * 2;
+      C(cx0, cy0, 9); C(cx0, cy0, 3.5, 'i');
+      R(21, 6, 0, (x, y, a) => E(x, y, 7, 3, a));
+      R(42, 12, 0, (x, y, a) => { E(x, y, 13, 5.5, a); E(x, y, 6, 1.6, a, 'i'); });
+      R(64, 12, T / 24, (x, y) => C(x, y, 5));
+      R(76, 24, 0, (x, y) => C(x, y, 2));
+      R(104, 12, 0, (x, y, a) => { E(x, y, 24, 10, a); E(x, y, 15, 5, a, 'i'); E(x, y, 8, 1.8, a); });
+      R(102, 12, T / 24, (x, y) => C(x, y, 4));
+      R(140, 24, T / 48, (x, y, a) => E(x, y, 9, 3.6, a));
+      R(172, 12, 0, (x, y, a) => { for (let j = -2; j <= 2; j++) { const b = a + j * 0.075; E(cx0 + Math.cos(b) * 174, cy0 + Math.sin(b) * 174, 11, 2.6, b); } });
+      R(172, 12, T / 24, (x, y) => { C(x, y, 6.5); C(x, y, 2.5, 'i'); });
+      R(206, 48, 0, (x, y) => C(x, y, 2.2));
+      R(228, 36, 0, (x, y) => { C(x, y, 8); C(x, y, 3, 'i'); });
+      R(246, 36, T / 72, (x, y) => C(x, y, 2.2));
+      R(288, 12, 0, (x, y, a) => { E(x, y, 34, 14, a); E(x, y, 24, 8, a, 'i'); E(x, y, 14, 3, a); });
+      R(288, 12, T / 24, (x, y) => rosette(x, y, 1.1));
+      R(332, 48, 0, (x, y) => C(x, y, 2.6));
+      R(362, 24, 0, (x, y, a) => { E(x, y, 14, 5.5, a); E(x, y, 6, 1.4, a, 'i'); });
+      R(362, 24, T / 48, (x, y) => C(x, y, 3));
+      R(404, 12, 0, (x, y) => { C(x, y, 5); ring(x, y, 16, 8, 0, (px, py, a) => E(px, py, 9, 3.5, a)); ring(x, y, 28, 16, 0, (px, py) => C(px, py, 1.8)); });
+      R(404, 12, T / 24, (x, y, a) => { E(x, y, 22, 8, a); E(x, y, 12, 3, a, 'i'); });
+      R(444, 48, 0, (x, y) => C(x, y, 3));
+    } else if (kind === 0) {
+      const s = 112;
+      for (let i = -4; i <= 4; i++) for (let j = -5; j <= 5; j++) {
+        const cx = cx0 + i * s, cy = cy0 + j * s;
+        if (cx < -s || cx > W + s || cy < -s || cy > H + s) continue;
+        C(cx, cy, 7); C(cx, cy, 2.5, 'i');
+        for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; const x = cx + Math.cos(a) * 22, y = cy + Math.sin(a) * 22; E(x, y, 12, 5.5, a); E(x, y, 6, 1.5, a, 'i'); const b = a + Math.PI / 8; E(cx + Math.cos(b) * 38, cy + Math.sin(b) * 38, 6, 3, b); }
+        for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8; C(cx + Math.cos(a) * 50, cy + Math.sin(a) * 50, 2.4); }
+        const qx = cx + s / 2, qy = cy + s / 2;
+        C(qx, qy, 3.2);
+        for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + Math.PI / 4; E(qx + Math.cos(a) * 10, qy + Math.sin(a) * 10, 6.5, 2.8, a); }
+        C(cx + s / 2, cy, 3); C(cx, cy + s / 2, 3);
+      }
+    } else {
+      const s = 104, h = s * Math.sqrt(3) / 2;
+      for (let j = -6; j <= 6; j++) for (let i = -4; i <= 4; i++) {
+        const cx = cx0 + i * s + (Math.abs(j) % 2) * s / 2, cy = cy0 + j * h;
+        if (cx < -s || cx > W + s || cy < -s || cy > H + s) continue;
+        P(cx, cy, 8, 6, 0); P(cx, cy, 3, 6, 0, 'i');
+        for (let k = 0; k < 6; k++) {
+          const a = k * Math.PI / 3; const x = cx + Math.cos(a) * 21, y = cy + Math.sin(a) * 21; E(x, y, 11, 4.8, a); E(x, y, 5, 1.3, a, 'i');
+          const b = a + Math.PI / 6; P(cx + Math.cos(b) * 34, cy + Math.sin(b) * 34, 5, 4, b);
+        }
+        for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; C(cx + Math.cos(a) * 45, cy + Math.sin(a) * 45, 2.2); }
+        for (const a of [Math.PI / 6, Math.PI / 2]) P(cx + Math.cos(a) * s / Math.sqrt(3), cy + Math.sin(a) * s / Math.sqrt(3), 6, 3, a);
+      }
+    }
+
+    const lc = this.P.laceColor ?? '#0f0f0f';
+    const n = parseInt(lc.slice(1), 16), lum = ((n >> 16 & 255) * .3 + (n >> 8 & 255) * .59 + (n & 255) * .11) / 255;
+    const ink = lum > 0.5 ? '90,75,60' : '255,255,255';
+    const L = document.createElement('canvas'); L.width = W * dpr; L.height = H * dpr;
+    const l = L.getContext('2d'); l.scale(dpr, dpr);
+    l.fillStyle = lc; l.fillRect(0, 0, W, H);
+    l.globalCompositeOperation = 'destination-out';
+    l.beginPath(); net.forEach(([x, y]) => { l.moveTo(x + 1.25, y); l.arc(x, y, 1.25, 0, Math.PI * 2); }); l.fill();
+    ops.forEach(o => { l.globalCompositeOperation = o.t === 'h' ? 'destination-out' : 'source-over'; l.fillStyle = lc; l.beginPath(); o.f(l); l.fill(); });
+    l.globalCompositeOperation = 'source-over';
+    l.strokeStyle = `rgba(${ink},.09)`; l.lineWidth = 2.6;
+    ops.forEach(o => { l.beginPath(); o.f(l); l.stroke(); });
+    l.strokeStyle = `rgba(${ink},.26)`; l.lineWidth = 0.9;
+    ops.forEach(o => { l.beginPath(); o.f(l); l.stroke(); });
+    const c = document.createElement('canvas'); c.width = L.width; c.height = L.height;
+    const x = c.getContext('2d');
+    x.shadowColor = 'rgba(40,30,20,.3)'; x.shadowBlur = 5 * dpr; x.shadowOffsetY = 1.5 * dpr;
+    x.drawImage(L, 0, 0);
+    return c;
+  }
+
+  initAudio() {
+    const ac = this.ac = new (window.AudioContext || window.webkitAudioContext)();
+    this.out = ac.createGain(); this.out.gain.value = 0; this.out.connect(ac.destination);
+    const len = ac.sampleRate * 3, buf = ac.createBuffer(2, len, ac.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+    const rev = ac.createConvolver(); rev.buffer = buf;
+    const wet = ac.createGain(); wet.gain.value = 0.45; rev.connect(wet); wet.connect(this.out);
+    this.bus = ac.createGain(); this.bus.connect(this.out); this.bus.connect(rev);
+  }
+  hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  bell(t, m, dur, vol) {
+    const ac = this.ac, g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(this.bus);
+    [[1, 1], [2.76, 0.25], [5.4, 0.08]].forEach(([r, a]) => { const o = ac.createOscillator(), og = ac.createGain(); o.type = 'sine'; o.frequency.value = this.hz(m) * r; og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + dur + 0.05); });
+  }
+  pad(t, ms, dur, vol) {
+    const ac = this.ac, g = ac.createGain(), f = ac.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 900;
+    const a = Math.min(dur * 0.4, 1.2);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + a); g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.8);
+    f.connect(g); g.connect(this.bus);
+    ms.forEach((m, i) => { const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = this.hz(m); o.detune.value = i % 2 ? 5 : -5; o.connect(f); o.start(t); o.stop(t + dur + 1); });
+  }
+  root(i) { return [50, 47, 43, 45, 52, 48][i % 6]; }
+  onWave(nextIdx) {
+    if (!this.state.sound || this.mp3()) return;
+    const t0 = this.ac.currentTime + 0.03, w = this.P.waveSec ?? 2;
+    const scale = [62, 64, 66, 69, 71, 74, 76, 78, 81, 83, 86];
+    const r = this.root(nextIdx);
+    const n = Math.max(3, Math.min(16, Math.round(w * 1.4)));
+    let idx = 2 + Math.floor(Math.random() * 3);
+    [r, r + 7].forEach(m => this.bell(t0, m, Math.max(2, w), 0.12));
+    for (let i = 0; i < n; i++) {
+      const arch = i < n * 0.6 ? 1 : -1;
+      idx = Math.max(0, Math.min(scale.length - 1, idx + arch * (Math.random() < 0.7 ? 1 : 2) * (Math.random() < 0.2 ? -1 : 1)));
+      this.bell(t0 + (i / n) * w + (i % 2 ? 0.04 : 0), scale[idx], 1.6, i === n - 1 ? 0.16 : 0.1);
+    }
+  }
+  onRest(len) {
+    if (!this.state.sound || len < 0.4 || this.mp3()) return;
+    const r = this.root(this.e.base);
+    this.pad(this.ac.currentTime + 0.03, [r + 12, r + 19, r + 24], len, 0.035);
+  }
+  TRACKS = {
+    'Handcraft': { src: 'zene/handcraft.mp3', bpm: 120, offset: 0.18 },
+    'Rhubarb': { src: 'zene/rhubarb.mp3', bpm: 84.7, offset: 0.1 },
+    'Lazy Days': { src: 'zene/lazy-days.mp3', bpm: 69.6, offset: 0.2 },
+  };
+  track() { return this.TRACKS[this.P.track] || this.TRACKS['Handcraft']; }
+  mp3() { return this.track().src; }
+  switchTrack() {
+    if (!this.audio) return;
+    const on = this.state.sound; this.audio.pause(); this.audio = null; clearInterval(this.fade);
+    if (on) this.setSound(true);
+  }
+  setSound(on) {
+    const src = this.mp3();
+    if (src) {
+      if (!this.audio) { this.audio = new Audio(src); this.audio.loop = true; this.audio.volume = 0; }
+      clearInterval(this.fade);
+      const target = on ? 0.9 : 0, a = this.audio;
+      if (on) { window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: this.id })); a.play().catch(() => {}); }
+      this.fade = setInterval(() => {
+        const v = a.volume + (target - a.volume) * 0.15;
+        a.volume = Math.abs(target - v) < 0.01 ? target : v;
+        if (a.volume === target) { clearInterval(this.fade); if (!on) a.pause(); }
+      }, 40);
+      this.setState({ sound: on, hint: false });
+      return;
+    }
+    if (on) {
+      if (!this.ac) this.initAudio();
+      this.ac.resume();
+      window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: this.id }));
+      this.out.gain.setTargetAtTime(0.7, this.ac.currentTime, 0.05);
+      const t = this.ac.currentTime + 0.05, r = this.root(this.e.base) + 12;
+      [r, r + 7, r + 12].forEach((m, i) => this.bell(t + i * 0.12, m, 2, 0.12));
+    } else if (this.ac) this.out.gain.setTargetAtTime(0, this.ac.currentTime, 0.2);
+    this.setState({ sound: on, hint: false });
+  }
+
+  ease(t) { return t <= 0 ? 0 : t >= 1 ? 1 : 0.5 - 0.5 * Math.cos(Math.PI * t); }
+  rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
+
+  step(now) {
+    const dt = Math.min(now - this.last, 60); this.last = now;
+    const e = this.e, n = this.colors().length;
+    const wave = (this.P.waveSec ?? 8) * this.speedMul() * 1000, pause = (this.P.pauseSec ?? 0.5) * 1000, SWAP = 1400;
+    if (e.base >= n) e.base = 0;
+    if (this.audio && this.state.sound && !this.audio.paused && this.mp3()) {
+      const beat = 60 / ((this.P.bpm || 0) > 0 ? this.P.bpm : this.track().bpm), wb = (this.P.waveBeats || 0) > 0 ? this.P.waveBeats : Math.max(2, Math.round((this.P.waveSec ?? 8) * this.speedMul() / beat)), pb = this.P.pauseBeats ?? 2;
+      const tb = Math.max(0, this.audio.currentTime - ((this.P.beatOffset || 0) > 0 ? this.P.beatOffset : this.track().offset)) / beat;
+      if (e.mStart == null || tb < e.mStart - 1 || tb - e.mStart > wb + pb * 4) { e.mStart = Math.floor(tb); e.phase = 'wave'; this.pickDir(); }
+      if (e.swap) { e.swap.el += dt; if (e.swap.el >= e.swap.len) { e.lace = e.swap.to; e.swap = null; } }
+      let rel = tb - e.mStart;
+      if (e.phase === 'wave' && rel >= wb) {
+        e.mStart += wb; rel -= wb; e.phase = 'rest'; e.restB = pb * this.restMul();
+        this.endWave(); e.waves++;
+        if (this.autoPattern() && e.waves % n === 0) e.swap = { from: e.lace, to: this.nextLace(), el: 0, len: Math.max(1, e.restB) * beat * 1000 * 0.9 };
+      }
+      if (e.phase === 'rest' && rel >= (e.restB ?? pb)) { e.mStart += (e.restB ?? pb); rel -= (e.restB ?? pb); e.phase = 'wave'; this.pickDir(); }
+      e.el = 0;
+      this.draw(e.phase === 'wave' ? this.ease(rel / wb) : 0, e.phase === 'wave' ? rel / wb : 0);
+      return;
+    }
+    if (e.swap) {
+      e.swap.el += dt;
+      if (e.swap.el >= SWAP) { e.lace = e.swap.to; e.swap = null; }
+    } else {
+      e.el += dt;
+      if (e.phase === 'rest' && e.el >= pause * this.restMul()) { e.phase = 'wave'; e.el = 0; this.pickDir(); this.onWave((e.base + 1) % n); }
+      else if (e.phase === 'wave' && e.el >= wave) {
+        this.endWave(); e.phase = 'rest'; e.el = 0; e.waves++;
+        const swapNow = this.autoPattern() && e.waves % n === 0;
+        if (swapNow) {
+          e.swap = { from: e.lace, to: this.nextLace(), el: 0 };
+        }
+        this.onRest(pause / 1000 + (swapNow ? SWAP / 1000 : 0));
+      }
+    }
+    this.draw(e.phase === 'wave' ? this.ease(e.el / wave) : 0, e.phase === 'wave' ? e.el / wave : 0);
+  }
+  endWave() {
+    const e = this.e, cols = this.colors(), n = cols.length;
+    if (e.kind === 'meet' && n >= 3) {
+      const rg = this.meetRegions(), k = rg.length;
+      e.under = rg.map((r, i) => ({ poly: r.poly, c: cols[(e.base + 1 + r.opp) % n] }));
+      e.base = (e.base + k) % n;
+    } else { e.under = null; e.base = (e.base + 1) % n; }
+  }
+  meetRegions() {
+    const { W, H } = this, ax = this.e.axis || 'v', cx = W / 2, cy = H / 2, D = W + H;
+    if (ax === 'x') {
+      const c = [cx, cy], tri = [[[0, 0], [W, 0], c], [[W, 0], [W, H], c], [[W, H], [0, H], c], [[0, H], [0, 0], c]];
+      const us = [[0, 1], [-1, 0], [0, -1], [1, 0]];
+      return tri.map((poly, i) => { const u = us[i], pe = u[0] * cx + u[1] * cy, ps = Math.min(...poly.map(p => u[0] * p[0] + u[1] * p[1])); return { poly, u, ps, pe, opp: (i + 2) % 4 }; });
+    }
+    const nr = Math.hypot(W, H);
+    const u0 = ax === 'h' ? [1, 0] : ax === 'd1' ? [H / nr, W / nr] : ax === 'd2' ? [-H / nr, W / nr] : [0, 1];
+    const corners = [[0, 0], [W, 0], [W, H], [0, H]];
+    return [u0, [-u0[0], -u0[1]]].map((u, i) => {
+      const v = [-u[1], u[0]], pe = u[0] * cx + u[1] * cy;
+      const poly = [[cx + v[0] * D, cy + v[1] * D], [cx - v[0] * D, cy - v[1] * D], [cx - v[0] * D - u[0] * D, cy - v[1] * D - u[1] * D], [cx + v[0] * D - u[0] * D, cy + v[1] * D - u[1] * D]];
+      return { poly, u, ps: Math.min(...corners.map(p => u[0] * p[0] + u[1] * p[1])), pe, opp: 1 - i };
+    });
+  }
+  drawMeet(t) {
+    const { ctx, W, H } = this, e = this.e, cols = this.colors(), n = cols.length, rg = this.meetRegions();
+    const sF = (0.005 + ((this.P.softness ?? 0) / 100) * 0.9);
+    const clip = poly => { ctx.save(); ctx.beginPath(); poly.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.clip(); };
+    const band = (r, c, p0, dir, q) => {
+      const L = r.pe - r.ps, fw = Math.max(1, sF * L * 2), fr = q * (L + fw) - fw, u = r.u;
+      const a0 = p0 + dir * fr, a1 = p0 + dir * (fr + fw);
+      const g = ctx.createLinearGradient(u[0] * a0, u[1] * a0, u[0] * a1, u[1] * a1);
+      g.addColorStop(0, this.rgba(c, 1)); g.addColorStop(1, this.rgba(c, 0));
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    };
+    const col = i => cols[(e.base + 1 + i) % n];
+    const hold = 0.06, a = (1 - hold) / 2;
+    if (t < a + hold) {
+      const q = this.ease(Math.min(1, t / a));
+      if (q > 0) rg.forEach((r, i) => { clip(r.poly); band(r, col(i), r.ps, 1, q); ctx.restore(); });
+    } else {
+      const q = this.ease((t - a - hold) / a);
+      rg.forEach((r, i) => { clip(r.poly); ctx.fillStyle = col(i); ctx.fillRect(0, 0, W, H); band(r, col(r.opp), r.pe, -1, q); ctx.restore(); });
+    }
+  }
+  isOff(k) { if (k < 3) return true; const d = this.imgDefs()[k - 3]; return !d || !!d.off; }
+  canInv(k) { if (k < 3) return true; const d = this.imgDefs()[k - 3]; return !!d && d.mode !== 'tone' && !d.ad; }
+  invFor(k) {
+    const m = this.P.paint ?? 'auto';
+    if (m === 'hole' || !this.canInv(k)) return false;
+    if (m === 'figure') return true;
+    const e = this.e; e.pick = e.pick || {};
+    if (e.pick[k] === undefined) {
+      const L = this.lace(k); if (!L) return false;
+      const c = L.cov ?? 0.5; e.pick[k] = c >= 0.12 && c <= 0.47 ? Math.random() < 0.5 : false;
+    }
+    return e.pick[k];
+  }
+  ensureOff() {
+    const cw = this.ctx.canvas.width, ch = this.ctx.canvas.height;
+    if (!this.fcv || this.fcv.width !== cw || this.fcv.height !== ch) for (const n of ['fcv', 'mcv', 'xcv']) { this[n] = document.createElement('canvas'); this[n].width = cw; this[n].height = ch; }
+  }
+  frame(out, k, inv, p, t) {
+    const real = this.ctx, get = i => this.lace(i) || this.lace(2);
+    if (!inv) {
+      this.ctx = out; try { this.drawColor(p, t); } finally { this.ctx = real; }
+      out.setTransform(1, 0, 0, 1, 0, 0); const L = get(k); out.globalCompositeOperation = L.blend || 'source-over'; out.globalAlpha = 1; out.drawImage(L, 0, 0);
+      out.globalCompositeOperation = 'source-over'; return;
+    }
+    const f = this.fcv.getContext('2d');
+    this.ctx = f; try { this.drawColor(p, t); } finally { this.ctx = real; }
+    f.setTransform(1, 0, 0, 1, 0, 0); f.globalAlpha = 1; f.globalCompositeOperation = 'destination-in'; f.drawImage(get(k), 0, 0); f.globalCompositeOperation = 'source-over';
+    out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.imageSmoothingEnabled = true; out.imageSmoothingQuality = 'high';
+    out.fillStyle = this.P.holeColor ?? '#ffffff'; out.fillRect(0, 0, out.canvas.width, out.canvas.height); out.drawImage(this.fcv, 0, 0);
+  }
+  mirFor(k) {
+    const d = k >= 3 ? (this.imgDefs()[k - 3] || {}) : {};
+    if (d.ad) return false;
+    return this.P.mirror === true || d.mirror === true;
+  }
+  mirrorTo(out, p, t) {
+    const real = this.ctx, cw = out.canvas.width, ch = out.canvas.height;
+    if (!this.kcv || this.kcv.width !== cw || this.kcv.height !== ch) { this.kcv = document.createElement('canvas'); this.kcv.width = cw; this.kcv.height = ch; }
+    this.ctx = this.kcv.getContext('2d'); try { this.drawScene(p, t); } finally { this.ctx = real; }
+    const N = +(this.P.mirrorN ?? 12), cx = cw / 2, cy = ch / 2, Rr = Math.hypot(cx, cy), w = Math.PI * 2 / N, th = performance.now() / 1000 * Math.PI * 2 / 90, sc = Rr / Math.min(cx, cy);
+    out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.imageSmoothingEnabled = true; out.imageSmoothingQuality = 'high';
+    for (let i = 0; i < N; i++) {
+      out.save(); out.setTransform(1, 0, 0, 1, cx, cy); out.rotate(i * w);
+      if (i % 2) { out.rotate(w); out.scale(1, -1); }
+      out.beginPath(); out.moveTo(0, 0); out.arc(0, 0, Rr, -0.004, w + 0.004); out.closePath(); out.clip();
+      out.rotate(th); out.scale(sc, sc); out.drawImage(this.kcv, -cx, -cy); out.restore();
+    }
+  }
+  renderOne(out, mir, p, t) {
+    if (mir) { this.mirrorTo(out, p, t); return; }
+    const real = this.ctx; this.ctx = out; try { this.drawScene(p, t); } finally { this.ctx = real; }
+  }
+  draw(p, t) {
+    const e = this.e, sw = e.swap;
+    const anyMir = this.mirFor(e.lace) || (sw && (this.mirFor(sw.from) || this.mirFor(sw.to)));
+    if (!anyMir) { this.drawScene(p, t); return; }
+    const now = performance.now(); if (this.lastMirror && now - this.lastMirror < 40) return; this.lastMirror = now;
+    const real = this.ctx;
+    if (!sw || this.mirFor(sw.from) === this.mirFor(sw.to)) { this.mirrorTo(real, p, t); return; }
+    const cw = real.canvas.width, ch = real.canvas.height;
+    if (!this.ycv || this.ycv.width !== cw || this.ycv.height !== ch) { this.ycv = document.createElement('canvas'); this.ycv.width = cw; this.ycv.height = ch; }
+    const k = this.ease(sw.el / (sw.len || 1400)), L = e.lace;
+    try {
+      e.swap = null; e.lace = sw.from; this.renderOne(real, this.mirFor(sw.from), p, t);
+      e.lace = sw.to; this.renderOne(this.ycv.getContext('2d'), this.mirFor(sw.to), p, t);
+    } finally { e.swap = sw; e.lace = L; }
+    real.setTransform(1, 0, 0, 1, 0, 0); real.globalAlpha = k; real.drawImage(this.ycv, 0, 0); real.globalAlpha = 1;
+  }
+  drawScene(p, t) {
+    const e = this.e, real = this.ctx; this.ensureOff();
+    if (!e.swap) { this.frame(real, e.lace, this.invFor(e.lace), p, t); return; }
+    const k = this.ease(e.swap.el / (e.swap.len || 1400)), ia = this.invFor(e.swap.from), ib = this.invFor(e.swap.to);
+    if (!ia && !ib) {
+      this.drawColor(p, t);
+      const get = i => this.lace(i) || this.lace(2), put = (L, a) => { real.globalCompositeOperation = L.blend || 'source-over'; real.globalAlpha = a; real.drawImage(L, 0, 0); };
+      real.setTransform(1, 0, 0, 1, 0, 0); put(get(e.swap.from), 1 - k); put(get(e.swap.to), k);
+      real.globalCompositeOperation = 'source-over'; real.globalAlpha = 1; return;
+    }
+    this.frame(real, e.swap.from, ia, p, t);
+    const x = this.xcv.getContext('2d'); this.frame(x, e.swap.to, ib, p, t);
+    real.setTransform(1, 0, 0, 1, 0, 0); real.globalAlpha = k; real.drawImage(this.xcv, 0, 0); real.globalAlpha = 1;
+  }
+  drawColor(p, t) {
+    const { ctx, W, H, dpr } = this, e = this.e, cols = this.colors(), n = cols.length;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1;
+    if (e.under) e.under.forEach(r => { ctx.fillStyle = r.c; ctx.beginPath(); r.poly.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fill(); });
+    else { ctx.fillStyle = cols[e.base % n]; ctx.fillRect(0, 0, W, H); }
+    if (e.kind === 'meet' && n >= 3 && e.phase === 'wave') this.drawMeet(t || 0);
+    else if (p > 0) {
+      const s = 0.005 + ((this.P.softness ?? 0) / 100) * 0.9;
+      const f = p * (1 + s) - s, c = cols[(e.base + 1) % n], c1 = this.rgba(c, 1), c0 = this.rgba(c, 0);
+      let g;
+      if (e.kind === 'out' || e.kind === 'in') {
+        const R = Math.hypot(W / 2, H / 2), Rg = R * (1 + s), cl = v => Math.min(1, Math.max(0, v / Rg));
+        g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Rg);
+        if (e.kind === 'out') { g.addColorStop(0, c1); g.addColorStop(cl(f * R), c1); g.addColorStop(cl((f + s) * R), c0); g.addColorStop(1, c0); }
+        else { g.addColorStop(0, c0); g.addColorStop(cl((1 - f - s) * R), c0); g.addColorStop(cl((1 - f) * R), c1); g.addColorStop(1, c1); }
+      } else {
+        const a = e.ang * Math.PI / 180, ux = Math.cos(a), uy = Math.sin(a);
+        const m = (Math.abs(ux) * W + Math.abs(uy) * H) / 2;
+        const x0 = W / 2 - ux * m, y0 = H / 2 - uy * m, dx = ux * 2 * m, dy = uy * 2 * m;
+        g = ctx.createLinearGradient(x0 + dx * f, y0 + dy * f, x0 + dx * (f + s), y0 + dy * (f + s));
+        g.addColorStop(0, c1); g.addColorStop(1, c0);
+      }
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  renderVals() {
+    return {
+      cvRef: this.cvRef,
+      ...this.panelVals(),
+      tooFew: this.colorCount() < 3,
+      colorCount: this.colorCount(),
+      toggleSound: () => { if (this.state.paused) { this.setState({ paused: false }); return; } this.setSound(!this.state.sound); },
+      showCtl: this.mode === 'phone' && !((this.P.showSplash ?? true) !== false && !this.state.splashGone),
+      paused: !!this.state.paused,
+      playing: !this.state.paused,
+      togglePause: (ev) => {
+        if (ev) { ev.stopPropagation(); ev.preventDefault && ev.preventDefault(); }
+        const t = performance.now(); if (this._tp && t - this._tp < 350) return; this._tp = t;
+        this.setState(st => ({ paused: !st.paused }));
+      },
+      saveImg: (ev) => {
+        ev && ev.stopPropagation(); const cv = this.cvRef.current; if (!cv) return;
+        const d = new Date(), p = n => String(n).padStart(2, '0');
+        const t = performance.now(); if (this._ts && t - this._ts < 800) return; this._ts = t;
+        cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.target = '_blank'; a.rel = 'noopener'; a.download = 'kaleidoszkop-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()) + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }, 'image/png');
+      },
+      splashMounted: (this.P.showSplash ?? true) !== false && !this.state.splashGone,
+      splashOpacity: this.state.splashFading ? 0 : 1,
+      enter: () => {
+        if (this.state.splashFading) return;
+        if ((this.P.music ?? true) !== false) this.setSound(true);
+        this.setState({ splashFading: true });
+        setTimeout(() => this.setState({ splashGone: true }), 1500);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
