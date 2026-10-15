@@ -30,10 +30,10 @@
     </div>
     <div ref="{{ txtRef }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:7%;box-sizing:border-box;pointer-events:none;opacity:0">
       <sc-if value="{{ txtOutline }}" hint-placeholder-val="{{ true }}">
-        <div style="font:400 clamp(44px,12vw,150px)/1 'Anton',Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;text-align:center;color:transparent;-webkit-text-stroke:3px {{ txtStroke }};filter:drop-shadow(0 0 2px rgba(0,0,0,.75)) drop-shadow(0 0 10px rgba(0,0,0,.35));text-wrap:balance">{{ txt }}</div>
+        <div style="font:400 clamp(44px,12vw,150px)/1 'Anton',Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;text-align:center;color:transparent;-webkit-text-stroke:3px {{ txtStroke }};filter:drop-shadow(0 0 2px rgba(0,0,0,.75)) drop-shadow(0 0 10px rgba(0,0,0,.35));text-wrap:balance;position:relative" ref="{{ txtBox }}"></div>
       </sc-if>
       <sc-if value="{{ txtElegant }}" hint-placeholder-val="{{ false }}">
-        <div style="font:italic 500 clamp(36px,9vw,104px)/1.05 'Cormorant Garamond',Georgia,serif;color:{{ txtStroke }};text-align:center;text-shadow:0 0 3px rgba(0,0,0,.7),0 0 16px rgba(0,0,0,.45);text-wrap:balance">{{ txt }}</div>
+        <div style="font:italic 500 clamp(36px,9vw,104px)/1.05 'Cormorant Garamond',Georgia,serif;color:{{ txtStroke }};text-align:center;text-shadow:0 0 3px rgba(0,0,0,.7),0 0 16px rgba(0,0,0,.45);text-wrap:balance;position:relative" ref="{{ txtBox }}"></div>
       </sc-if>
     </div>
     <sc-if value="{{ showCtl }}" hint-placeholder-val="{{ false }}">
@@ -96,14 +96,14 @@
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:384,&quot;height&quot;:800},&quot;szövegHirdetés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CITYTAXI +36 1 234-55-66&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;betű&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;kontúr&quot;,&quot;elegáns&quot;],&quot;default&quot;:&quot;kontúr&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szövegSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#FBFAF7&quot;,&quot;#0f0f0f&quot;,&quot;#E0C25A&quot;],&quot;default&quot;:&quot;#FBFAF7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;esemény&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;hóesés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;hóSűrűség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:30,&quot;max&quot;:320,&quot;step&quot;:10,&quot;default&quot;:140,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluett&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluettErősség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:10,&quot;max&quot;:80,&quot;step&quot;:5,&quot;default&quot;:35,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluettGyakoriság&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1 perc (próba)&quot;,&quot;5 perc&quot;,&quot;15 perc&quot;],&quot;default&quot;:&quot;1 perc (próba)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;ALAPÉRTELMEZÉSEK&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;A (vé, vé, Ha, 6)&quot;,&quot;B (kK, vé, Rh, 235)&quot;,&quot;C (Hópehely)&quot;,&quot;D (Karácsony)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;irány&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;balról&quot;,&quot;jobbról&quot;,&quot;fentről&quot;,&quot;lentről&quot;,&quot;átlósan&quot;,&quot;körKifelé&quot;,&quot;körBefelé&quot;,&quot;szembe&quot;,&quot;szembeFentLent&quot;,&quot;szembeBalJobb&quot;,&quot;szembeNagyátló&quot;,&quot;szembeKisátló&quot;,&quot;szembeX&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;lágyság&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:50,&quot;step&quot;:1,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;hullámMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0.5,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;szünetMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;default&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;minta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;O-01&quot;,&quot;L15&quot;,&quot;L23&quot;,&quot;L24&quot;,&quot;L31&quot;,&quot;L39&quot;,&quot;L43&quot;,&quot;L44&quot;,&quot;L50&quot;,&quot;L55&quot;,&quot;P-01&quot;,&quot;P-02&quot;,&quot;P-03&quot;,&quot;P-04&quot;,&quot;P-05&quot;,&quot;P-06&quot;,&quot;H-01&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;festés&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;automatikus&quot;,&quot;lyukfestés&quot;,&quot;mintafestés&quot;],&quot;default&quot;:&quot;automatikus&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;komplementer&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:5,&quot;default&quot;:100,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;Tükrözés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;tükörSzelet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;8&quot;,&quot;12&quot;,&quot;16&quot;],&quot;default&quot;:&quot;12&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;lyukSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#f5efe4&quot;,&quot;#ffffff&quot;,&quot;#e6d5b8&quot;,&quot;#0f0f0f&quot;,&quot;#9f6805&quot;],&quot;default&quot;:&quot;#f5efe4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;reklámGyakoriság&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:1,&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;tüllháló&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;alapSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;zene&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;dal&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Handcraft&quot;,&quot;Rhubarb&quot;,&quot;Lazy Days&quot;,&quot;Z-01&quot;,&quot;Z-02&quot;,&quot;Z-03&quot;,&quot;Z-04&quot;,&quot;Z-05&quot;,&quot;Z-06&quot;],&quot;default&quot;:&quot;Handcraft&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;paletta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;Hópehely (4)&quot;,&quot;Karácsony (4)&quot;,&quot;Mediterrán (3)&quot;,&quot;Rét (4)&quot;,&quot;Vidám (5)&quot;,&quot;Éjfél és arany (3)&quot;,&quot;Ősz (4)&quot;,&quot;Skandináv (5)&quot;,&quot;Neon éj (6)&quot;,&quot;Mélykék (6)&quot;,&quot;Bordó–rózsa (6)&quot;,&quot;Erdő (6)&quot;,&quot;Homok (6)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín1&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6b69f2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be1&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín2&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3ea805&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín3&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#dc0efb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be3&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín4&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffb300&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be4&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín5&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00c2c7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be5&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín6&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4d6d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be6&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín7&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be7&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;bpm&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:0.1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;hullámÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:32,&quot;step&quot;:1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;szünetÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:16,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;ütemEltolás&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.01,&quot;default&quot;:0,&quot;unit&quot;:&quot;mp&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;nyitókép&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;csempeMéret&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:120,&quot;max&quot;:720,&quot;step&quot;:10,&quot;default&quot;:360,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:384,&quot;height&quot;:800},&quot;szövegHirdetés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CITYTAXI +36 1 234-55-66&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg2&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;VÁLASZD A KÜLÖNBSÉGET!&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg3&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;EGYSZERŰEN NAGYSZERŰ&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;betű&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;kontúr&quot;,&quot;elegáns&quot;],&quot;default&quot;:&quot;kontúr&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szövegSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#FBFAF7&quot;,&quot;#0f0f0f&quot;,&quot;#E0C25A&quot;],&quot;default&quot;:&quot;#FBFAF7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;KI/BE&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;hóesés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;hóSűrűség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:30,&quot;max&quot;:320,&quot;step&quot;:10,&quot;default&quot;:140,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluett&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluettErősség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:10,&quot;max&quot;:80,&quot;step&quot;:5,&quot;default&quot;:35,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sziluettGyakoriság&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;30 mp (próba)&quot;,&quot;1 perc (próba)&quot;,&quot;5 perc&quot;,&quot;15 perc&quot;],&quot;default&quot;:&quot;30 mp (próba)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;ALAPÉRTELMEZÉSEK&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;A (vé, vé, Z9, 6)&quot;,&quot;B (kK, vé, Z8, 235)&quot;,&quot;C (Hópehely)&quot;,&quot;D (Karácsony)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;irány&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;balról&quot;,&quot;jobbról&quot;,&quot;fentről&quot;,&quot;lentről&quot;,&quot;átlósan&quot;,&quot;körKifelé&quot;,&quot;körBefelé&quot;,&quot;szembe&quot;,&quot;szembeFentLent&quot;,&quot;szembeBalJobb&quot;,&quot;szembeNagyátló&quot;,&quot;szembeKisátló&quot;,&quot;szembeX&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;lágyság&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:50,&quot;step&quot;:1,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;hullámMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0.5,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;szünetMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;default&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;minta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;O-01&quot;,&quot;L15&quot;,&quot;L23&quot;,&quot;L24&quot;,&quot;L31&quot;,&quot;L39&quot;,&quot;L43&quot;,&quot;L44&quot;,&quot;L50&quot;,&quot;L55&quot;,&quot;P-01&quot;,&quot;P-02&quot;,&quot;P-03&quot;,&quot;P-04&quot;,&quot;P-05&quot;,&quot;P-06&quot;,&quot;H-01&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;festés&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;automatikus&quot;,&quot;lyukfestés&quot;,&quot;mintafestés&quot;],&quot;default&quot;:&quot;automatikus&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;komplementer&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:5,&quot;default&quot;:100,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;Tükrözés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;tükörSzelet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;8&quot;,&quot;12&quot;,&quot;16&quot;],&quot;default&quot;:&quot;12&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;lyukSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#f5efe4&quot;,&quot;#ffffff&quot;,&quot;#e6d5b8&quot;,&quot;#0f0f0f&quot;,&quot;#9f6805&quot;],&quot;default&quot;:&quot;#f5efe4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;reklámGyakoriság&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;alapSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;zene&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;dal&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Z-09&quot;,&quot;Z-03&quot;,&quot;Z-06&quot;,&quot;Z-07&quot;,&quot;Z-08&quot;],&quot;default&quot;:&quot;Z-09&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;paletta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;Hópehely (4)&quot;,&quot;Karácsony (4)&quot;,&quot;Mediterrán (3)&quot;,&quot;Rét (4)&quot;,&quot;Vidám (5)&quot;,&quot;Éjfél és arany (3)&quot;,&quot;Ősz (4)&quot;,&quot;Skandináv (5)&quot;,&quot;Neon éj (6)&quot;,&quot;Mélykék (6)&quot;,&quot;Bordó–rózsa (6)&quot;,&quot;Erdő (6)&quot;,&quot;Homok (6)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín1&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6b69f2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be1&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín2&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3ea805&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín3&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#dc0efb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be3&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín4&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffb300&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be4&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín5&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00c2c7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be5&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín6&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4d6d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be6&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín7&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be7&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;bpm&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:0.1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;hullámÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:32,&quot;step&quot;:1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;szünetÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:16,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;ütemEltolás&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.01,&quot;default&quot;:0,&quot;unit&quot;:&quot;mp&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;nyitókép&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;csempeMéret&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:120,&quot;max&quot;:720,&quot;step&quot;:10,&quot;default&quot;:360,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;}}">
 class Component extends DCLogic {
   KEYS = {"direction":"irány","meetShare":"szembeArány","radialShare":"körArány","softness":"lágyság","waveSec":"hullámMp","pauseSec":"szünetMp","pattern":"minta","adEvery":"reklámGyakoriság","net":"tüllháló","laceColor":"alapSzín","compStr":"komplementer","music":"zene","track":"dal","bpm":"bpm","waveBeats":"hullámÜtem","pauseBeats":"szünetÜtem","beatOffset":"ütemEltolás","showSplash":"nyitókép","lace4Tile":"csempeMéret","lace4Src":"lace4Src","color1":"szín1","use1":"be1","color2":"szín2","use2":"be2","color3":"szín3","use3":"be3","color4":"szín4","use4":"be4","color5":"szín5","use5":"be5","color6":"szín6","use6":"be6","color7":"szín7","use7":"be7","palette":"paletta","paint":"festés","mirror":"Tükrözés","mirrorN":"tükörSzelet","holeColor":"lyukSzín"};
   VALS = { paint: { 'lyukfestés': 'hole', 'mintafestés': 'figure', 'automatikus': 'auto' }, direction: {"véletlen":"auto","balról":"left","jobbról":"right","fentről":"top","lentről":"bottom","átlósan":"diag","körKifelé":"out","körBefelé":"in","szembe":"meet","szembeFentLent":"meetV","szembeBalJobb":"meetH","szembeNagyátló":"meetD1","szembeKisátló":"meetD2","szembeX":"meetX"}, pattern: { 'véletlen': 'auto', 'O-01': '3', 'L15': '4', 'L23': '5', 'L24': '6', 'L31': '7', 'L39': '8', 'L43': '9', 'L44': '10', 'L50': '11', 'L55': '12', 'P-01': '13', 'P-02': '14', 'P-03': '15', 'P-04': '16', 'P-05': '17', 'P-06': '18', 'H-01': '19' } };
   mode = /[?&]beallitas/.test(location.search) ? 'phone' : 'demo';
   ov = (() => { if (this.mode !== 'phone') return {}; try { return JSON.parse(localStorage.getItem('kaleido-beallitas') || '{}'); } catch (e) { return {}; } })();
   ovv = 0;
-  FIX = { 'Tükrözés': true, 'dal': 'Handcraft', 'zene': true, 'nyitókép': true };
+  FIX = { 'Tükrözés': true, 'dal': 'Z-09', 'zene': true, 'nyitókép': true };
   mapProps(p) {
     if (p === this._p0 && this._ovv === this.ovv) return this._p1;
     const o = {}, ov = this.ov || {}, fix = this.mode === 'demo' ? this.FIX : {}, pr = this.PRESETS[String(p['ALAPÉRTELMEZÉSEK'] || 'saját').charAt(0)];
@@ -121,12 +121,12 @@ class Component extends DCLogic {
     try { localStorage.removeItem('kaleido-beallitas'); } catch (e) {}
     this.react(old); this.forceUpdate();
   }
-  DEFS = {"komplementer":100,"irány":"véletlen","lágyság":20,"hullámMp":8,"szünetMp":0.5,"minta":"véletlen","reklámGyakoriság":4,"tüllháló":true,"alapSzín":"#0f0f0f","zene":true,"dal":"Handcraft","szín1":"#6b69f2","be1":true,"szín2":"#3ea805","be2":true,"szín3":"#dc0efb","be3":true,"szín4":"#ffb300","be4":true,"szín5":"#00c2c7","be5":true,"szín6":"#ff4d6d","be6":true,"szín7":"#0f0f0f","be7":false,"paletta":"saját","festés":"automatikus","Tükrözés":true,"tükörSzelet":"12","lyukSzín":"#f5efe4","bpm":0,"hullámÜtem":0,"szünetÜtem":2,"ütemEltolás":0,"nyitókép":true,"csempeMéret":360};
+  DEFS = {"komplementer":100,"irány":"véletlen","lágyság":20,"hullámMp":8,"szünetMp":0.5,"minta":"véletlen","reklámGyakoriság":2,"tüllháló":true,"alapSzín":"#0f0f0f","zene":true,"dal":"Z-09","szín1":"#6b69f2","be1":true,"szín2":"#3ea805","be2":true,"szín3":"#dc0efb","be3":true,"szín4":"#ffb300","be4":true,"szín5":"#00c2c7","be5":true,"szín6":"#ff4d6d","be6":true,"szín7":"#0f0f0f","be7":false,"paletta":"saját","festés":"automatikus","Tükrözés":true,"tükörSzelet":"12","lyukSzín":"#f5efe4","bpm":0,"hullámÜtem":0,"szünetÜtem":2,"ütemEltolás":0,"nyitókép":true,"csempeMéret":360};
   PRESETS = {
-    A: { 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Handcraft', be1: true, be2: true, be3: true, be4: true, be5: true, be6: true },
-    B: { 'irány': 'körKifelé', 'minta': 'véletlen', 'dal': 'Rhubarb', be1: false, be2: true, be3: true, be4: false, be5: true, be6: false },
-    C: { 'paletta': 'Hópehely (4)', 'Tükrözés': true, 'tükörSzelet': '12', 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Handcraft' },
-    D: { 'paletta': 'Karácsony (4)', 'Tükrözés': true, 'tükörSzelet': '12', 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Handcraft' },
+    A: { 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Z-09', be1: true, be2: true, be3: true, be4: true, be5: true, be6: true },
+    B: { 'irány': 'körKifelé', 'minta': 'véletlen', 'dal': 'Z-08', be1: false, be2: true, be3: true, be4: false, be5: true, be6: false },
+    C: { 'paletta': 'Hópehely (4)', 'Tükrözés': true, 'tükörSzelet': '12', 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Z-09' },
+    D: { 'paletta': 'Karácsony (4)', 'Tükrözés': true, 'tükörSzelet': '12', 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'Z-09' },
   };
   get P() { return this.mapProps(this.props); }
   autoPattern() { const v = this.P.pattern; return v == null || v === 'auto'; }
@@ -179,7 +179,7 @@ class Component extends DCLogic {
     S('paletta', 'paletta', ['saját', ...Object.keys(this.PALS)]);
     S('dal', 'dal', Object.keys(this.TRACKS));
     const T = (key, hk) => { const v = r(hk) === true; tg[key] = { txt: v ? 'Be' : 'Ki', bg: v ? '#E0C25A' : 'rgba(251,250,247,.12)', fg: v ? '#151412' : '#FBFAF7', click: () => this.setOv(hk, !v) }; };
-    T('tukor', 'Tükrözés'); T('esemeny', 'esemény'); T('zene', 'zene');
+    T('tukor', 'Tükrözés'); T('esemeny', 'KI/BE'); T('zene', 'zene');
     const G = (key, hk) => { rg[key] = r(hk); on[key] = ev => this.setOv(hk, +ev.target.value); };
     G('lagy', 'lágyság'); G('komp', 'komplementer'); G('hullam', 'hullámMp'); G('szunet', 'szünetMp');
     const sz = String(r('tükörSzelet'));
@@ -197,15 +197,15 @@ class Component extends DCLogic {
     };
   }
   snowRef = React.createRef(); silWrap = React.createRef(); silRef = React.createRef();
-  SIL = ['data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20262%22%3E%3Cpolygon%20points%3D%22100%2C2%20106%2C17%20122%2C17%20109%2C26%20114%2C41%20100%2C32%2086%2C41%2091%2C26%2078%2C17%2094%2C17%22%2F%3E%3Cpolygon%20points%3D%22100%2C34%2042%2C112%20158%2C112%22%2F%3E%3Cpolygon%20points%3D%22100%2C72%2026%2C172%20174%2C172%22%2F%3E%3Cpolygon%20points%3D%22100%2C116%2010%2C234%20190%2C234%22%2F%3E%3Crect%20x%3D%2288%22%20y%3D%22232%22%20width%3D%2224%22%20height%3D%2228%22%2F%3E%3C%2Fsvg%3E', 'mintak/sziluett-renszarvas.png', 'mintak/sziluett-hoember.png', 'mintak/sziluett-szanko.png'];
-  silOk = [true, null, null, null];
+  SIL = ['mintak/sziluett-renszarvas.png', 'mintak/sziluett-hoember.png', 'mintak/sziluett-szanko.png'];
+  silOk = [null, null, null];
   winterLoop(now) {
     const cv = this.snowRef.current, pp = Object.assign({}, this.props, this.ov || {}), splash = (this.P.showSplash ?? true) !== false && !this.state.splashGone;
     if (cv) {
       const w = cv.clientWidth, h = cv.clientHeight;
       if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; this.flakes = null; }
       const x = cv.getContext('2d'); x.clearRect(0, 0, w, h);
-      const evOn = (pp['esemény'] ?? true) !== false;
+      const evOn = (pp['KI/BE'] ?? true) !== false;
       const N = !evOn || (pp['hóesés'] ?? true) === false ? 0 : Math.round((pp['hóSűrűség'] ?? 140) * Math.sqrt(w * h) / 900);
       if (!this.flakes || this.flakes.length !== N) this.flakes = Array.from({ length: N }, () => { const r = 0.8 + Math.pow(Math.random(), 2.2) * 3.4; return { x: Math.random() * w, y: Math.random() * h, r, v: 14 + r * 15, ph: Math.random() * 6.3, d: 6 + Math.random() * 16 }; });
       const dt = Math.min(0.06, (now - (this.wLast || now)) / 1000); this.wLast = now;
@@ -220,9 +220,9 @@ class Component extends DCLogic {
     const wrap = this.silWrap.current, el = this.silRef.current;
     if (wrap && el) {
       let op = 0;
-      if ((pp['esemény'] ?? true) !== false && (pp['sziluett'] ?? true) !== false && !splash) {
+      if ((pp['KI/BE'] ?? true) !== false && (pp['sziluett'] ?? true) !== false && !splash) {
         if (this.s0 == null) this.s0 = now + 5000;
-        const per = ({ '1 perc (próba)': 60, '5 perc': 300, '15 perc': 900 }[pp['sziluettGyakoriság'] ?? '1 perc (próba)'] || 60) * 1000;
+        const per = ({ '30 mp (próba)': 30, '1 perc (próba)': 60, '5 perc': 300, '15 perc': 900 }[pp['sziluettGyakoriság'] ?? '30 mp (próba)'] || 60) * 1000;
         const t = now - this.s0;
         if (t >= 0) {
           const cyc = Math.floor(t / per), c = (t % per) / 1000, sm = q => q * q * (3 - 2 * q);
@@ -232,7 +232,7 @@ class Component extends DCLogic {
             if (this.silOk[k] == null) { const im = new Image(); im.onload = () => { this.silOk[k] = true; }; im.onerror = () => { this.silOk[k] = false; }; im.src = u; }
             el.style.webkitMaskImage = el.style.maskImage = 'url("' + u + '")';
           }
-          const a = 5, hold = 20;
+          const a = per < 60000 ? 3 : 5, hold = per < 60000 ? 8 : 20;
           op = c < a ? sm(c / a) : c < a + hold ? 1 : c < 2 * a + hold ? sm(1 - (c - a - hold) / a) : 0;
           op *= (pp['sziluettErősség'] ?? 35) / 100;
         }
@@ -242,12 +242,55 @@ class Component extends DCLogic {
     this.wRaf = requestAnimationFrame(t => this.winterLoop(t));
   }
   txtRef = React.createRef();
+  txtBox = React.createRef();
+  txtTexts() { return [this.props['szöveg'] ?? 'CITYTAXI +36 1 234-55-66', this.props['szöveg2'] ?? 'VÁLASZD A KÜLÖNBSÉGET!', this.props['szöveg3'] ?? 'EGYSZERŰEN NAGYSZERŰ'].map(t => String(t || '').trim()).filter(Boolean); }
+  txtBuild(text) {
+    const box = this.txtBox.current; if (!box) return null;
+    box.innerHTML = ''; const spans = [];
+    text.split(/\s+/).forEach((w, wi, arr) => {
+      const word = document.createElement('span'); word.style.cssText = 'display:inline-block;white-space:nowrap';
+      for (const ch of w) { const sp = document.createElement('span'); sp.textContent = ch; sp.style.cssText = 'display:inline-block;will-change:transform,opacity;opacity:0'; word.appendChild(sp); spans.push(sp); }
+      box.appendChild(word); if (wi < arr.length - 1) box.appendChild(document.createTextNode(' '));
+    });
+    const br = box.getBoundingClientRect();
+    const pos = spans.map(sp => { const r = sp.getBoundingClientRect(); return [r.left - br.left, r.top - br.top, r.height]; });
+    const n = spans.length, pairs = []; let mx = 0;
+    const bad = ch => /[\s\-+.,!?:;()'"0-9]/.test(ch);
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const a = spans[i].textContent, b = spans[j].textContent; if (a === b || bad(a) || bad(b)) continue;
+      const d = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]); pairs.push([d, i, j]); if (d > mx) mx = d;
+    }
+    const far = pairs.filter(p => p[0] >= mx * 0.55), pick = far[Math.floor(Math.random() * far.length)] || [0, -1, -1];
+    const R = Math.max(window.innerWidth, window.innerHeight) * 0.8;
+    const L = spans.map((sp, k) => {
+      const ang = Math.random() * Math.PI * 2;
+      return { sp, x0: Math.cos(ang) * R, y0: Math.sin(ang) * R, r0: (Math.random() * 2 - 1) * 270, dl: (k / Math.max(1, n - 1)) * 1.4 + Math.random() * 0.35, bx: 0, by: 0, lift: 0 };
+    });
+    const [, si, sj] = pick;
+    if (si >= 0) {
+      const dx = pos[sj][0] - pos[si][0], dy = pos[sj][1] - pos[si][1], h = pos[si][2] * 0.9;
+      L[si].bx = dx; L[si].by = dy; L[si].lift = -h; L[sj].bx = -dx; L[sj].by = -dy; L[sj].lift = h;
+    }
+    return L;
+  }
   txtLoop() {
     const el = this.txtRef.current, now = performance.now(); let op = 0;
-    if (this.txtT0 != null) {
-      const c = (now - this.txtT0) / 1000, a = 2.5, h = 4, sm = x => x * x * (3 - 2 * x);
-      if (c >= 0) op = c < a ? sm(c / a) : c < a + h ? 1 : c < 2 * a + h ? sm(1 - (c - a - h) / a) : 0;
-      if (c > 2 * a + h) this.txtT0 = null;
+    if (this.txtT0 != null && now >= this.txtT0) {
+      const c = (now - this.txtT0) / 1000, D = 1.5, settle = D + 1.75, sw0 = settle + 2.5, sw = 1.4, end0 = sw0 + sw + 3, out = 1.5;
+      if (this.txtFor !== this.txtT0) { const T = this.txtTexts(); this.txtFor = this.txtT0; this.txtL = T.length ? this.txtBuild(T[(this.txtIdx || 0) % T.length]) : null; }
+      const L = this.txtL, eo = q => 1 - Math.pow(1 - q, 3), io = q => q < .5 ? 4 * q * q * q : 1 - Math.pow(-2 * q + 2, 3) / 2, cl = q => Math.max(0, Math.min(1, q));
+      if (L) {
+        const s2 = io(cl((c - sw0) / sw)), bump = Math.sin(Math.PI * s2);
+        for (const o of L) {
+          const q = cl((c - o.dl) / D), e = eo(q);
+          const bx = o.bx * (1 - s2), by = o.by * (1 - s2) + o.lift * bump, sc = 1 + (o.lift ? 0.35 * bump : 0);
+          const x = o.x0 * (1 - e) + bx * e, y = o.y0 * (1 - e) + by * e, r = o.r0 * (1 - e);
+          o.sp.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + r.toFixed(1) + 'deg) scale(' + sc.toFixed(3) + ')';
+          o.sp.style.opacity = Math.min(1, q * 2.5).toFixed(3);
+        }
+      }
+      op = c < end0 ? 1 : c < end0 + out ? 1 - (c - end0) / out : 0;
+      if (c > end0 + out) { this.txtT0 = null; this.txtL = null; this.txtFor = null; const b = this.txtBox.current; if (b) b.innerHTML = ''; }
     }
     if (el && el._op !== op) { el.style.opacity = op.toFixed(3); el._op = op; }
     this.txtRaf = requestAnimationFrame(() => this.txtLoop());
@@ -404,8 +447,8 @@ class Component extends DCLogic {
     let adTurn = every > 0 && !isAd(e.lace) && (e.cyc || 0) >= every;
     if (adTurn) {
       e.cyc = 0; e.adAlt = (e.adAlt || 0) + 1;
-      const txtOn = (this.props['szövegHirdetés'] ?? true) !== false && String(this.props['szöveg'] ?? '').trim() !== '';
-      if (txtOn && (e.adAlt % 2 === 0 || !ads.length)) { this.txtT0 = performance.now() + 900; adTurn = false; }
+      const txtOn = (this.props['szövegHirdetés'] ?? true) !== false && this.txtTexts().length > 0;
+      if (txtOn && (e.adAlt % 2 === 0 || !ads.length)) { this.txtT0 = performance.now() + 900; this.txtIdx = (this.txtIdx ?? -1) + 1; adTurn = false; }
       else if (!ads.length) adTurn = false;
     }
     const list = adTurn ? ads : (normal.length ? normal : pool);
@@ -431,7 +474,7 @@ class Component extends DCLogic {
     const l = L.getContext('2d');
     const ox = Math.round((L.width - T) / 2) % T - T, oy = Math.round((L.height - TH) / 2) % TH - TH;
     for (let y = oy; y < L.height; y += TH) for (let x = ox; x < L.width; x += T) l.drawImage(t, x, y);
-    if (((def && def.net) ?? this.P.net ?? true) !== false) {
+    if (false) {
       l.setTransform(dpr, 0, 0, dpr, 0, 0); l.globalCompositeOperation = 'destination-out';
       const s = 8, h = s * Math.sqrt(3) / 2; l.beginPath();
       for (let j = 0, yy = 0; yy < H + s; j++, yy = j * h) for (let xx = (j % 2) * s / 2; xx < W + s; xx += s) { l.moveTo(xx + 1.25, yy); l.arc(xx, yy, 1.25, 0, Math.PI * 2); }
@@ -479,7 +522,7 @@ class Component extends DCLogic {
     const R = (r, n, off, fn) => ring(cx0, cy0, r, n, off, fn);
     const rosette = (x, y, s) => { C(x, y, 3 * s); ring(x, y, 9 * s, 6, 0, (px, py, a) => E(px, py, 5 * s, 2 * s, a)); };
 
-    if ((this.P.net ?? true) !== false) {
+    if (false) {
       const s = 8, h = s * Math.sqrt(3) / 2;
       for (let j = 0, y = 0; y < H + s; j++, y = j * h) for (let x = (j % 2) * s / 2; x < W + s; x += s) net.push([x, y]);
     }
@@ -601,17 +644,13 @@ class Component extends DCLogic {
     this.pad(this.ac.currentTime + 0.03, [r + 12, r + 19, r + 24], len, 0.035);
   }
   TRACKS = {
-    'Handcraft': { src: 'zene/handcraft.mp3', bpm: 120, offset: 0.18 },
-    'Rhubarb': { src: 'zene/rhubarb.mp3', bpm: 84.7, offset: 0.1 },
-    'Lazy Days': { src: 'zene/lazy-days.mp3', bpm: 69.6, offset: 0.2 },
-    'Z-01': { src: 'zene/Z-01.mp3', bpm: 79.6, offset: 0.05 },
-    'Z-02': { src: 'zene/Z-02.mp3', bpm: 98.6, offset: 0.02 },
+    'Z-09': { src: 'zene/Z-09.mp3', bpm: 63.9, offset: 0.2 },
     'Z-03': { src: 'zene/Z-03.mp3', bpm: 67.2, offset: 0.01 },
-    'Z-04': { src: 'zene/Z-04.mp3', bpm: 91.6, offset: 0.18 },
-    'Z-05': { src: 'zene/Z-05.mp3', bpm: 65.2, offset: 0.02 },
     'Z-06': { src: 'zene/Z-06.mp3', bpm: 113.6, offset: 0.36 },
+    'Z-07': { src: 'zene/Z-07.mp3', bpm: 60.6, offset: 0.61 },
+    'Z-08': { src: 'zene/Z-08.mp3', bpm: 84.2, offset: 0.39 },
   };
-  track() { return this.TRACKS[this.P.track] || this.TRACKS['Handcraft']; }
+  track() { return this.TRACKS[this.P.track] || this.TRACKS['Z-09']; }
   mp3() { return this.track().src; }
   switchTrack() {
     if (!this.audio) return;
@@ -882,7 +921,7 @@ class Component extends DCLogic {
     return {
       cvRef: this.cvRef,
       txtRef: this.txtRef,
-      txt: this.props['szöveg'] ?? 'CITYTAXI +36 1 234-55-66',
+      txtBox: this.txtBox,
       txtOutline: (this.props['betű'] ?? 'kontúr') === 'kontúr',
       txtElegant: (this.props['betű'] ?? 'kontúr') !== 'kontúr',
       txtStroke: this.props['szövegSzín'] ?? '#FBFAF7',
