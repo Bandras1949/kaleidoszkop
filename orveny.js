@@ -1,7 +1,7 @@
 (function () {
   const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f' };
   const PAL = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d'];
-  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-09', 'X-10'];
+  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-10'];
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
