@@ -7,10 +7,11 @@
 </head>
 <body>
 <x-dc>
-<helmet><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet"><title>Kaleidoscope – Brillidea</title><style>html,body{margin:0;height:100%;background:#0f0f0f;overflow:hidden;-webkit-tap-highlight-color:transparent}a{color:#FBFAF7}a:hover{color:#E0C25A}</style></helmet>
+<helmet><script src="./orveny.js"></script><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet"><title>Kaleidoscope – Brillidea</title><style>html,body{margin:0;height:100%;background:#0f0f0f;overflow:hidden;-webkit-tap-highlight-color:transparent}a{color:#FBFAF7}a:hover{color:#E0C25A}</style><style>@keyframes kGearPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}}@keyframes kGearFade{0%,8%{opacity:0}18%,82%{opacity:1}100%{opacity:0}}</style></helmet>
 <div style="position:fixed;inset:0;background:#0f0f0f">
   <div style="position:relative;width:100%;height:100%;overflow:hidden;background:#0f0f0f">
-    <canvas ref="{{ cvRef }}" onClick="{{ toggleSound }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer"></canvas>
+    <canvas ref="{{ cvRef }}" onClick="{{ toggleSound }}" onPointerDown="{{ swDown }}" onPointerUp="{{ swUp }}" style="touch-action:none;position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer"></canvas>
+    <canvas ref="{{ orvRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;opacity:0"></canvas>
     <sc-if value="{{ splashMounted }}" hint-placeholder-val="{{ true }}">
       <div onClick="{{ enter }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:64px 32px 56px;box-sizing:border-box;cursor:pointer;background:radial-gradient(ellipse 70% 42% at 50% 46%,rgba(10,10,10,.88) 0%,rgba(10,10,10,.6) 60%,rgba(10,10,10,.15) 100%);transition:opacity 1.4s ease;opacity:{{ splashOpacity }}">
         <div style="flex:none;height:1px"></div>
@@ -54,6 +55,10 @@
         </sc-if>
       </div>
     </sc-if>
+    <sc-if value="{{ gearHint }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:14px;width:44px;height:44px;border-radius:22px;pointer-events:none;box-shadow:0 0 0 2px #E0C25A;animation:kGearPulse 1.6s ease-out infinite"></div>
+      <div style="position:absolute;top:calc(env(safe-area-inset-top) + 24px);right:70px;padding:6px 12px;border-radius:14px;pointer-events:none;background:rgba(15,15,15,.7);color:#FBFAF7;font:500 13px 'DM Sans',system-ui,sans-serif;white-space:nowrap;animation:kGearFade 7s ease forwards">Try me!</div>
+    </sc-if>
     <sc-if value="{{ gearOn }}" hint-placeholder-val="{{ false }}">
       <div onClick="{{ togglePanel }}" title="Beállítások" style="position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:14px;width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;background:rgba(15,15,15,.55);box-shadow:inset 0 0 0 1px rgba(251,250,247,.35);cursor:pointer"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23FBFAF7%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%226.6%22%2F%3E%3Cpath%20d%3D%22M12%202.4v2.8M12%2018.8v2.8M2.4%2012h2.8M18.8%2012h2.8M5.2%205.2l2%202M16.8%2016.8l2%202M5.2%2018.8l2-2M16.8%207.2l2-2%22%2F%3E%3C%2Fsvg%3E" alt="" style="width:22px;height:22px;display:block"></div>
     </sc-if>
@@ -64,10 +69,9 @@
           <div onClick="{{ togglePanel }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:rgba(251,250,247,.12);color:#FBFAF7">Kész</div>
         </div>
         <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Minta</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Minta</div><select value="{{ sel.minta }}" onChange="{{ on.minta }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.minta }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Festés</div><select value="{{ sel.festes }}" onChange="{{ on.festes }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.festes }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Kiválasztás</div><select value="{{ sel.minta }}" onChange="{{ on.minta }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.minta }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Eljárás</div><select value="{{ sel.festes }}" onChange="{{ on.festes }}" style="height:40px;min-width:160px;max-width:58%;background:#24221f;color:#FBFAF7;border:1px solid rgba(251,250,247,.25);border-radius:10px;padding:0 10px;font:400 14px 'DM Sans',system-ui,sans-serif"><sc-for list="{{ opts.festes }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Komplementer (%)</div><div style="display:flex;align-items:center;gap:10px"><input type="range" min="0" max="100" step="5" value="{{ rg.komp }}" onChange="{{ on.komp }}" style="width:130px;accent-color:#E0C25A"><div style="width:34px;text-align:right;font-variant-numeric:tabular-nums">{{ rg.komp }}</div></div></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Tükrözés</div><div onClick="{{ tg.tukor.click }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:{{ tg.tukor.bg }};color:{{ tg.tukor.fg }}">{{ tg.tukor.txt }}</div></div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Tükörszelet</div><div style="display:flex;gap:6px"><sc-for list="{{ szelet }}" as="z" hint-placeholder-count="3"><div onClick="{{ z.click }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;min-width:44px;background:{{ z.bg }};color:{{ z.fg }}">{{ z.v }}</div></sc-for></div></div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px"><div>Lyukszín</div><div style="display:flex;gap:8px"><sc-for list="{{ lyuk }}" as="c" hint-placeholder-count="5"><div onClick="{{ c.click }}" style="width:30px;height:30px;border-radius:15px;cursor:pointer;background:{{ c.color }};box-shadow:{{ c.ring }}"></div></sc-for></div></div>
         <div style="font:600 11px 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#E0C25A;padding-top:6px">Mozgás</div>
@@ -106,18 +110,18 @@
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:384,&quot;height&quot;:800},&quot;szövegHirdetés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CITYTAXI +36 1 234-55-66&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg2&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CHOOSE THE DIFFERENCE!&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;szöveg3&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;SIMPLY BRILLIANT&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;betű&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;kontúr&quot;,&quot;elegáns&quot;],&quot;default&quot;:&quot;kontúr&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;KI/BE&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;hó&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;csillag&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;levél&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;macska&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;egér&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;sűrűség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:30,&quot;max&quot;:320,&quot;step&quot;:10,&quot;default&quot;:140,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ESEMÉNYEK&quot;},&quot;irány&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;balról&quot;,&quot;jobbról&quot;,&quot;fentről&quot;,&quot;lentről&quot;,&quot;átlósan&quot;,&quot;körKifelé&quot;,&quot;körBefelé&quot;,&quot;szembe&quot;,&quot;szembeFentLent&quot;,&quot;szembeBalJobb&quot;,&quot;szembeNagyátló&quot;,&quot;szembeKisátló&quot;,&quot;szembeX&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;lágyság&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:50,&quot;step&quot;:1,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;hullámMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0.5,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;szünetMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;default&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MOZGÁS&quot;},&quot;minta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;Pr&quot;,&quot;Px&quot;,&quot;Py&quot;,&quot;Poo&quot;,&quot;Phh&quot;,&quot;Pi&quot;,&quot;Pdd&quot;,&quot;Pee&quot;,&quot;Paa&quot;,&quot;P-05&quot;,&quot;P-06&quot;,&quot;S-01 zebra&quot;,&quot;S-02 sugaras&quot;,&quot;S-03 labirintus&quot;,&quot;E-01 eper&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;festés&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;automatikus&quot;,&quot;lyukfestés&quot;,&quot;mintafestés&quot;],&quot;default&quot;:&quot;automatikus&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;Tükrözés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;tükörSzelet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;12&quot;,&quot;16&quot;],&quot;default&quot;:&quot;12&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;lyukSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#f5efe4&quot;,&quot;#ffffff&quot;,&quot;#e6d5b8&quot;,&quot;#0f0f0f&quot;,&quot;#F28C28&quot;],&quot;default&quot;:&quot;#f5efe4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;reklámGyakoriság&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:1,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;HIRDETÉS&quot;},&quot;alapSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;MINTA&quot;},&quot;zene&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;dal&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;folyamatos&quot;,&quot;Z-09&quot;,&quot;Z-10&quot;,&quot;Z-11&quot;,&quot;Z-12&quot;,&quot;Z-13&quot;,&quot;Z-14&quot;],&quot;default&quot;:&quot;folyamatos&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;témák&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;Hópehely (4)&quot;,&quot;Karácsony (4)&quot;,&quot;Mediterrán (3)&quot;,&quot;Rét (4)&quot;,&quot;Vidám (5)&quot;,&quot;Éjfél és arany (3)&quot;,&quot;Ősz (4)&quot;,&quot;Skandináv (5)&quot;,&quot;Neon éj (6)&quot;,&quot;Mélykék (6)&quot;,&quot;Bordó–rózsa (6)&quot;,&quot;Erdő (6)&quot;,&quot;Homok (6)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín1&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6b69f2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be1&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín2&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3ea805&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín3&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#dc0efb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be3&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín4&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffb300&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be4&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín5&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00c2c7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be5&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín6&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4d6d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be6&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;szín7&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;be7&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;SZÍNEK&quot;},&quot;bpm&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:0.1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;hullámÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:32,&quot;step&quot;:1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;szünetÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:16,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;ütemEltolás&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.01,&quot;default&quot;:0,&quot;unit&quot;:&quot;mp&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;ZENE&quot;},&quot;csempeMéret&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:120,&quot;max&quot;:720,&quot;step&quot;:10,&quot;default&quot;:360,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;MINTA&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:384,&quot;height&quot;:800},&quot;kiválasztás&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;Pr&quot;,&quot;Px&quot;,&quot;Py&quot;,&quot;Poo&quot;,&quot;Phh&quot;,&quot;Pi&quot;,&quot;Pdd&quot;,&quot;Pee&quot;,&quot;Paa&quot;,&quot;P-05&quot;,&quot;P-06&quot;,&quot;S-01 zebra&quot;,&quot;S-02 sugaras&quot;,&quot;S-03 labirintus&quot;,&quot;E-01 eper&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* M I N T Á K *&quot;},&quot;csempeMéret&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:120,&quot;max&quot;:720,&quot;step&quot;:10,&quot;default&quot;:360,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* M I N T Á K *&quot;},&quot;eljárás&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Örvény&quot;,&quot;Váltakozó&quot;,&quot;Tükrözéses&quot;,&quot;Lyukfestéses&quot;,&quot;Mintafestéses&quot;,&quot;Automatikus festés&quot;],&quot;default&quot;:&quot;Váltakozó&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* E L J Á R Á S O K *&quot;},&quot;tárgy1&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;X-02&quot;,&quot;X-03&quot;,&quot;X-04&quot;,&quot;X-06&quot;,&quot;X-07&quot;,&quot;X-09&quot;,&quot;X-10&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* Ö R V É N Y E K *&quot;},&quot;tárgy2&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;X-02&quot;,&quot;X-03&quot;,&quot;X-04&quot;,&quot;X-06&quot;,&quot;X-07&quot;,&quot;X-09&quot;,&quot;X-10&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* Ö R V É N Y E K *&quot;},&quot;örvénySzín&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;háttérrel azonos, késleltetve&quot;,&quot;sárga&quot;,&quot;fehér&quot;,&quot;piros&quot;,&quot;narancs&quot;,&quot;zöld&quot;,&quot;kék&quot;,&quot;lila&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* Ö R V É N Y E K *&quot;},&quot;örvényHáttér&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;váltakozó&quot;,&quot;fekete&quot;,&quot;színhullám&quot;],&quot;default&quot;:&quot;váltakozó&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* Ö R V É N Y E K *&quot;},&quot;párosításMp&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:5,&quot;max&quot;:30,&quot;step&quot;:1,&quot;unit&quot;:&quot;mp&quot;,&quot;default&quot;:10,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* Ö R V É N Y E K *&quot;},&quot;tükörSzelet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;12&quot;,&quot;16&quot;],&quot;default&quot;:&quot;12&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* E L J Á R Á S O K *&quot;},&quot;lyukSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#f5efe4&quot;,&quot;#ffffff&quot;,&quot;#e6d5b8&quot;,&quot;#0f0f0f&quot;,&quot;#F28C28&quot;],&quot;default&quot;:&quot;#f5efe4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* E L J Á R Á S O K *&quot;},&quot;alapSzín&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* E L J Á R Á S O K *&quot;},&quot;irány&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;véletlen&quot;,&quot;balról&quot;,&quot;jobbról&quot;,&quot;fentről&quot;,&quot;lentről&quot;,&quot;átlósan&quot;,&quot;körKifelé&quot;,&quot;körBefelé&quot;,&quot;szembe&quot;,&quot;szembeFentLent&quot;,&quot;szembeBalJobb&quot;,&quot;szembeNagyátló&quot;,&quot;szembeKisátló&quot;,&quot;szembeX&quot;],&quot;default&quot;:&quot;véletlen&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* M O Z G Á S O K *&quot;},&quot;lágyság&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:50,&quot;step&quot;:1,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* M O Z G Á S O K *&quot;},&quot;hullámMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0.5,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* M O Z G Á S O K *&quot;},&quot;szünetMp&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;default&quot;:0.5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* M O Z G Á S O K *&quot;},&quot;paletta&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;saját&quot;,&quot;Hópehely (4)&quot;,&quot;Karácsony (4)&quot;,&quot;Mediterrán (3)&quot;,&quot;Rét (4)&quot;,&quot;Vidám (5)&quot;,&quot;Éjfél és arany (3)&quot;,&quot;Ősz (4)&quot;,&quot;Skandináv (5)&quot;,&quot;Neon éj (6)&quot;,&quot;Mélykék (6)&quot;,&quot;Bordó–rózsa (6)&quot;,&quot;Erdő (6)&quot;,&quot;Homok (6)&quot;],&quot;default&quot;:&quot;saját&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín1&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6b69f2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be1&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín2&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3ea805&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be2&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín3&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#dc0efb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be3&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín4&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffb300&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be4&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín5&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00c2c7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be5&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín6&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4d6d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be6&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;szín7&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0f0f0f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;be7&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* S Z Í N E K *&quot;},&quot;zene&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;dal&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;folyamatos&quot;,&quot;Z-09&quot;,&quot;Z-10&quot;,&quot;Z-11&quot;,&quot;Z-12&quot;,&quot;Z-13&quot;,&quot;Z-14&quot;],&quot;default&quot;:&quot;folyamatos&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;bpm&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:0.1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;hullámÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:32,&quot;step&quot;:1,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;szünetÜtem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:16,&quot;step&quot;:1,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;ütemEltolás&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:2,&quot;step&quot;:0.01,&quot;default&quot;:0,&quot;unit&quot;:&quot;mp&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* Z E N É K *&quot;},&quot;KI/BE&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;hó&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;csillag&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;levél&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;macska&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;egér&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;sűrűség&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:30,&quot;max&quot;:320,&quot;step&quot;:10,&quot;default&quot;:140,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* E S E M É N Y E K *&quot;},&quot;reklámGyakoriság&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:1,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;},&quot;szövegHirdetés&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;},&quot;szöveg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CITYTAXI +36 1 234-55-66&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;},&quot;szöveg2&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;CHOOSE THE DIFFERENCE!&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;},&quot;szöveg3&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;SIMPLY BRILLIANT&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;},&quot;betű&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;kontúr&quot;,&quot;elegáns&quot;],&quot;default&quot;:&quot;kontúr&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;* H I R D E T É S E K *&quot;}}">
 class Component extends DCLogic {
-  KEYS = {"direction":"irány","meetShare":"szembeArány","radialShare":"körArány","softness":"lágyság","waveSec":"hullámMp","pauseSec":"szünetMp","pattern":"minta","adEvery":"reklámGyakoriság","net":"tüllháló","laceColor":"alapSzín","compStr":"komplementer","music":"zene","track":"dal","bpm":"bpm","waveBeats":"hullámÜtem","pauseBeats":"szünetÜtem","beatOffset":"ütemEltolás","showSplash":"nyitókép","lace4Tile":"csempeMéret","lace4Src":"lace4Src","color1":"szín1","use1":"be1","color2":"szín2","use2":"be2","color3":"szín3","use3":"be3","color4":"szín4","use4":"be4","color5":"szín5","use5":"be5","color6":"szín6","use6":"be6","color7":"szín7","use7":"be7","palette":"témák","paint":"festés","mirror":"Tükrözés","mirrorN":"tükörSzelet","holeColor":"lyukSzín"};
-  VALS = { paint: { 'lyukfestés': 'hole', 'mintafestés': 'figure', 'automatikus': 'auto' }, direction: {"véletlen":"auto","balról":"left","jobbról":"right","fentről":"top","lentről":"bottom","átlósan":"diag","körKifelé":"out","körBefelé":"in","szembe":"meet","szembeFentLent":"meetV","szembeBalJobb":"meetH","szembeNagyátló":"meetD1","szembeKisátló":"meetD2","szembeX":"meetX"}, pattern: { 'véletlen': 'auto', 'Pr': '3', 'Px': '4', 'Py': '5', 'Poo': '6', 'Phh': '7', 'Pi': '8', 'Pdd': '9', 'Pee': '10', 'Paa': '11', 'P-05': '12', 'P-06': '13', 'S-01 zebra': '14', 'S-02 sugaras': '15', 'S-03 labirintus': '16', 'E-01 eper': '17' } };
+  KEYS = {"direction":"irány","meetShare":"szembeArány","radialShare":"körArány","softness":"lágyság","waveSec":"hullámMp","pauseSec":"szünetMp","pattern":"kiválasztás","adEvery":"reklámGyakoriság","net":"tüllháló","laceColor":"alapSzín","compStr":"komplementer","music":"zene","track":"dal","bpm":"bpm","waveBeats":"hullámÜtem","pauseBeats":"szünetÜtem","beatOffset":"ütemEltolás","showSplash":"nyitókép","lace4Tile":"csempeMéret","lace4Src":"lace4Src","color1":"szín1","use1":"be1","color2":"szín2","use2":"be2","color3":"szín3","use3":"be3","color4":"szín4","use4":"be4","color5":"szín5","use5":"be5","color6":"szín6","use6":"be6","color7":"szín7","use7":"be7","palette":"paletta","paint":"eljárás","mirror":"eljárás","mirrorN":"tükörSzelet","holeColor":"lyukSzín"};
+  VALS = { paint: { 'Örvény': 'auto', 'Váltakozó': 'ALT', 'Lyukfestéses': 'hole', 'Mintafestéses': 'figure', 'Automatikus festés': 'auto', 'Tükrözéses': 'auto' }, mirror: { 'Örvény': false, 'Váltakozó': 'ALT', 'Tükrözéses': true, 'Lyukfestéses': false, 'Mintafestéses': false, 'Automatikus festés': false }, direction: {"véletlen":"auto","balról":"left","jobbról":"right","fentről":"top","lentről":"bottom","átlósan":"diag","körKifelé":"out","körBefelé":"in","szembe":"meet","szembeFentLent":"meetV","szembeBalJobb":"meetH","szembeNagyátló":"meetD1","szembeKisátló":"meetD2","szembeX":"meetX"}, pattern: { 'véletlen': 'auto', 'Pr': '3', 'Px': '4', 'Py': '5', 'Poo': '6', 'Phh': '7', 'Pi': '8', 'Pdd': '9', 'Pee': '10', 'Paa': '11', 'P-05': '12', 'P-06': '13', 'S-01 zebra': '14', 'S-02 sugaras': '15', 'S-03 labirintus': '16', 'E-01 eper': '17' } };
   mode = /[?&]beallitas/.test(location.search) ? 'phone' : 'demo';
   ov = (() => { if (this.mode !== 'phone') return {}; try { return JSON.parse(localStorage.getItem('kaleido-beallitas') || '{}'); } catch (e) { return {}; } })();
   ovv = 0;
-  FIX = { 'Tükrözés': true, 'dal': 'folyamatos', 'zene': true, 'nyitókép': true };
+  FIX = { 'eljárás': 'Váltakozó', 'dal': 'folyamatos', 'zene': true, 'nyitókép': true };
   mapProps(p) {
     if (p === this._p0 && this._ovv === this.ovv) return this._p1;
     const o = {}, ov = this.ov || {}, fix = this.mode === 'demo' ? this.FIX : {}, pr = this.PRESETS[String(p['ALAPÉRTELMEZÉSEK'] || 'saját').charAt(0)];
-    for (const k in this.KEYS) { const hk = this.KEYS[k]; let v = hk in fix ? fix[hk] : hk in ov ? ov[hk] : pr ? (hk in pr ? pr[hk] : this.DEFS[hk]) : (p[hk] ?? this.DEFS[hk]); const m = this.VALS[k]; if (m && v != null && m[v] != null) v = m[v]; o[k] = v; }
+    for (const k in this.KEYS) { const hk = this.KEYS[k]; let v = hk in fix ? fix[hk] : hk in ov ? ov[hk] : pr ? (hk in pr ? pr[hk] : this.DEFS[hk]) : (p[hk] ?? this.DEFS[hk]); const m = this.VALS[k]; if (m && v != null && m[v] != null) v = m[v]; o[k] = v; } if (o.mirror === 'ALT') o.mirror = !!this.altMir; if (o.paint === 'ALT') o.paint = 'auto';
     this._p0 = p; this._ovv = this.ovv; this._p1 = o; return o;
   }
   raw(hk) { return hk in this.ov ? this.ov[hk] : (this.props[hk] ?? this.DEFS[hk]); }
@@ -131,7 +135,7 @@ class Component extends DCLogic {
     try { localStorage.removeItem('kaleido-beallitas'); } catch (e) {}
     this.react(old); this.forceUpdate();
   }
-  DEFS = {"komplementer":70,"irány":"véletlen","lágyság":20,"hullámMp":8,"szünetMp":0.5,"minta":"véletlen","reklámGyakoriság":1,"tüllháló":true,"alapSzín":"#0f0f0f","zene":true,"dal":"folyamatos","szín1":"#6b69f2","be1":true,"szín2":"#3ea805","be2":true,"szín3":"#dc0efb","be3":true,"szín4":"#ffb300","be4":true,"szín5":"#00c2c7","be5":true,"szín6":"#ff4d6d","be6":true,"szín7":"#0f0f0f","be7":false,"témák":"saját","festés":"automatikus","Tükrözés":true,"tükörSzelet":"12","lyukSzín":"#f5efe4","bpm":0,"hullámÜtem":0,"szünetÜtem":2,"ütemEltolás":0,"nyitókép":true,"csempeMéret":360};
+  DEFS = {"komplementer":70,"irány":"véletlen","lágyság":20,"hullámMp":8,"szünetMp":0.5,"kiválasztás":"véletlen","reklámGyakoriság":1,"tüllháló":true,"alapSzín":"#0f0f0f","zene":true,"dal":"folyamatos","szín1":"#6b69f2","be1":true,"szín2":"#3ea805","be2":true,"szín3":"#dc0efb","be3":true,"szín4":"#ffb300","be4":true,"szín5":"#00c2c7","be5":true,"szín6":"#ff4d6d","be6":true,"szín7":"#0f0f0f","be7":false,"paletta":"saját","eljárás":"Váltakozó","tükörSzelet":"12","lyukSzín":"#f5efe4","bpm":0,"hullámÜtem":0,"szünetÜtem":2,"ütemEltolás":0,"nyitókép":true,"csempeMéret":360};
   PRESETS = {
     A: { 'irány': 'véletlen', 'minta': 'véletlen', 'dal': 'folyamatos', be1: true, be2: true, be3: true, be4: true, be5: true, be6: true },
     B: { 'irány': 'körKifelé', 'minta': 'véletlen', 'dal': 'Z-08', be1: false, be2: true, be3: true, be4: false, be5: true, be6: false },
@@ -183,13 +187,13 @@ class Component extends DCLogic {
     if (this.mode !== 'phone') return { gearOn: false, panelOpen: false };
     const r = k => this.raw(k), on = {}, sel = {}, opts = {}, tg = {}, rg = {};
     const S = (key, hk, list) => { sel[key] = String(r(hk)); opts[key] = list; on[key] = ev => this.setOv(hk, ev.target.value); };
-    S('minta', 'minta', ['véletlen', ...this.imgDefs().map(d => d.name)]);
-    S('festes', 'festés', ['automatikus', 'lyukfestés', 'mintafestés']);
+    S('minta', 'kiválasztás', ['véletlen', ...this.imgDefs().map(d => d.name)]);
+    S('festes', 'eljárás', ['Örvény','Váltakozó','Tükrözéses','Lyukfestéses','Mintafestéses','Automatikus festés']);
     S('irany', 'irány', Object.keys(this.VALS.direction));
-    S('paletta', 'témák', ['saját', ...Object.keys(this.PALS)]);
+    S('paletta', 'paletta', ['saját', ...Object.keys(this.PALS)]);
     S('dal', 'dal', Object.keys(this.TRACKS));
     const T = (key, hk) => { const v = r(hk) === true; tg[key] = { txt: v ? 'Be' : 'Ki', bg: v ? '#E0C25A' : 'rgba(251,250,247,.12)', fg: v ? '#151412' : '#FBFAF7', click: () => this.setOv(hk, !v) }; };
-    T('tukor', 'Tükrözés'); T('esemeny', 'KI/BE'); T('ho', 'hó'); T('csillag', 'csillag'); T('level', 'levél'); T('macska', 'macska'); T('eger', 'egér'); T('zene', 'zene');
+    T('esemeny', 'KI/BE'); T('ho', 'hó'); T('csillag', 'csillag'); T('level', 'levél'); T('macska', 'macska'); T('eger', 'egér'); T('zene', 'zene');
     const G = (key, hk) => { rg[key] = r(hk); on[key] = ev => this.setOv(hk, +ev.target.value); };
     G('lagy', 'lágyság'); G('komp', 'komplementer'); G('hullam', 'hullámMp'); G('szunet', 'szünetMp');
     const sz = String(r('tükörSzelet'));
@@ -197,12 +201,13 @@ class Component extends DCLogic {
     return {
       gearOn: !((this.P.showSplash ?? true) !== false && !this.state.splashGone),
       panelOpen: !!this.state.panel,
-      togglePanel: ev => { ev && ev.stopPropagation(); this.setState(st => ({ panel: !st.panel })); },
+      gearHint: !this.state.panel && !this.state.gearSeen && !((this.P.showSplash ?? true) !== false && !this.state.splashGone) && (() => { try { return !localStorage.getItem('kaleido-gear-seen'); } catch (e) { return true; } })() && (this.hintT0 = this.hintT0 || performance.now(), performance.now() - this.hintT0 < 7000 || (setTimeout(() => this.setState({ gearSeen: true }), 0), false)),
+      togglePanel: ev => { ev && ev.stopPropagation(); try { localStorage.setItem('kaleido-gear-seen', '1'); } catch (e) {} this.setState(st => ({ panel: !st.panel, gearSeen: true })); },
       resetAll: () => this.resetOv(),
       sel, opts, on, tg, rg,
       szelet: ['12', '16'].map(v => ({ v, bg: v === sz ? '#E0C25A' : 'rgba(251,250,247,.12)', fg: v === sz ? '#151412' : '#FBFAF7', click: () => this.setOv('tükörSzelet', v) })),
       lyuk: ['#f5efe4', '#ffffff', '#e6d5b8', '#0f0f0f', '#F28C28'].map(c => ({ color: c, ring: ring(c === r('lyukSzín')), click: () => this.setOv('lyukSzín', c) })),
-      ownColors: r('témák') === 'saját',
+      ownColors: r('paletta') === 'saját',
       szinek: [1, 2, 3, 4, 5, 6, 7].map(i => { const u = r('be' + i) !== false, b = this.blocked(i); return { color: r('szín' + i), op: b ? 0.12 : u ? 1 : 0.28, ring: b ? 'inset 0 0 0 1px rgba(251,250,247,.15)' : ring(u), click: () => { if (!b) this.setOv('be' + i, !u); } }; }),
     };
   }
@@ -344,7 +349,7 @@ class Component extends DCLogic {
       const bx = this.txtBox.current;
       if (bx && this.txtC) { const k = io(cl((c - rc) / 1.2)), [a, b] = this.txtC; bx.style.color = 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(',') + ')'; }
       op = 1 - io(cl((c - end0) / OUT));
-      if (c > end0 + OUT) { op = 0; this.txtT0 = null; this.txtL = null; this.txtFor = null; const b = this.txtBox.current; if (b) b.innerHTML = ''; }
+      if (c > end0 + OUT) { op = 0; this.txtT0 = null; this.adEnded(); this.txtL = null; this.txtFor = null; const b = this.txtBox.current; if (b) b.innerHTML = ''; }
     }
     if (el && el._op !== op) { el.style.opacity = String(op); el._op = op; }
     this.txtRaf = requestAnimationFrame(() => this.txtLoop());
@@ -354,7 +359,23 @@ class Component extends DCLogic {
     const a = this.audio;
     if (this.state.sound && a && a.paused) { const p = a.play(); if (p && p.catch) p.catch(() => this.setState({ sound: false, hint: true })); }
   };
+  onKey = ev => { if (ev.key === 'ArrowRight') this.swipe(1); else if (ev.key === 'ArrowLeft') this.swipe(-1); };
+  orvRef = React.createRef();
+  rawE() { const hk = 'eljárás', ov = this.ov || {}, fix = this.mode === 'demo' ? (this.FIX || {}) : {}; return hk in fix ? fix[hk] : hk in ov ? ov[hk] : (this.props[hk] ?? this.DEFS[hk]); }
+  orvState() {
+    const v = this.rawE(), e = this.e || {}, d = this.imgDefs(), a = k => k >= 3 && (d[k - 3] || {}).ad;
+    const ad = !!(a(e.lace) || (e.swap && (a(e.swap.from) || a(e.swap.to))));
+    const splash = (this.P.showSplash ?? true) !== false && !this.state.splashGone;
+    return {
+      mode: v === 'Örvény' ? 'on' : v === 'Váltakozó' ? 'alt' : 'off', ad, paused: !!this.state.paused || splash,
+      P: { 'tárgy1': this.props['tárgy1'], 'tárgy2': this.props['tárgy2'], 'örvénySzín': this.props['örvénySzín'], 'örvényHáttér': this.props['örvényHáttér'], 'párosításMp': this.props['párosításMp'] },
+      setSkip: b => { this.orvSkip = b; },
+      setMir: b => { this.altMir = b; this._p0 = null; },
+    };
+  }
   componentDidMount() {
+    window.addEventListener('keydown', this.onKey);
+    this.hintIv = setInterval(() => { if (this.hintT0 && !this.state.gearSeen && performance.now() - this.hintT0 > 7000) { this.setState({ gearSeen: true }); clearInterval(this.hintIv); } }, 1000);
     document.addEventListener('visibilitychange', this.onVis); window.addEventListener('pageshow', this.onVis); window.addEventListener('focus', this.onVis);
     this.txtRaf = requestAnimationFrame(() => this.txtLoop());
     this.wRaf = requestAnimationFrame(t => this.winterLoop(t));
@@ -363,6 +384,7 @@ class Component extends DCLogic {
     this.last = performance.now();
     this.pickDir();
     const tick = (now) => {
+      if (!this.orv && window.Orveny && this.orvRef.current) this.orv = new window.Orveny(this.orvRef.current, () => this.orvState());
       const cv = this.cvRef.current;
       if (cv) {
         const w = cv.clientWidth, h = cv.clientHeight;
@@ -387,7 +409,7 @@ class Component extends DCLogic {
     if (pp.track !== this.P.track) this.switchTrack();
     if (pp.music !== this.P.music && this.P.music === false) this.setSound(false);
   }
-  componentWillUnmount() { document.removeEventListener('visibilitychange', this.onVis); window.removeEventListener('pageshow', this.onVis); window.removeEventListener('focus', this.onVis); cancelAnimationFrame(this.txtRaf); cancelAnimationFrame(this.wRaf); cancelAnimationFrame(this.raf); window.removeEventListener('kaleido-solo', this.onSolo); if (this.ac) this.ac.close(); if (this.audio) this.audio.pause(); clearInterval(this.fade); }
+  componentWillUnmount() { if (this.orv) this.orv.destroy(); window.removeEventListener('keydown', this.onKey); clearInterval(this.hintIv); document.removeEventListener('visibilitychange', this.onVis); window.removeEventListener('pageshow', this.onVis); window.removeEventListener('focus', this.onVis); cancelAnimationFrame(this.txtRaf); cancelAnimationFrame(this.wRaf); cancelAnimationFrame(this.raf); window.removeEventListener('kaleido-solo', this.onSolo); if (this.ac) this.ac.close(); if (this.audio) this.audio.pause(); clearInterval(this.fade); }
   imgDefs() {
     return [{ src: 'mintak/Pr.png', mode:'tone',cat:'festoi',name:'Pr' },
       { src: 'mintak/Px.png', mode:'cut',cat:'top',key:'lin',name:'Px' },
@@ -422,7 +444,7 @@ class Component extends DCLogic {
   lace(k) {
     if (this.laces[k]) return this.laces[k];
     let L;
-    if (k < 3) L = this.makeLace(k);
+    if (k < 3) { L = document.createElement('canvas'); L.width = Math.max(1, Math.round((this.W || 1) * (this.dpr || 1))); L.height = Math.max(1, Math.round((this.H || 1) * (this.dpr || 1))); }
     else {
       const i = k - 3, im = this.imgs[i], d = this.imgDefs()[i];
       if (!d) return null;
@@ -486,8 +508,21 @@ class Component extends DCLogic {
     x.drawImage(L, 0, 0);
     return c;
   }
+  adEnded() { this.e.lastAdEnd = performance.now(); }
+  swipe(dir) {
+    const e = this.e, isAd = k => k >= 3 && !!(this.imgDefs()[k - 3] || {}).ad;
+    if (isAd(e.lace) || (e.swap && (isAd(e.swap.to) || isAd(e.swap.from)))) return;
+    if (this.txtT0 != null) return;
+    if (e.swap) { e.lace = e.swap.to; e.swap = null; }
+    if (dir > 0) { this._swiping = true; try { e.swap = this.mkSwap(500); } finally { this._swiping = false; } }
+    else { const k = (e.hist || []).pop(); if (k == null) return; e.swap = { from: e.lace, to: k, el: 0, len: 500, back: true }; this.reqImg(k - 3); }
+    e.waves = 0; e.el = 0; e.phase = 'wave'; this.pickDir();
+    if (this.state.paused) this.setState({ paused: false });
+  }
   mkSwap(len) {
-    const e = this.e, to = this.nextLace(), ad = k => k >= 3 && !!(this.imgDefs()[k - 3] || {}).ad;
+    const e = this.e, isA = k => k >= 3 && !!(this.imgDefs()[k - 3] || {}).ad;
+    if (!isA(e.lace)) { e.hist = e.hist || []; if (e.hist[e.hist.length - 1] !== e.lace) e.hist.push(e.lace); if (e.hist.length > 10) e.hist.shift(); }
+    const to = this.nextLace(), ad = k => k >= 3 && !!(this.imgDefs()[k - 3] || {}).ad;
     return { from: e.lace, to, el: 0, len: ad(to) || ad(e.lace) ? 700 : (len || 1400) };
   }
   nextLace() {
@@ -498,14 +533,20 @@ class Component extends DCLogic {
     this.warm();
     const ads = pool.filter(isAd), normal = pool.filter(k => !isAd(k));
     let adTurn = every > 0 && !isAd(e.lace) && (e.cyc || 0) >= every;
+    if (adTurn && this._swiping && (this.txtT0 != null || isAd(e.lace) || performance.now() - (e.lastAdEnd || -1e9) < 20000)) adTurn = false;
     if (adTurn) {
-      e.cyc = 0; e.adAlt = (e.adAlt || 0) + 1;
+      e.cyc = 0; e.lastAdT = performance.now(); e.adAlt = (e.adAlt || 0) + 1;
       const txtOn = (this.props['szövegHirdetés'] ?? true) !== false && this.txtTexts().length > 0;
       if (txtOn && (e.adAlt % 2 === 0 || !ads.length)) { this.txtT0 = performance.now() + 900; this.txtIdx = (this.txtIdx ?? -1) + 1; adTurn = false; }
       else if (!ads.length) adTurn = false;
     }
-    const list = adTurn ? ads : (normal.length ? normal : pool);
-    const pick = list[Math.floor(Math.random() * list.length)]; if (e.pick) delete e.pick[pick]; return pick;
+    let list = adTurn ? ads : (normal.length ? normal : pool);
+    if (!adTurn) {
+      e.seen = e.seen || new Set(); let fresh = list.filter(k => !e.seen.has(k));
+      if (!fresh.length) { e.seen = new Set([e.lace]); fresh = list.filter(k => k !== e.lace); if (!fresh.length) fresh = list; }
+      list = fresh;
+    }
+    const pick = list[Math.floor(Math.random() * list.length)]; if (!adTurn && e.seen) e.seen.add(pick); if (e.pick) delete e.pick[pick]; return pick;
   }
   speedMul() { const k = this.e.lace, d = k >= 3 ? this.imgDefs()[k - 3] : null; return ((d && d.wave) || 1) * (this.invFor(k) ? 0.7 : 1); }
   restMul() { const k = this.e.lace, d = k >= 3 ? this.imgDefs()[k - 3] : null; return (d && d.rest) || 1; }
@@ -776,7 +817,7 @@ class Component extends DCLogic {
     const adCur = !e.swap && adOn(e.lace) && this.autoPattern();
     if (adCur) {
       e.adT = (e.adT || 0) + dt;
-      if (e.adT >= (this.P.adSec ?? 5) * 1000 - 700) { e.adT = 0; e.swap = this.mkSwap(); }
+      if (e.adT >= (this.P.adSec ?? 5) * 1000 - 700) { e.adT = 0; this.adEnded(); e.swap = this.mkSwap(); }
     } else if (!e.swap) e.adT = 0;
     if (this.audio && this.state.sound && !this.audio.paused && this.mp3()) {
       const beat = 60 / ((this.P.bpm || 0) > 0 ? this.P.bpm : this.track().bpm), wb = (this.P.waveBeats || 0) > 0 ? this.P.waveBeats : Math.max(2, Math.round((this.P.waveSec ?? 8) * this.speedMul() / beat)), pb = this.P.pauseBeats ?? 2;
@@ -899,7 +940,7 @@ class Component extends DCLogic {
     const real = this.ctx, get = i => this.safeLace(i);
     if (!inv) {
       this.ctx = out; try { this.drawColor(p, t); } finally { this.ctx = real; }
-      out.setTransform(1, 0, 0, 1, 0, 0); const L = get(k); out.globalCompositeOperation = L.blend || 'source-over'; out.globalAlpha = 1; out.drawImage(L, 0, 0);
+      out.setTransform(1, 0, 0, 1, 0, 0); const L = get(k); out.globalCompositeOperation = L.blend || 'source-over'; out.globalAlpha = 1; this.drawL(out, L);
       out.globalCompositeOperation = 'source-over';
       const cs = 70;
       if (cs > 0 && !L.blend) {
@@ -907,26 +948,44 @@ class Component extends DCLogic {
         if (u0) this.e.under = u0.map(o => Object.assign({}, o, { c: this.comp(o.c) }));
         this._comp = true; this.ctx = f;
         try { this.drawColor(p, t); } finally { this.ctx = real; this._comp = false; this.e.under = u0; }
-        f.setTransform(1, 0, 0, 1, 0, 0); f.globalAlpha = 1; f.globalCompositeOperation = 'destination-in'; f.drawImage(L, 0, 0); f.globalCompositeOperation = 'source-over';
+        f.setTransform(1, 0, 0, 1, 0, 0); f.globalAlpha = 1; f.globalCompositeOperation = 'destination-in'; this.drawL(f, L); f.globalCompositeOperation = 'source-over';
         out.globalAlpha = cs / 100; out.drawImage(this.fcv, 0, 0); out.globalAlpha = 1;
       }
       return;
     }
     const f = this.fcv.getContext('2d');
     this.ctx = f; try { this.drawColor(p, t); } finally { this.ctx = real; }
-    f.setTransform(1, 0, 0, 1, 0, 0); f.globalAlpha = 1; f.globalCompositeOperation = 'destination-in'; f.drawImage(get(k), 0, 0); f.globalCompositeOperation = 'source-over';
+    f.setTransform(1, 0, 0, 1, 0, 0); f.globalAlpha = 1; f.globalCompositeOperation = 'destination-in'; this.drawL(f, get(k)); f.globalCompositeOperation = 'source-over';
     out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.imageSmoothingEnabled = true; out.imageSmoothingQuality = 'high';
     out.fillStyle = this.P.holeColor ?? '#f5efe4'; out.fillRect(0, 0, out.canvas.width, out.canvas.height); out.drawImage(this.fcv, 0, 0);
+  }
+  drawL(c, L) {
+    if (this._inMir) { c.drawImage(L, 0, 0); return; }
+    const t = performance.now() / 1000, cw = c.canvas.width, ch = c.canvas.height, cx = cw / 2, cy = ch / 2;
+    const a = 0.07 * Math.sin(t * 2 * Math.PI / 41), dx = 0.035 * cw * Math.sin(t * 2 * Math.PI / 27), dy = 0.035 * ch * Math.cos(t * 2 * Math.PI / 33), sc = 1.2;
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.translate(cx + dx, cy + dy); c.rotate(a); c.scale(sc, sc); c.drawImage(L, -cx, -cy); c.restore();
+  }
+  altPaint(k) {
+    const e = this.e, st = e.alt || (e.alt = {}), live = new Set([e.lace, e.swap && e.swap.from, e.swap && e.swap.to]);
+    Object.keys(st).forEach(x => { if (!live.has(+x)) delete st[x]; });
+    if (st[k] === undefined) {
+      e.altN = (e.altN || 0) + 1; if (!e.altGap) e.altGap = 3 + (Math.random() < 0.5 ? 0 : 1);
+      st[k] = e.altN >= e.altGap;
+      if (st[k]) { e.altN = 0; e.altGap = 3 + (Math.random() < 0.5 ? 0 : 1); if ((this.P.paint ?? 'auto') === 'auto') { e.pick = e.pick || {}; e.pick[k] = this.canInv(k) ? Math.random() < 0.5 : false; } }
+    }
+    return st[k];
   }
   mirFor(k) {
     const d = k >= 3 ? (this.imgDefs()[k - 3] || {}) : {};
     if (d.ad) return false;
-    return this.P.mirror === true || d.mirror === true;
+    if (d.mirror === true) return true;
+    if (this.P.mirror !== true) return false;
+    return true;
   }
   mirrorTo(out, p, t) {
     const real = this.ctx, cw = out.canvas.width, ch = out.canvas.height;
     if (!this.kcv || this.kcv.width !== cw || this.kcv.height !== ch) { this.kcv = document.createElement('canvas'); this.kcv.width = cw; this.kcv.height = ch; }
-    this.ctx = this.kcv.getContext('2d'); try { this.drawScene(p, t); } finally { this.ctx = real; }
+    this.ctx = this.kcv.getContext('2d'); this._inMir = true; try { this.drawScene(p, t); } finally { this.ctx = real; this._inMir = false; }
     const N = +(this.P.mirrorN ?? 12), cx = cw / 2, cy = ch / 2, Rr = Math.hypot(cx, cy), w = Math.PI * 2 / N, th = performance.now() / 1000 * Math.PI * 2 / 90, sc = Rr / Math.min(cx, cy);
     out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.imageSmoothingEnabled = true; out.imageSmoothingQuality = 'high';
     for (let i = 0; i < N; i++) {
@@ -941,6 +1000,7 @@ class Component extends DCLogic {
     const real = this.ctx; this.ctx = out; try { this.drawScene(p, t); } finally { this.ctx = real; }
   }
   draw(p, t) {
+    if (this.orvSkip) return;
     const e = this.e, sw = e.swap;
     const anyMir = this.mirFor(e.lace) || (sw && (this.mirFor(sw.from) || this.mirFor(sw.to)));
     if (!anyMir) { this.drawScene(p, t); return; }
@@ -1000,6 +1060,7 @@ class Component extends DCLogic {
   renderVals() {
     return {
       cvRef: this.cvRef,
+      orvRef: this.orvRef,
       txtRef: this.txtRef,
       txtBox: this.txtBox,
       txtOutline: (this.props['betű'] ?? 'kontúr') === 'kontúr',
@@ -1011,7 +1072,14 @@ class Component extends DCLogic {
       tooFew: this.colorCount() < 3,
       fallTooMany: !!this.fallTooMany,
       colorCount: this.colorCount(),
-      toggleSound: () => { if (this.state.paused) { this.setState({ paused: false }); return; } this.setSound(!this.state.sound); },
+      swDown: ev => { this._sw = { x: ev.clientX, y: ev.clientY, t: performance.now() }; },
+      swUp: ev => {
+        const a = this._sw; this._sw = null; if (!a) return;
+        const dx = ev.clientX - a.x, dy = ev.clientY - a.y, dt = performance.now() - a.t;
+        if (Math.hypot(dx, dy) > 12) this._swT = performance.now();
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 1200) this.swipe(dx < 0 ? 1 : -1);
+      },
+      toggleSound: () => { if (this._swT && performance.now() - this._swT < 500) return; if (this.state.paused) { this.setState({ paused: false }); return; } this.setSound(!this.state.sound); },
       showCtl: this.mode === 'phone' && !((this.P.showSplash ?? true) !== false && !this.state.splashGone),
       paused: !!this.state.paused,
       playing: !this.state.paused,
@@ -1021,7 +1089,7 @@ class Component extends DCLogic {
         this.setState(st => ({ paused: !st.paused }));
       },
       saveImg: (ev) => {
-        ev && ev.stopPropagation(); const cv = this.cvRef.current; if (!cv) return;
+        ev && ev.stopPropagation(); const cv = (this.orv && this.orv.op > 0.5) ? this.orvRef.current : this.cvRef.current; if (!cv) return;
         const d = new Date(), p = n => String(n).padStart(2, '0');
         const t = performance.now(); if (this._ts && t - this._ts < 800) return; this._ts = t;
         cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.target = '_blank'; a.rel = 'noopener'; a.download = 'kaleidoszkop-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()) + '.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }, 'image/png');
