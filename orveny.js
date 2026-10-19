@@ -1,7 +1,7 @@
 (function () {
   const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f' };
   const PAL = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d'];
-  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-10'];
+  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-10', 'X-11', 'X-12', 'X-13', 'X-14-a', 'X-14-b', 'X-15', 'X-16', 'X-17'];
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -10,7 +10,7 @@
     constructor(canvas, host) {
       this.cv = canvas; this.host = host;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
-      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=14'; });
+      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=18'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
       this.bg = this.newWave(0); this.ob = this.newWave(3); this.ob.el = 2;
       this.seg = 'orv'; this.segLeft = 35; this.pairLeft = 0; this.pairN = 0; this.mirAlt = false; this.bgToggle = false;
@@ -43,10 +43,10 @@
       const t1 = P['tárgy1'] ?? 'véletlen', t2 = P['tárgy2'] ?? 'véletlen';
       const n1 = t1 === 'véletlen' ? pick(TARGYAK) : t1;
       const n2 = t2 === 'véletlen' ? (Math.random() < 0.5 ? n1 : pick(TARGYAK)) : t2;
-      const sz = P['örvénySzín'] ?? 'véletlen', hb = P['örvényHáttér'] ?? 'váltakozó';
+      const z1 = P['tárgy1Szín'] ?? 'véletlen', z2 = P['tárgy2Szín'] ?? 'másikkal azonos', hb = P['örvényHáttér'] ?? 'váltakozó';
       this.bgToggle = !this.bgToggle;
       this.cfg = {
-        n1, n2, szin: sz === 'véletlen' ? pick(SZINEK) : sz,
+        n1, n2, ...(() => { const one = z => z === 'véletlen' || z === 'másikkal azonos' ? pick(SZINEK) : z; let a = one(z1), b = one(z2); if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; return { szin1: a, szin2: b }; })(),
         wave: hb === 'színhullám' || (hb === 'váltakozó' && this.bgToggle),
         s1: rnd(100, 118), s2: rnd(60, 115), off: rnd(15, 45) * Math.PI / 180, ph: Math.random() * Math.PI * 2
       };
@@ -57,16 +57,17 @@
       const s = this.snap.getContext('2d'); s.clearRect(0, 0, c.width, c.height); s.drawImage(c, 0, 0); this.snapA = 1;
     }
     frame(now) {
-      const st = this.host(); const P = st.P || {};
+      const st = this.host(); const P = st.P || {}; this.P = P;
       let dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
       if (st.paused) dt = 0;
-      const pairSec = +(P['párosításMp'] ?? 10);
+      this.fast = P['tempó'] === 'pörgős';
+      const pairSec = this.fast ? 3.5 : +(P['párosításMp'] ?? 10);
       if (!this.cfg) { this.newPair(P); this.pairLeft = pairSec; }
       this.pairLeft -= dt;
       if (st.mode === 'alt') {
         this.segLeft -= dt;
         if (this.segLeft <= 0) {
-          if (this.seg === 'orv') { this.seg = 'other'; this.segLeft = 30; this.mirAlt = !this.mirAlt; st.setMir && st.setMir(this.mirAlt); }
+          if (this.seg === 'orv') { this.seg = 'other'; this.segLeft = this.fast ? 10 : 30; this.mirAlt = !this.mirAlt; st.setMir && st.setMir(this.mirAlt); }
           else { this.seg = 'orv'; this.segLeft = pairSec * (3 + Math.floor(Math.random() * 2)); }
         }
       } else { this.seg = 'orv'; this.segLeft = pairSec * 3; }
@@ -76,7 +77,7 @@
       if (want === 1 && this.op > 0.995) this.op = 1;
       if (this.cv._op !== this.op) { this.cv.style.opacity = this.op.toFixed(3); this.cv._op = this.op; }
       st.setSkip && st.setSkip(this.op >= 1);
-      if (this.pairLeft <= 0) { this.pairLeft = pairSec; if (this.op > 0) this.snapshot(); this.newPair(P); }
+      if (this.pairLeft <= 0) { this.pairLeft = pairSec; if (this.op > 0 && !this.fast) this.snapshot(); this.newPair(P); }
       if (this.op <= 0 || (st.paused && this.drawnOnce)) return;
       this.render(dt);
     }
@@ -85,7 +86,7 @@
       const W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
       if (!W || !H) return;
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-      const c = this.cfg, waveSec = 3, soft = 0.3;
+      const c = this.cfg, F = this.fast, waveSec = F ? 1.5 : 3, soft = F ? 0.15 : 0.3;
       for (const key of ['bg', 'ob']) { const w = this[key]; w.el += dt; if (w.el >= waveSec) { const nw = this.newWave(0, w); nw.el = w.el - waveSec; if (key === 'bg') this.bgPrev = w; this[key] = nw; } }
       const kOf = (w, el) => Math.min(1, (el ?? w.el) / waveSec) * (1 + soft) - soft / 2;
       const x = cv.getContext('2d'), cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy);
@@ -93,15 +94,14 @@
       if (c.wave) this.paint(x, this.bg, cx, cy, RR, kOf(this.bg), soft); else { x.fillStyle = COL.fekete; x.fillRect(0, 0, W, H); }
       const g1 = this.grays[c.n1], g2 = this.grays[c.n2];
       if (g1 && g2) {
-        this.th += dt * Math.PI * 2 / 15; this.th2 -= dt * Math.PI * 2 / 10; this.lt += dt;
-        let col;
-        if (COL[c.szin]) col = { flat: COL[c.szin] };
-        else if (c.wave) { const e = this.bg.el - 0.2; col = e >= 0 || !this.bgPrev ? { w: this.bg, k: kOf(this.bg, Math.max(0, e)) } : { w: this.bgPrev, k: kOf(this.bgPrev, waveSec + e) }; }
-        else col = { w: this.ob, k: kOf(this.ob) };
-        const br = ph => 1 - 0.6 * (0.5 - 0.5 * Math.cos(this.lt * Math.PI * 2 / 12 + ph));
+        this.th += dt * Math.PI * 2 / (F ? 6 : 15); this.th2 -= dt * Math.PI * 2 / (F ? 4 : 10); this.lt += dt;
+        const colOf = sz => { if (COL[sz]) return { flat: COL[sz] }; if (c.wave) { const e = this.bg.el - 0.2; return e >= 0 || !this.bgPrev ? { w: this.bg, k: kOf(this.bg, Math.max(0, e)) } : { w: this.bgPrev, k: kOf(this.bgPrev, waveSec + e) }; } return { w: this.ob, k: kOf(this.ob) }; };
+        const col1 = colOf(c.szin1), col2 = colOf(c.szin2);
+        const PP = this.P || {}, amp = (+(PP['lélegzés'] ?? 60)) / 100, per = Math.max(1, +(PP['lélegzésMp'] ?? 12));
+        const br = ph => 1 - amp * (0.5 - 0.5 * Math.cos(this.lt * Math.PI * 2 / (F ? Math.min(5, per) : per) + ph));
         const M = Math.min(W, H);
-        this.obj(x, 'oc', Math.round(M * c.s1 / 100 * br(c.ph)), this.th, col, g1, cx, cy, RR, soft);
-        this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col, g2, cx, cy, RR, soft);
+        this.obj(x, 'oc', Math.round(M * c.s1 / 100 * br(c.ph)), this.th, col1, g1, cx, cy, RR, soft);
+        this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
       }
       if (this.snapA > 0 && this.snap) {
         x.globalAlpha = this.snapA; x.drawImage(this.snap, 0, 0, W, H); x.globalAlpha = 1;
