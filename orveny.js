@@ -19,75 +19,105 @@
     let u = into > per - fade ? (into - (per - fade)) / fade : 0; u = u * u * (3 - 2 * u);
     return mix(hex(L[(i0 + n) % L.length]), hex(L[(i0 + n + 1) % L.length]), u);
   }
+  const SCYC = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A'];
+  const num = (v, d) => { const n = +v; return v == null || v === '' || isNaN(n) ? d : n; };
+  const sigOf = (P, ks) => ks.map(k => P[k]).join('|');
   class Spir {
     constructor() { this.t = 0; this.e = {}; this.rnd = null; this.form0 = pick(FORMS); }
-    shuffle() { this.rnd = { karok: Math.floor(rnd(2, 9)), csav: rnd(-0.8, 0.8), dir: Math.random() < 0.5 ? -1 : 1, k: rnd(0.7, 1.3), forma: pick(FORMS), c2: pick(SP2) }; }
+    shuffle(P) {
+      const base = Math.abs(num(P['spirálSebesség'], 9)) || 9;
+      this.rnd = { karok: Math.floor(rnd(2, 9)), csav: rnd(-0.8, 0.8), sp: (Math.random() < 0.5 ? -1 : 1) * Math.min(9, base * rnd(0.7, 1.3)), c1: pick(SP1), forma: pick(FORMS) };
+      this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form));
+    }
     draw(x, W, H, dt, F, P) {
-      const r = this.rnd || {}, sp = ez(this.e, 'sp', (r.dir ?? 1) * Math.min(9, (F ? 9 : 5) * (r.k ?? 1)), dt);
-      this.t += sp * dt; const t = this.t, ARMS = r.karok ?? 5, TW = ez(this.e, 'tw', r.csav ?? 0.35, dt);
-      const pf = P['spirálForma'] ?? 'véletlen', FORM = pf !== 'véletlen' ? pf : (r.forma ?? this.form0);
-      const base = cycle(this, SP1, dt, F ? 5 : 8, 2, 0), wh = hex(r.c2 ?? '#F5F5FA');
+      const sg = sigOf(P, ['spirálSebesség', 'spirálKarok', 'spirálCsavarás', 'spirálSzín1']); if (sg !== this.sg) { this.sg = sg; this.rnd = null; }
+      const r = this.rnd || {}, sp = ez(this.e, 'sp', r.sp ?? num(P['spirálSebesség'], 9), dt);
+      this.t += sp * dt; const t = this.t, ARMS = r.karok ?? num(P['spirálKarok'], 5), TW = ez(this.e, 'tw', r.csav ?? num(P['spirálCsavarás'], 0.35), dt);
+      const SHARP = num(P['spirálÉlesség'], 3), TURN = num(P['spirálFordulás'], 1), LAZY = num(P['spirálLomhaság'], 0), CON = num(P['spirálKontraszt'], 1);
+      const fk = LAZY > 0 ? 1 - Math.exp(-dt / LAZY) : 1;
+      const pf = P['spirálForma'] ?? 'véletlen'; let FORM = pf, sc = 1;
+      if (pf === 'véletlen') {
+        if (!this.form) this.form = this.form0;
+        this.fT = (this.fT || 0) + dt;
+        if (this.fT > (F ? 10 : 15) && this.trU == null) { this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form)); }
+        if (this.trU != null) { this.trU += dt / 1.2; if (this.trU >= 0.5 && this.nextForm) { this.form = this.nextForm; this.nextForm = null; } if (this.trU >= 1) this.trU = null; else sc = Math.abs(1 - 2 * this.trU); }
+        FORM = this.form;
+      }
+      const base = P['spirálSzínváltás'] !== false ? cycle(this, SCYC, dt, Math.max(2, num(P['spirálSzínváltásMp'], 8)), num(P['spirálÁttűnésMp'], 2), 0) : hex(r.c1 ?? P['spirálSzín1'] ?? '#3C78E6');
+      const wh = hex(P['spirálSzín2'] ?? '#F5F5FA');
       const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy) / S;
-      const GAP = 285 / 17, RINGS = Math.ceil(RR / GAP) + 1, DGAP = 24, d = 8 * S, DW = 4 * S;
+      const GAP = 285 / num(P['spirálGyűrűk'], 17), RINGS = Math.ceil(RR / GAP) + 1, DGAP = num(P['spirálTáv'], 24), d = num(P['spirálHossz'], 16) / 2 * S * sc, DW = Math.max(0.01, num(P['spirálVastagság'], 4) * S * sc);
+      const mk = W + 'x' + H + '/' + GAP + '/' + DGAP; if (this.mk !== mk) { this.mk = mk; this.mem = null; }
       x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
       const NB = 12, paths = Array.from({ length: NB }, () => new Path2D()), stroke = FORM === 'pálcika' || FORM === 'H-betű';
+      const mem = [], old = this.mem; let idx = 0;
       for (let i = 1; i <= RINGS; i++) {
         const rr = i * GAP + 5, n = Math.max(3, Math.floor(2 * Math.PI * rr / DGAP));
         for (let j = 0; j < n; j++) {
-          const th = 2 * Math.PI * j / n, s = 0.5 + 0.5 * Math.tanh(3 * Math.cos(ARMS * th - i * TW - t));
-          const rel = Math.PI / 2 * s, a = th + Math.PI / 2 + rel, k = Math.sin(rel);
+          const th = 2 * Math.PI * j / n, s = 0.5 + 0.5 * Math.tanh(SHARP * Math.cos(ARMS * th - i * TW - t));
+          let v = s; const m0 = old ? old[idx] : undefined; if (m0 != null) v = m0 + (s - m0) * fk; mem[idx++] = v;
           const X = cx + S * rr * Math.cos(th), Y = cy + S * rr * Math.sin(th);
           if (X < -20 || Y < -20 || X > W + 20 || Y > H + 20) continue;
-          const p = paths[Math.min(NB - 1, Math.round(k * (NB - 1)))], ca = Math.cos(a), sa = Math.sin(a);
-          const L = (u, v) => [X + u * ca - v * sa, Y + u * sa + v * ca];
+          const rel = Math.PI / 2 * v * TURN, a = th + Math.PI / 2 + rel, k = Math.sin(Math.PI / 2 * v) * CON;
+          const p = paths[Math.min(NB - 1, Math.max(0, Math.round(k * (NB - 1))))], ca = Math.cos(a), sa = Math.sin(a);
+          const L = (u, w) => [X + u * ca - w * sa, Y + u * sa + w * ca];
           if (FORM === 'korong') { p.moveTo(X + d * 0.6, Y); p.arc(X, Y, d * 0.6, 0, 2 * Math.PI); }
           else if (FORM === 'H-betű') { const e = d * 0.6; for (const [a1, b1, a2, b2] of [[-e, -e, e, -e], [-e, e, e, e], [0, -e, 0, e]]) { p.moveTo(...L(a1, b1)); p.lineTo(...L(a2, b2)); } }
           else if (FORM === 'pálcika') { p.moveTo(...L(-d, 0)); p.lineTo(...L(d, 0)); }
           else {
-            const pts = FORM === 'négyzet' ? [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => [u * d * 0.55, v * d * 0.55])
+            const pts = FORM === 'négyzet' ? [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, w]) => [u * d * 0.55, w * d * 0.55])
               : FORM === 'háromszög' ? [0, 1, 2].map(q => [d * 0.75 * Math.cos(q * 2.0944), d * 0.75 * Math.sin(q * 2.0944)])
-              : Array.from({ length: 10 }, (_, q) => { const rr2 = q % 2 ? d * 0.32 : d * 0.8; return [rr2 * Math.cos(q * Math.PI / 5), rr2 * Math.sin(q * Math.PI / 5)]; });
-            pts.forEach(([u, v], q) => p[q ? 'lineTo' : 'moveTo'](...L(u, v))); p.closePath();
+              : Array.from({ length: 10 }, (_, q) => { const r2 = q % 2 ? d * 0.32 : d * 0.8; return [r2 * Math.cos(q * Math.PI / 5), r2 * Math.sin(q * Math.PI / 5)]; });
+            pts.forEach(([u, w], q) => p[q ? 'lineTo' : 'moveTo'](...L(u, w))); p.closePath();
           }
         }
       }
-      x.lineCap = 'round'; x.lineWidth = FORM === 'H-betű' ? DW * 0.6 : DW;
-      paths.forEach((p, b) => { const c = 'rgb(' + mix(base, wh, b / (NB - 1)).map(Math.round) + ')'; if (stroke) { x.strokeStyle = c; x.stroke(p); } else { x.fillStyle = c; x.fill(p); } });
+      this.mem = LAZY > 0 ? mem : null;
+      x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = FORM === 'H-betű' ? DW * 0.6 : DW;
+      paths.forEach((p, q) => { const c = 'rgb(' + mix(base, wh, q / (NB - 1)).map(Math.round) + ')'; if (stroke) { x.strokeStyle = c; x.stroke(p); } else { x.fillStyle = c; x.fill(p); } });
     }
   }
   class Hold {
     constructor() { this.t = 0; this.e = {}; this.rnd = null; this.flip = false; this.v0 = Math.random() < 0.5 ? 'HOLDAK' : 'KAROK'; }
-    shuffle() { this.rnd = { karok: Math.floor(rnd(1, 7)), csav: rnd(-3, 3), wv: rnd(0.5, 3), spn: Math.floor(rnd(-4, 5)), dir: Math.random() < 0.5 ? -1 : 1, k: rnd(0.7, 1.3) }; if (Math.random() < 0.3) this.flip = !this.flip; }
-    build(W, H) {
-      const key = W + 'x' + H; if (this.key === key) return; this.key = key;
-      const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy), SP = 18 * S, hr = 12 * S, gold = Math.PI * (3 - Math.sqrt(5));
-      this.holes = []; for (let n = 1; SP * Math.sqrt(n) < RR + 2 * hr; n++) { const r = SP * Math.sqrt(n), a = n * gold; this.holes.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), r }); }
-      this.R = RR; this.hr = hr; this.S = S; this.M = M;
+    shuffle(P) {
+      const base = Math.abs(num(P['holdSebesség'], 4)) || 4;
+      this.rnd = { karok: Math.floor(rnd(1, 7)), csav: rnd(-3, 3), wv: rnd(0.5, 3), spn: Math.floor(rnd(-4, 5)), sp: (Math.random() < 0.5 ? -1 : 1) * Math.min(6, base * rnd(0.7, 1.3)) };
+      if (String(P['holdVáltozat'] ?? 'holdak').toLowerCase() === 'vegyes' && Math.random() < 0.3) this.flip = !this.flip;
+    }
+    build(W, H, P) {
+      const SPu = num(P['holdLyukTáv'], 24) * 0.75, HSu = num(P['holdLyukMéret'], 32) * 0.75, N = num(P['holdLyukakSzáma'], 3000), PC = P['holdLapSzín'] ?? '#6E6E6A';
+      const key = [W, H, SPu, HSu, N, PC].join('/'); if (this.key === key) return; this.key = key;
+      const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy), SP = SPu * S, hr = HSu / 2 * S, gold = Math.PI * (3 - Math.sqrt(5));
+      this.holes = []; for (let n = 1; n <= N && SP * Math.sqrt(n) < RR + 2 * hr; n++) { const r = SP * Math.sqrt(n), a = n * gold; this.holes.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), r }); }
+      this.R = Math.min(RR, SP * Math.sqrt(this.holes.length) + 2 * hr); this.hr = hr; this.S = S; this.M = M;
       const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
-      const pl = mk(), p = pl.getContext('2d'); p.fillStyle = '#6E6E6A'; p.fillRect(0, 0, W, H); p.globalCompositeOperation = 'destination-out';
+      const pl = mk(), p = pl.getContext('2d'); p.fillStyle = PC; p.fillRect(0, 0, W, H); p.globalCompositeOperation = 'destination-out';
       const all = new Path2D(); for (const h of this.holes) { all.moveTo(h.x + hr, h.y); all.arc(h.x, h.y, hr, 0, 2 * Math.PI); } p.fill(all);
       const s0c = mk(), s0 = s0c.getContext('2d'); s0.fillStyle = 'rgba(0,0,0,.55)'; s0.fill(all); s0.globalCompositeOperation = 'destination-out'; s0.translate(3 * S, 4 * S); s0.fill(all);
       const sh = mk(), s = sh.getContext('2d'); s.filter = 'blur(' + (1.5 * S) + 'px)'; s.drawImage(s0c, 0, 0);
       this.plate = pl; this.shade = sh;
     }
     draw(x, W, H, dt, F, P) {
-      this.build(W, H);
+      this.build(W, H, P);
+      const sg = sigOf(P, ['holdSebesség', 'holdKarok', 'holdCsavarás', 'holdHullámok', 'holdSpirálkarok', 'holdVáltozat']); if (sg !== this.sg) { this.sg = sg; this.rnd = null; this.flip = false; }
       const r = this.rnd || {}, e = this.e, pv = String(P['holdVáltozat'] ?? 'holdak').toUpperCase(), b0 = pv === 'VEGYES' || pv === 'VÉLETLEN' ? this.v0 : pv;
       const V = this.flip ? (b0 === 'HOLDAK' ? 'KAROK' : 'HOLDAK') : b0;
-      const sp = ez(e, 'sp', (r.dir ?? 1) * Math.min(6, (F ? 4.5 : 2) * (r.k ?? 1)), dt), tw = ez(e, 'tw', r.csav ?? 1.2, dt);
-      const wv = ez(e, 'wv', r.wv ?? 1, dt), spn = ez(e, 'spn', r.spn ?? 0, dt), arms = Math.max(1, r.karok ?? 3);
+      const sp = ez(e, 'sp', r.sp ?? num(P['holdSebesség'], 4), dt), tw = ez(e, 'tw', r.csav ?? num(P['holdCsavarás'], 1.2), dt);
+      const wv = ez(e, 'wv', r.wv ?? num(P['holdHullámok'], 1), dt), spn = ez(e, 'spn', r.spn ?? num(P['holdSpirálkarok'], 0), dt), arms = Math.max(1, Math.round(r.karok ?? num(P['holdKarok'], 3)));
       this.t += sp * dt; const t = this.t, cx = W / 2, cy = H / 2, R = this.R, hr = this.hr;
-      x.fillStyle = 'rgb(' + cycle(this, HCYC, dt, F ? 5 : 8, 2, 0).map(Math.round) + ')'; x.fillRect(0, 0, W, H);
-      x.fillStyle = '#0A0A0A';
+      const vil = String(P['holdVilágos'] ?? '#00F0FF').toUpperCase();
+      const L = P['holdSzínváltás'] !== false ? cycle(this, HCYC, dt, Math.max(2, num(P['holdSzínváltásMp'], 8)), num(P['holdÁttűnésMp'], 2), Math.max(0, HCYC.indexOf(vil))) : hex(vil);
+      x.fillStyle = 'rgb(' + L.map(Math.round) + ')'; x.fillRect(0, 0, W, H);
+      x.fillStyle = P['holdSötét'] ?? '#0A0A0A';
       if (V === 'KAROK') {
-        const Rm = this.M / 2, w = Math.min(0.95, Math.max(0.05, 0.5 + 0.35 * Math.sin(t * 0.7))), span = 2 * Math.PI / arms * w, ST = 60;
+        const Rm = this.M / 2, w = Math.min(0.95, Math.max(0.05, num(P['holdKarSzélesség'], 0.5) + num(P['holdLélegzés'], 0.35) * Math.sin(t * 0.7))), span = 2 * Math.PI / arms * w, ST = 60, Rx = Math.hypot(cx, cy) * 1.05;
         for (let i = 0; i < arms; i++) {
           const a0 = 2 * Math.PI * i / arms + t * 0.5; x.beginPath();
-          for (let s = 0; s <= ST; s++) { const rr = R * 1.05 * s / ST, a = a0 + tw * rr / Rm; x.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
-          for (let s = ST; s >= 0; s--) { const rr = R * 1.05 * s / ST, a = a0 + span + tw * rr / Rm; x.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
+          for (let s = 0; s <= ST; s++) { const rr = Rx * s / ST, a = a0 + tw * rr / Rm; x.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
+          for (let s = ST; s >= 0; s--) { const rr = Rx * s / ST, a = a0 + span + tw * rr / Rm; x.lineTo(cx + rr * Math.cos(a), cy + rr * Math.sin(a)); }
           x.closePath(); x.fill();
         }
-        x.beginPath(); x.arc(cx, cy, Rm * 0.4 * (0.5 + 0.5 * Math.sin(t * 0.45)), 0, 2 * Math.PI); x.fill();
+        x.beginPath(); x.arc(cx, cy, Rm * num(P['holdKorong'], 0.35) * 1.15 * (0.5 + 0.5 * Math.sin(t * 0.45)), 0, 2 * Math.PI); x.fill();
       } else {
         const p = new Path2D();
         for (const h of this.holes) {
@@ -144,7 +174,7 @@
       this.cfg = {
         n1, n2, ...(() => { const one = z => z === 'véletlen' || z === 'másikkal azonos' ? pick(SZINEK) : z; let a = one(z1), b = one(z2); if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; return { szin1: a, szin2: b }; })(),
         wave: hb === 'színhullám' || (hb === 'váltakozó' && this.bgToggle),
-        s1: rnd(100, 118), s2: rnd(60, 115), off: rnd(15, 45) * Math.PI / 180, ph: Math.random() * Math.PI * 2
+        s1: P['méretVéletlen'] === false ? num(P['méret1'], 110) : rnd(100, 118), s2: P['méretVéletlen'] === false ? num(P['méret2'], 90) : rnd(60, 115), off: rnd(15, 45) * Math.PI / 180, ph: Math.random() * Math.PI * 2
       };
     }
     snapshot() {
@@ -184,8 +214,8 @@
       const st = this.host();
       if (st.mode === 'alt') { this.jump = true; return true; }
       if (st.mode === 'orv') { this.snapshot(); this.newPair(this.P || {}); this.pairLeft = this.fast ? 3.5 : +((this.P || {})['párosításMp'] ?? 10); return true; }
-      if (st.mode === 'spir') { this.spir.shuffle(); return true; }
-      if (st.mode === 'hold') { this.hold.shuffle(); return true; }
+      if (st.mode === 'spir') { this.spir.shuffle(this.P || {}); return true; }
+      if (st.mode === 'hold') { this.hold.shuffle(this.P || {}); return true; }
       return false;
     }
     render(dt) {
@@ -201,7 +231,7 @@
       this.drawnOnce = true;
     }
     renderOrv(dt, W, H) {
-      const cv = this.cv, c = this.cfg, F = this.fast, waveSec = F ? 1.5 : 3, soft = F ? 0.15 : 0.3;
+      const cv = this.cv, c = this.cfg, F = this.fast, PQ = this.P || {}, waveSec = F ? 1.5 : num(PQ['örvényHullámMp'], 3), soft = F ? 0.15 : num(PQ['örvényLágyság'], 30) / 100, late = num(PQ['késésMp'], 0.2);
       for (const key of ['bg', 'ob']) { const w = this[key]; w.el += dt; if (w.el >= waveSec) { const nw = this.newWave(0, w); nw.el = w.el - waveSec; if (key === 'bg') this.bgPrev = w; this[key] = nw; } }
       const kOf = (w, el) => Math.min(1, (el ?? w.el) / waveSec) * (1 + soft) - soft / 2;
       const x = cv.getContext('2d'), cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy);
@@ -209,14 +239,14 @@
       if (c.wave) this.paint(x, this.bg, cx, cy, RR, kOf(this.bg), soft); else { x.fillStyle = COL.fekete; x.fillRect(0, 0, W, H); }
       const g1 = this.grays[c.n1], g2 = this.grays[c.n2];
       if (g1 && g2) {
-        this.th += dt * Math.PI * 2 / (F ? 6 : 15); this.th2 -= dt * Math.PI * 2 / (F ? 4 : 10); this.lt += dt;
-        const colOf = sz => { if (COL[sz]) return { flat: COL[sz] }; if (c.wave) { const e = this.bg.el - 0.2; return e >= 0 || !this.bgPrev ? { w: this.bg, k: kOf(this.bg, Math.max(0, e)) } : { w: this.bgPrev, k: kOf(this.bgPrev, waveSec + e) }; } return { w: this.ob, k: kOf(this.ob) }; };
+        this.th += dt * Math.PI * 2 / (F ? 6 : Math.max(2, num(PQ['fordulat1Mp'], 15))); this.th2 -= dt * Math.PI * 2 / (F ? 4 : Math.max(2, num(PQ['fordulat2Mp'], 10))); this.lt += dt;
+        const colOf = sz => { if (COL[sz]) return { flat: COL[sz] }; if (c.wave) { const e = this.bg.el - late; return e >= 0 || !this.bgPrev ? { w: this.bg, k: kOf(this.bg, Math.max(0, e)) } : { w: this.bgPrev, k: kOf(this.bgPrev, waveSec + e) }; } return { w: this.ob, k: kOf(this.ob) }; };
         const col1 = colOf(c.szin1), col2 = colOf(c.szin2);
         const PP = this.P || {}, amp = (+(PP['lélegzés'] ?? 60)) / 100, per = Math.max(1, +(PP['lélegzésMp'] ?? 12));
         const br = ph => 1 - amp * (0.5 - 0.5 * Math.cos(this.lt * Math.PI * 2 / (F ? Math.min(5, per) : per) + ph));
         const M = Math.min(W, H);
         this.obj(x, 'oc', Math.round(M * c.s1 / 100 * br(c.ph)), this.th, col1, g1, cx, cy, RR, soft);
-        this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
+        if (String(PQ['örvényTárgyakSzáma'] ?? '2') !== '1') this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
       }
     }
     obj(x, key, D, ang, col, gray, cx, cy, RR, soft) {
