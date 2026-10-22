@@ -257,7 +257,7 @@
         const col1 = colOf(c.szin1), col2 = colOf(c.szin2);
         const PP = this.P || {}, amp = (+(PP['lélegzés'] ?? 60)) / 100, per = Math.max(1, +(PP['lélegzésMp'] ?? 12));
         const br = ph => 1 - amp * (0.5 - 0.5 * Math.cos(this.lt * Math.PI * 2 / (F ? Math.min(5, per) : per) + ph));
-        const M = Math.min(W, H);
+        const M = PQ['örvényKitöltés'] === 'kitöltés' ? Math.max(W, H) : Math.min(W, H);
         this.obj(x, 'oc', Math.round(M * c.s1 / 100 * br(c.ph)), this.th, col1, g1, cx, cy, RR, soft);
         if (String(PQ['örvényTárgyakSzáma'] ?? '2') !== '1') this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
       }
