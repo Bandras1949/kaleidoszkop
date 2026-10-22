@@ -127,7 +127,7 @@ class Component extends DCLogic {
     { const look = hk => hk in fix ? fix[hk] : hk in ov ? ov[hk] : pr && hk in pr ? pr[hk] : (p[hk] ?? this.DEFS[hk]);
       const um = this.normE(look('üzemmód'));
       if (o.paint === 'FEST') o.paint = { 'lyukfestés': 'hole', 'mintafestés': 'figure' }[look('festésVáltozat')] || 'auto';
-      o.fast = false; o.plKey = um === 'TÜKRÖS' ? 'Z' : um === 'VÁLTAKOZÓ' ? (this.altMir ? 'Z' : 'G') : 'G'; }
+      o.fast = false; o.plKey = 'V'; }
     this._p0 = p; this._ovv = this.ovv; this._p1 = o; return o;
   }
   raw(hk) { return hk in this.ov ? this.ov[hk] : (this.props[hk] ?? this.DEFS[hk]); }
@@ -454,7 +454,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-10-22c';
+  VER = 'v2026-10-22e';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
@@ -555,9 +555,9 @@ class Component extends DCLogic {
       { src: 'mintak/Cs-6.png', mode:'cut',cat:'flora',season:'nyar',own:true,name:'Cs-6',tile:430 },
       { src: 'mintak/Cs-1.png', mode:'cut',cat:'geo',key:'lin',own:true,name:'Cs-1',tile:380 },
       { src: 'mintak/H-01b.png', mode:'tone',ad:true,name:'H-01' },
-      { src: 'mintak/Cs-2.png', mode:'tone',cat:'festoi',own:true,name:'Cs-2',tile:520 },
+      { src: 'mintak/Cs-2.jpg', mode:'tone',cat:'festoi',own:true,name:'Cs-2',tile:520 },
       { src: 'mintak/Cs-3.png', mode:'tone',cat:'geo',own:true,name:'Cs-3',tile:720 },
-      { src: 'mintak/Cs-4.png', mode:'cut',cat:'organikus',key:'lin',own:true,name:'Cs-4',tile:600 }];
+      { src: 'mintak/Cs-4.jpg', mode:'cut',cat:'organikus',key:'lin',own:true,name:'Cs-4',tile:600 }];
   }
   loadImg() {
     if (this.imgs) return;
