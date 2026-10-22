@@ -309,14 +309,14 @@ class Component extends DCLogic {
         const cats = ['elegans1', 'elegans1sz', 'elegans2', 'elegans2sz', 'elegans3', 'elegans3sz', 'elegans4', 'elegans4sz', 'elegans5', 'elegans5sz', 'elegans6', 'elegans6sz', 'elegans7', 'elegans7sz', 'elegans8', 'elegans8sz', 'elegans9', 'elegans9sz'].map(n => mk(n, 2)), mice = ['eger1', 'eger1sz', 'eger2', 'eger2sz', 'eger3', 'eger3sz', 'eger4'].map(n => mk(n, 1.4));
         this.fallIm = { 'levél': ['level1', 'level2'].map(n => mk(n)), 'macska': cats, 'egér': mice }; }
       const base = (pp['sűrűség'] ?? 140) * Math.sqrt(w * h) / 900, sig = evOn ? kinds.join(',') + '|' + Math.round(base) : '';
-      if (this.fallSig !== sig) {
+      if (!this.flakes || this.fallSig !== sig) {
         this.fallSig = sig;
         const list = []; if (evOn) kinds.forEach(kd => { const n = Math.round(base * (isSpr(kd) ? 0.14 : 1) / kinds.length); for (let i = 0; i < n; i++) list.push(kd); });
         this.flakes = list.map(kd => { const r = 0.8 + Math.pow(Math.random(), 2.2) * 3.4; return { kd, k: Math.floor(Math.random() * 840), x: Math.random() * w, y: Math.random() * h, r, v: (kd === 'macska' || kd === 'egér' ? 0.6 : kd === 'levél' ? 0.8 : 1) * (14 + r * 15), ph: Math.random() * 6.3, d: 6 + Math.random() * 16 }; });
       }
       const dt = Math.min(0.06, (now - (this.wLast || now)) / 1000); this.wLast = now;
       x.shadowColor = 'rgba(40,55,80,.45)'; x.shadowBlur = 3;
-      for (const f of this.flakes) {
+      for (const f of (this.flakes || [])) {
         const fall = f.kd;
         f.y += f.v * dt; f.ph += dt * 0.9; const xx = f.x + Math.sin(f.ph) * f.d;
         if (f.y - f.r > h + 60) { f.y = -f.r - 60 - Math.random() * 30; f.x = Math.random() * w; }
@@ -454,7 +454,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-10-22e';
+  VER = 'v2026-10-22f';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
