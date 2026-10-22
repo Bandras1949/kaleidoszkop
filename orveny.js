@@ -1,13 +1,14 @@
 (function () {
-  const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f' };
+  const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f', arany: '#e8b923', bronz: '#c27a3a', ezüst: '#dfe3e8' };
   const PAL = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d'];
-  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-10', 'X-11', 'X-12', 'X-13', 'X-14-a', 'X-14-b', 'X-15', 'X-16', 'X-17'];
+  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-06', 'X-07', 'X-10', 'X-11', 'X-12', 'X-13', 'X-14-a', 'X-14-b', 'X-15', 'X-16', 'X-17', 'X-18', 'X-19', 'X-17-3D', 'X-10-3D', 'X-14-a-3D', 'X-20', 'X-20-3D'];
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
+  const FEM = ['ezüst', 'arany', 'bronz'], is3D = n => /3D$/.test(n) || n === 'X-18' || n === 'X-19';
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
 
-  const SEQ = ['orv', 'spir', 'mir', 'hold', 'hole', 'figure'], OV = ['orv', 'spir', 'hold'];
-  const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű'];
+  const SEQ = ['orv', 'spir', 'orv', 'hold', 'orv', 'mir'], OV = ['orv', 'spir', 'hold'];
+  const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű', 'szív', '8-as'];
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
   const HCYC = ['#00F0FF', '#F5E62A', '#FF2BD6', '#39FF14', '#FF7A00', '#F5F5F0'];
@@ -49,7 +50,7 @@
       const GAP = 285 / num(P['spirálGyűrűk'], 17), RINGS = Math.ceil(RR / GAP) + 1, DGAP = num(P['spirálTáv'], 24), d = num(P['spirálHossz'], 16) / 2 * S * sc, DW = Math.max(0.01, num(P['spirálVastagság'], 4) * S * sc);
       const mk = W + 'x' + H + '/' + GAP + '/' + DGAP; if (this.mk !== mk) { this.mk = mk; this.mem = null; }
       x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
-      const NB = 12, paths = Array.from({ length: NB }, () => new Path2D()), stroke = FORM === 'pálcika' || FORM === 'H-betű';
+      const NB = 12, paths = Array.from({ length: NB }, () => new Path2D()), stroke = FORM === 'pálcika' || FORM === 'H-betű' || FORM === '8-as';
       const mem = [], old = this.mem; let idx = 0;
       for (let i = 1; i <= RINGS; i++) {
         const rr = i * GAP + 5, n = Math.max(3, Math.floor(2 * Math.PI * rr / DGAP));
@@ -64,6 +65,8 @@
           if (FORM === 'korong') { p.moveTo(X + d * 0.6, Y); p.arc(X, Y, d * 0.6, 0, 2 * Math.PI); }
           else if (FORM === 'H-betű') { const e = d * 0.6; for (const [a1, b1, a2, b2] of [[-e, -e, e, -e], [-e, e, e, e], [0, -e, 0, e]]) { p.moveTo(...L(a1, b1)); p.lineTo(...L(a2, b2)); } }
           else if (FORM === 'pálcika') { p.moveTo(...L(-d, 0)); p.lineTo(...L(d, 0)); }
+          else if (FORM === '8-as') { const rr = d * 0.42; for (const cy0 of [-rr, rr]) { const [a1, b1] = L(cy0 + rr, 0); p.moveTo(a1, b1); for (let q = 1; q <= 16; q++) { const u = q / 16 * 2 * Math.PI; p.lineTo(...L(cy0 + rr * Math.cos(u), rr * Math.sin(u))); } } }
+          else if (FORM === 'szív') { const s = d * 0.06; for (let q = 0; q <= 24; q++) { const u = q / 24 * 2 * Math.PI, hx = 16 * Math.pow(Math.sin(u), 3), hy = 13 * Math.cos(u) - 5 * Math.cos(2 * u) - 2 * Math.cos(3 * u) - Math.cos(4 * u); p[q ? 'lineTo' : 'moveTo'](...L(-(hy + 2.5) * s, hx * s)); } p.closePath(); }
           else {
             const pts = FORM === 'négyzet' ? [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, w]) => [u * d * 0.55, w * d * 0.55])
               : FORM === 'háromszög' ? [0, 1, 2].map(q => [d * 0.75 * Math.cos(q * 2.0944), d * 0.75 * Math.sin(q * 2.0944)])
@@ -73,7 +76,7 @@
         }
       }
       this.mem = LAZY > 0 ? mem : null;
-      x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = FORM === 'H-betű' ? DW * 0.6 : DW;
+      x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = FORM === 'H-betű' || FORM === '8-as' ? DW * 0.6 : DW;
       paths.forEach((p, q) => { const c = 'rgb(' + mix(base, wh, q / (NB - 1)).map(Math.round) + ')'; if (stroke) { x.strokeStyle = c; x.stroke(p); } else { x.fillStyle = c; x.fill(p); } });
     }
   }
@@ -136,7 +139,7 @@
     constructor(canvas, host) {
       this.cv = canvas; this.host = host;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
-      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=24'; });
+      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=28'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
       this.bg = this.newWave(0); this.ob = this.newWave(3); this.ob.el = 2;
       this.pairLeft = 0; this.bgToggle = false; this.ai = null; this.kind = null; this.spir = new Spir(); this.hold = new Hold();
@@ -172,7 +175,7 @@
       const z1 = P['tárgy1Szín'] ?? 'véletlen', z2 = P['tárgy2Szín'] ?? 'másikkal azonos', hb = P['örvényHáttér'] ?? 'váltakozó';
       this.bgToggle = !this.bgToggle;
       this.cfg = {
-        n1, n2, ...(() => { const one = z => z === 'véletlen' || z === 'másikkal azonos' ? pick(SZINEK) : z; let a = one(z1), b = one(z2); if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; return { szin1: a, szin2: b }; })(),
+        n1, n2, ...(() => { const one = (z, n) => z === 'véletlen' || z === 'másikkal azonos' ? (is3D(n) && Math.random() < 0.75 ? pick(FEM) : pick(SZINEK)) : z; let a = one(z1, n1), b = one(z2, n2); if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; return { szin1: a, szin2: b }; })(),
         wave: hb === 'színhullám' || (hb === 'váltakozó' && this.bgToggle),
         s1: P['méretVéletlen'] === false ? num(P['méret1'], 110) : rnd(100, 118), s2: P['méretVéletlen'] === false ? num(P['méret2'], 90) : rnd(60, 115), off: rnd(15, 45) * Math.PI / 180, ph: Math.random() * Math.PI * 2
       };
@@ -189,6 +192,9 @@
       this.fast = P['tempó'] === 'pörgős';
       const pairSec = this.fast ? 3.5 : +(P['párosításMp'] ?? 10);
       if (!this.cfg) { this.newPair(P); this.pairLeft = pairSec; }
+      const pk = ['tárgy1', 'tárgy2', 'tárgy1Szín', 'tárgy2Szín', 'örvényHáttér', 'örvényTárgyakSzáma', 'méretVéletlen', 'méret1', 'méret2'].map(k => P[k]).join('|');
+      if (this.pk != null && pk !== this.pk) { if (this.kind === 'orv' && this.op > 0) this.snapshot(); this.newPair(P); this.pairLeft = pairSec; }
+      this.pk = pk;
       this.pairLeft -= dt;
       let kind = null;
       if (st.mode === 'alt') {
@@ -210,6 +216,13 @@
       this.render(dt);
     }
     segDur(s, pairSec) { const F = this.fast; return s === 'orv' ? pairSec * (3 + Math.floor(Math.random() * 2)) : s === 'spir' || s === 'hold' ? (F ? 15 : 30) : (F ? 10 : 30); }
+    variant() {
+      const k = this.kind; if (!k || this.op < 0.5) return false;
+      if (k === 'orv') { this.snapshot(); this.newPair(this.P || {}); this.pairLeft = this.fast ? 3.5 : +((this.P || {})['párosításMp'] ?? 10); }
+      else if (k === 'spir') this.spir.shuffle(this.P || {}); else this.hold.shuffle(this.P || {});
+      if (this.ai != null) this.segLeft = Math.max(this.segLeft, 8);
+      return true;
+    }
     next() {
       const st = this.host();
       if (st.mode === 'alt') { this.jump = true; return true; }
@@ -239,7 +252,7 @@
       if (c.wave) this.paint(x, this.bg, cx, cy, RR, kOf(this.bg), soft); else { x.fillStyle = COL.fekete; x.fillRect(0, 0, W, H); }
       const g1 = this.grays[c.n1], g2 = this.grays[c.n2];
       if (g1 && g2) {
-        this.th += dt * Math.PI * 2 / (F ? 6 : Math.max(2, num(PQ['fordulat1Mp'], 15))); this.th2 -= dt * Math.PI * 2 / (F ? 4 : Math.max(2, num(PQ['fordulat2Mp'], 10))); this.lt += dt;
+        this.th += dt * Math.PI * 2 / (F ? 6 : Math.max(1, num(PQ['fordulat1Mp'], 15))); this.th2 -= dt * Math.PI * 2 / (F ? 4 : Math.max(1, num(PQ['fordulat2Mp'], 10))); this.lt += dt;
         const colOf = sz => { if (COL[sz]) return { flat: COL[sz] }; if (c.wave) { const e = this.bg.el - late; return e >= 0 || !this.bgPrev ? { w: this.bg, k: kOf(this.bg, Math.max(0, e)) } : { w: this.bgPrev, k: kOf(this.bgPrev, waveSec + e) }; } return { w: this.ob, k: kOf(this.ob) }; };
         const col1 = colOf(c.szin1), col2 = colOf(c.szin2);
         const PP = this.P || {}, amp = (+(PP['lélegzés'] ?? 60)) / 100, per = Math.max(1, +(PP['lélegzésMp'] ?? 12));
