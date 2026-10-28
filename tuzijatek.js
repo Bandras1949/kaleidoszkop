@@ -13,12 +13,14 @@ class TuziCore {
   VORD = ['D', 'G', 'E', 'C'];
   virag() { return this.alk() === 'Virág'; }
   pickVP() { const ks = Object.keys(this.VPAL).filter(k => k !== this.vpk); this.vpk = ks[Math.floor(Math.random() * ks.length)]; this.C = this.VPAL[this.vpk][3]; }
-  ALS = ['Virág', 'Gömb', 'Szív', 'Felirat']; alR = null;
+  ALS = ['Virág', 'Gömb', 'Szív', 'Felirat', 'Csápos']; alR = null;
   alk() { const a = this.props['alakzat'] ?? 'Virág'; if (a !== 'Véletlen') return a; if (!this.alR) this.alR = this.ALS[0]; return this.alR; }
   pickAl() { this.alR = this.ALS[(this.ALS.indexOf(this.alR) + 1) % this.ALS.length]; }
   kep() { return this.alk() === 'Kép'; }
   buildKep(n) {
-    if (!this.KI) { const im = new Image(); im.onload = () => { this.KIok = true; if (this.F === 'kép') { const cy = this.cycle; this.init(); this.cycle = cy; } }; im.src = 'mintak/kep-macska.png'; this.KI = im; }
+    const kk = this.kk || 'macska'; this.KC = this.KC || {}; if (this._kcur !== kk) { if (this._kcur) this.KC[this._kcur] = { KI: this.KI, KIok: this.KIok, KP: this.KP }; const c0 = this.KC[kk] || {}; this.KI = c0.KI; this.KIok = c0.KIok; this.KP = c0.KP; this._kcur = kk; }
+    if (!this.KI) { const im = new Image(); im.onload = () => { if (this._kcur === kk) this.KIok = true; else (this.KC[kk] = this.KC[kk] || {}).KIok = true; if (this.F === 'kép' && this._kcur === kk) { const cy = this.cycle; this._kre = true; this.init(); this.cycle = cy; } }; im.src = kk === 'farkas' ? 'mintak/kep-farkas.jpg' : 'mintak/kep-macska.png'; this.KI = im; }
+    if (this.KIok && !this.KP && kk === 'farkas') this.KP = this.buildWolf();
     const tg = this.tg, T = this.trgb = new Array(n), Q = this.ty8 = new Uint8Array(n), R = Math.random;
     if (!this.KIok) { for (let i = 0; i < n; i++) { const a = R() * 6.283, r = Math.sqrt(R()) * 0.9; tg[0][i] = Math.cos(a) * r; tg[1][i] = Math.sin(a) * r; tg[2][i] = 0; T[i] = [255, 210, 110]; Q[i] = 0; } return; }
     if (!this.KP) { const im = this.KI, W = im.naturalWidth, H = im.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const id = g.getImageData(0, 0, W, H), d = id.data;
@@ -37,6 +39,37 @@ class TuziCore {
     const P = this.KP.P;
     for (let i = 0; i < n; i++) { const p = P[Math.floor(R() * P.length)]; tg[0][i] = p[0]; tg[1][i] = p[1]; tg[2][i] = 0; T[i] = R() < 0.1 ? [255, 248, 225] : [p[2], p[3], p[4]]; Q[i] = 0; }
   }
+  buildCsapos(n) {
+    const tg = this.tg, T = this.trgb = new Array(n), Q = this.ty8 = new Uint8Array(n), R = Math.random, N = 28, PH = (1 + Math.sqrt(5)) / 2, bone = false, h0 = R() * 360;
+    const nz = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }, cr = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const hsl = (h, S, L) => { h = ((h % 360) + 360) % 360; S /= 100; L /= 100; const k = m => (m + h / 30) % 12, a = S * Math.min(L, 1 - L), f = m => L - a * Math.max(-1, Math.min(k(m) - 3, 9 - k(m), 1)); return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)]; };
+    this.CT = []; this.csBone = bone;
+    for (let j = 0; j < N; j++) { const y = 1 - j / (N - 1) * 2, r = Math.sqrt(1 - y * y), th = 2 * Math.PI * j / PH, d = [Math.cos(th) * r, y, Math.sin(th) * r], p = nz(cr(d, Math.abs(d[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0])), q = cr(d, p); this.CT.push({ d, p, q, ph: j * 0.73, fr: 0.8 + R() * 0.4, h: h0 + (y + 1) * 55 }); }
+    const J = this.cpJ = new Int16Array(n), U = this.cpU = new Float32Array(n), A = this.cpA = new Float32Array(n), E = this.cpE = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { const rr = i / n; tg[0][i] = 0; tg[1][i] = 0; tg[2][i] = 0; Q[i] = 14;
+      if (rr < 0.16) { const y = 1 - 2 * (i + 0.5) / (n * 0.16), r = Math.sqrt(Math.max(0, 1 - y * y)), a = i * 2.39996; E[i * 3] = Math.cos(a) * r; E[i * 3 + 1] = y; E[i * 3 + 2] = Math.sin(a) * r; J[i] = -1; const sh = 0.86 + R() * 0.14; T[i] = bone ? [245, 235, 215].map(x => Math.round(x * sh)) : hsl(h0 + 30 + y * 25, 95, 30 + 14 * sh); }
+      else if (rr < 0.3) { const e = nz([R() - 0.5, R() - 0.5, R() - 0.5]); E[i * 3] = e[0]; E[i * 3 + 1] = e[1]; E[i * 3 + 2] = e[2]; J[i] = i % N; U[i] = 2; A[i] = 0.25 + R() * 0.75; T[i] = bone ? [255, 250, 240] : hsl(this.CT[i % N].h + 40, 100, 78); }
+      else { const j = i % N, u = Math.pow(R(), 1.25); J[i] = j; U[i] = u; A[i] = R() * 6.283; const C = this.CT[j]; T[i] = bone ? [240 - 38 * u, 228 - 40 * u, 205 - 42 * u].map(Math.round) : hsl(C.h + u * 35, 100, 52 + 16 * u); } }
+  }
+  csPt(i, tt, out) { const w = tt * 1.2, j = this.cpJ[i], E = this.cpE, S = 0.68;
+    if (j < 0) { const pr = 0.3 * (1 + Math.sin(w * 1.5) * 0.06); out[0] = E[i * 3] * pr * (1 + Math.sin(w) * 0.03) * S; out[1] = E[i * 3 + 1] * pr * (1 + Math.cos(w * 1.2) * 0.04) * S; out[2] = E[i * 3 + 2] * pr * S; return; }
+    const C = this.CT[j], bud = this.cpU[i] > 1.5, u = bud ? 1 : this.cpU[i], dist = 0.26 + u * 1.38, off = Math.sin(w * C.fr * 2 + u * 5 + C.ph) * 0.2 * Math.pow(u, 1.5);
+    let x = C.d[0] * dist + C.p[0] * off, y = C.d[1] * dist + C.p[1] * off, z = C.d[2] * dist + C.p[2] * off;
+    if (bud) { const rb = Math.cbrt(this.cpA[i] || 1); x += E[i * 3] * 0.06 * rb; y += E[i * 3 + 1] * 0.09 * rb; z += E[i * 3 + 2] * 0.06 * rb; }
+    else { const th = 0.074 + (0.006 - 0.074) * u, ca = Math.cos(this.cpA[i]) * th, sa = Math.sin(this.cpA[i]) * th; x += C.p[0] * ca + C.q[0] * sa; y += C.p[1] * ca + C.q[1] * sa; z += C.p[2] * ca + C.q[2] * sa; }
+    out[0] = x * S; out[1] = y * S; out[2] = z * S; }
+  buildWolf() { const im = this.KI, W = im.naturalWidth, H = im.naturalHeight, sc = W / 1024, S = H / 2.6, mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+    const poly = [[212,455],[218,398],[242,398],[252,432],[300,427],[360,419],[405,417],[428,430],[456,446],[466,480],[446,515],[400,528],[330,523],[260,511],[222,501]], path = g => { g.beginPath(); poly.forEach(([x, y], q) => q ? g.lineTo(x * sc, y * sc) : g.moveTo(x * sc, y * sc)); g.closePath(); };
+    const eb = [518, 255, 578, 300].map(v => v * sc), body = mk(), jaw = mk(), eye = mk(), g = body.getContext('2d'), jg = jaw.getContext('2d'), eg = eye.getContext('2d');
+    g.drawImage(im, 0, 0); jg.save(); path(jg); jg.clip(); jg.drawImage(im, 0, 0); jg.restore(); eg.drawImage(im, eb[0], eb[1], eb[2] - eb[0], eb[3] - eb[1], eb[0], eb[1], eb[2] - eb[0], eb[3] - eb[1]);
+    const ed = k => { const q = k >> 2, x = q % W, y = (q / W) | 0; return Math.max(0, Math.min(1, (W - x) / (0.16 * W))) * Math.max(0, Math.min(1, (H - y) / (0.16 * H))); }, wm = (D, k) => Math.max(0, Math.min(1, (D[k] - D[k + 2] + 5) / 40)), al = (D, k) => { const L = D[k] * 0.3 + D[k + 1] * 0.59 + D[k + 2] * 0.11, a = Math.max(0, Math.min(1, (L - 55) / 70)) * wm(D, k) * ed(k); D[k + 3] = Math.round(D[k + 3] * a); };
+    const id = g.getImageData(0, 0, W, H), d = id.data, P = [];
+    for (let y = 0; y < H; y += 2) for (let x = (y / 2) % 2; x < W; x += 2) { const k = (y * W + x) * 4, L = d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11; if (L > 85 && d[k] > d[k + 2] + 20 && Math.random() < ed(k)) P.push([(x - W / 2) / S, (y - H / 2) / S, d[k], d[k + 1], d[k + 2]]); }
+    for (let k = 0; k < d.length; k += 4) al(d, k); g.putImageData(id, 0, 0);
+    [jaw, eye].forEach((c, ci) => { const x = c.getContext('2d'), q = x.getImageData(0, 0, W, H), D = q.data; for (let k = 0; k < D.length; k += 4) if (D[k + 3]) { if (ci) al(D, k); else D[k + 3] = Math.round(D[k + 3] * wm(D, k)); } x.putImageData(q, 0, 0); });
+   
+    const ST = []; for (let q = 0; q < 1600; q++) { const p = P[Math.floor(Math.random() * P.length)], r = Math.hypot(p[0], p[1]) || 0.01, sp = 1.2 + Math.random() * 3; ST.push([p[0], p[1], p[0] / r * sp + (Math.random() - 0.5) * 0.6, p[1] / r * sp + (Math.random() - 0.5) * 0.6, p[2], p[3], p[4], Math.random() * 6.283, 0.6 + Math.random() * 1.2]); }
+    return { P, body, jaw, eye, wolf: true, hw: W / S, hh: H / S, hx: (458 * sc - W / 2) / S, hy: (470 * sc - H / 2) / S, ecy: 0, ST }; }
   felirat() { return this.alk() === 'Felirat'; }
   buildFelirat(n) {
     const txt = String(this.props['felirat'] ?? 'incredible') || 'incredible', FN = '"DM Sans"';
@@ -56,14 +89,14 @@ class TuziCore {
       tg[0][i] = p[0]; tg[1][i] = p[1]; tg[2][i] = (R() - 0.5) * 0.03; T[i] = R() < 0.12 ? [255, 250, 235] : GOLD[i % 4]; Q[i] = 0; }
   }
   logo() { return this.alk() === 'Logó'; }
-  applyAlak() { if (this.kep()) { this.F = 'kép'; this.C = 'arany'; return; } if (this.felirat()) { this.F = 'felirat'; this.C = 'arany'; return; } if (this.virag()) { this.F = 'virág'; this.vt = 'D'; this.pickVP(); return; } if (this.logo()) { this.F = 'logó'; this.C = 'arany'; return; } if (this.fenyo()) { this.F = 'fenyő'; this.fv = Math.random() < 0.5 ? 'gömb' : 'cukor'; } else { const al = this.alk(); this.FS = al === 'Szív' ? ['szív', '3 szív'] : al === 'Gömb' ? ['gömb'] : ['gömb', 'szív', '3 szív']; this.fi = 0; this.F = this.FS[0]; } }
-  nextLook() { if (this.felirat() || this.kep()) return; if (this.virag()) { this.vt = this.VORD[(this.VORD.indexOf(this.vt) + 1) % 4]; this.pickVP(); return; } if (this.logo()) return; if (this.fenyo()) { this.bi = (this.bi + 1 + Math.floor(Math.random() * (this.BALLS.length - 1))) % this.BALLS.length; this.fv = Math.random() < 0.5 ? 'gömb' : 'cukor'; return; } this.fi = (this.fi + 1) % this.FS.length; this.F = this.FS[this.fi]; const o = this.CS.filter(c => c !== this.C); this.C = o[Math.floor(Math.random() * o.length)]; }
+  applyAlak() { if (this.alk() === 'Csápos') { this.F = 'csápos'; this.C = 'arany'; return; } if (this.kep()) { this.F = 'kép'; this.C = 'arany'; return; } if (this.felirat()) { this.F = 'felirat'; this.C = 'arany'; return; } if (this.virag()) { this.F = 'virág'; this.vt = 'D'; this.pickVP(); return; } if (this.logo()) { this.F = 'logó'; this.C = 'arany'; return; } if (this.fenyo()) { this.F = 'fenyő'; this.fv = Math.random() < 0.5 ? 'gömb' : 'cukor'; } else { const al = this.alk(); this.FS = al === 'Szív' ? ['szív', '3 szív'] : al === 'Gömb' ? ['gömb'] : ['gömb', 'szív', '3 szív']; this.fi = 0; this.F = this.FS[0]; } }
+  nextLook() { if (this.felirat() || this.kep() || this.F === 'csápos') return; if (this.virag()) { this.vt = this.VORD[(this.VORD.indexOf(this.vt) + 1) % 4]; this.pickVP(); return; } if (this.logo()) return; if (this.fenyo()) { this.bi = (this.bi + 1 + Math.floor(Math.random() * (this.BALLS.length - 1))) % this.BALLS.length; this.fv = Math.random() < 0.5 ? 'gömb' : 'cukor'; return; } this.fi = (this.fi + 1) % this.FS.length; this.F = this.FS[this.fi]; const o = this.CS.filter(c => c !== this.C); this.C = o[Math.floor(Math.random() * o.length)]; }
   componentDidMount() { this.t0 = performance.now(); this.last = this.t0; this.applyAlak(); this.init(); this.raf = requestAnimationFrame(this.loop); }
   componentWillUnmount() { cancelAnimationFrame(this.raf); }
-  componentDidUpdate(pp) { if (pp['mód'] !== this.props['mód']) this.rf = undefined; if (pp['pontszám'] !== this.props['pontszám'] || pp['mód'] !== this.props['mód'] || pp['alakzat'] !== this.props['alakzat'] || pp['felirat'] !== this.props['felirat'] || pp['robbanásStílus'] !== this.props['robbanásStílus'] || pp['rakéták'] !== this.props['rakéták']) { this.applyAlak(); this.init(); this.t0 = performance.now(); this.cs = 0; } }
+  componentDidUpdate(pp) { if (pp['mód'] !== this.props['mód']) this.rf = undefined; if (pp['pontszám'] !== this.props['pontszám'] || pp['mód'] !== this.props['mód'] || pp['alakzat'] !== this.props['alakzat'] || pp['felirat'] !== this.props['felirat'] || pp['robbanásStílus'] !== this.props['robbanásStílus'] || pp['rakéták'] !== this.props['rakéták'] || pp['csápSzín'] !== this.props['csápSzín'] || pp['kép'] !== this.props['kép']) { this.applyAlak(); this.init(); this.t0 = performance.now(); this.cs = 0; } }
   init() {
     this.pickEx();
-    const n0 = Math.max(200, Math.min(2500, +(this.props['pontszám'] ?? 900))), n1 = this.F === 'logó' ? Math.max(n0, 7500) : this.F === 'virág' ? Math.max(n0, 3200) : this.F === 'felirat' ? Math.max(n0, 9000) : this.F === 'kép' ? Math.max(n0, 7000) : n0; const n = this.exS === 'pálma' ? Math.max(n1, 7000) : n1;
+    const n0 = Math.max(200, Math.min(2500, +(this.props['pontszám'] ?? 900))), n1 = this.F === 'logó' ? Math.max(n0, 7500) : this.F === 'virág' ? Math.max(n0, 3200) : this.F === 'felirat' ? Math.max(n0, 9000) : this.F === 'kép' ? Math.max(n0, 7000) : this.F === 'csápos' ? Math.max(n0, 5200) : n0; const n = this.exS === 'pálma' ? Math.max(n1, 7000) : this.exS === 'virágfénygömb' ? Math.max(n1, 3600) : n1;
     const A = k => new Float32Array(n);
     this.n = n; this.p = [A(), A(), A()]; this.v = [A(), A(), A()]; this.s = [A(), A(), A()]; this.tg = [A(), A(), A()]; this.hue = A();
     const ga = Math.PI * (3 - Math.sqrt(5));
@@ -74,6 +107,7 @@ class TuziCore {
     else if (FM === 'virág') this.buildVirag(n);
     else if (FM === 'felirat') this.buildFelirat(n);
     else if (FM === 'kép') this.buildKep(n);
+    else if (FM === 'csápos') this.buildCsapos(n);
     else if (FM !== 'gömb') {
       const hx = u => 16 * Math.pow(Math.sin(u), 3) / 15, hy = u => (-2.5 - (13 * Math.cos(u) - 5 * Math.cos(2 * u) - 2 * Math.cos(3 * u) - Math.cos(4 * u))) / 15;
       for (let i = 0; i < n; i++) { const u = Math.random() * Math.PI * 2, rim = i % 10 < 3, s = rim ? 1 : Math.sqrt(Math.random()), d = rim ? (Math.random() * 2 - 1) * 0.12 : (Math.random() < 0.5 ? -1 : 1) * 0.36 * Math.sqrt(1 - s * s);
@@ -193,14 +227,15 @@ class TuziCore {
       return 'rgba(' + Math.round(S[0] + (T[0] - S[0]) * cf) + ',' + Math.round(S[1] + (T[1] - S[1]) * cf) + ',' + Math.round(S[2] + (T[2] - S[2]) * cf) + ',' + al + ')'; }
     const hh = this.hue[i] + (this.holoHue(this.tg[1][i], tt, i) - this.hue[i]) * cf; return 'hsla(' + hh + ',100%,68%,' + al + ')';
   }
-  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'] };
+  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma', 'virágfénygömb']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'], 'farkas': ['bazsarózsa', 'krizantém'] };
   loadPalm() { if (this.PALMI) return; const im = new Image(); im.onload = () => { const W = im.naturalWidth, H = im.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, W, H).data, P = [], S = H / 2.5, ox = W * 0.5, oy = H * 0.405;
       for (let y = 0; y < H; y += 2) for (let x = 0; x < W; x += 2) { const k = (y * W + x) * 4, L = d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11; if (L > 110) P.push([(x - ox) / S, (y - oy) / S]); }
       this.PALMP = P; }; im.src = 'mintak/kiserlet-palma.png'; this.PALMI = im; }
   pickEx() { this.loadPalm(); const R = Math.random, st = ({ 'pálmalevél': 'banánlevél' })[this.props['robbanásStílus']] ?? this.props['robbanásStílus'] ?? 'véletlen', rk = this.props['rakéták'] ?? 'véletlen';
     if (st === 'véletlen') { const o = this.EXS.filter(x => x !== this.exS); this.exS = o[Math.floor(R() * o.length)]; } else this.exS = st;
     let nr = rk === 'véletlen' ? 1 + Math.floor(R() * 3) : Math.max(1, Math.min(3, +rk || 1)); this.exHue = null;
-    if (this.F === 'kép') { const ks = this.KEPS['macska']; if (st === 'véletlen') { this._ki = ((this._ki ?? -1) + 1) % ks.length; this.exS = ks[this._ki]; } if (rk === 'véletlen') nr = 2; this.exHue = [44, 205]; }
+    if (this.F === 'kép') { const kp = this.props['kép'] ?? 'véletlen'; if (this._kre) this._kre = false; else this.kk = kp === 'farkas' || kp === 'macska' ? kp : this.kk === 'macska' ? 'farkas' : 'macska'; }
+    if (this.F === 'kép') { const ks = this.KEPS[this.kk || 'macska']; if (st === 'véletlen') { this._ki = ((this._ki ?? -1) + 1) % ks.length; this.exS = ks[this._ki]; } if (rk === 'véletlen') nr = 2; this.exHue = this.kk === 'farkas' ? [40, 18] : [44, 205]; }
     this.exC = nr === 1 ? [[0, -0.32]] : nr === 2 ? [[-1.2, -0.15 - R() * 0.2], [1.2, -0.4 - R() * 0.2]] : [[-1.45, -0.05 - R() * 0.15], [0, -0.6 - R() * 0.12], [1.45, -0.1 - R() * 0.15]];
     if (this.exS === 'pálma') this.exC = this.exC.map(([x, y]) => [x, y + 0.3]);
     this.exG = { 'pálma': 0.12, 'banánlevél': 0.12, 'szomorúfűz': 1.7, 'folyondár': 0.1 }[this.exS] ?? 1; this.exD = { 'szomorúfűz': 0.12, 'gyűrű': 0.3 }[this.exS] ?? 0.25; }
@@ -247,8 +282,67 @@ class TuziCore {
       const l = Math.hypot(x, y, z) || 1;
       if (nC > 1 && !SH[ci]) { const spc = nC === 2 ? 2.4 : 1.45, tg0 = { 'bazsarózsa': 0.48, 'krizantém': 0.48, 'gyűrű': 0.56 }[S], bm = { 'bazsarózsa': 2.76, 'krizantém': 2.875, 'gyűrű': 2.47 }[S]; sp = tg0 ? sp / bm * (tg0 * spc / 0.72) : sp * 0.5; }
       p[0][i] = c[0]; p[2][i] = 0; p[1][i] = c[1]; v[0][i] = x / l * sp; v[1][i] = y / l * sp; v[2][i] = z / l * sp; this.hue[i] = S === 'pálma' ? 38 + R() * 10 : this.exHue ? this.exHue[ci % this.exHue.length] + (R() - 0.5) * 12 : S === 'szomorúfűz' || S === 'pálma' || S === 'folyondár' ? 38 + R() * 14 : f(); if (ctr) this.bb[i] = 1 + (CH[ci] | 0) % 3; }
+    if (S === 'virágfénygömb') { const ga = Math.PI * (3 - Math.sqrt(5)), K = 2, sc = nC === 1 ? 1 : nC === 2 ? 0.72 : 0.56; this.vfR = 0.78 * sc; this.vfV = 0.4; this.VFS = [];
+      C.forEach((c, ci) => { const a0 = (R() - 0.5) * 1.2, h0 = f(); let h1 = f(); for (let q = 0; q < 6 && Math.abs(h1 - h0) < 40; q++) h1 = f(); for (let q = 0; q < K; q++) { const so = c[0] > 0.3 ? 1 : c[0] < -0.3 ? -1 : 0, an = so ? (q ? Math.PI / 2 + so * 0.2 : -Math.PI / 2 - so * 0.2) + (R() - 0.5) * 0.25 : a0 + q * Math.PI, zz = (R() - 0.5) * 0.4, dx = Math.cos(an), dy = so ? Math.sin(an) - 0.15 : Math.sin(an) * 0.7 - 0.25, l = Math.hypot(dx, dy, zz); this.VFS.push({ c, ci, d: [dx / l, dy / l, zz / l], hue: q ? h1 : h0, k: [5, 6, 8][Math.floor(R() * 3)], ph: R() * 6.283, sz: (0.42 + R() * 0.08) * (0.55 + 0.45 * sc), P: [0, 0, 0] }); } });
+      const NS = this.VFS.length; this.vfJ = new Uint16Array(this.n); this.vfD = new Float32Array(this.n * 3); this.vfA = new Float32Array(this.n); this.vfS = new Float32Array(this.n);
+      for (let i = 0; i < this.n; i++) { const ci = i % nC, j = ci * K + Math.floor(R() * K), d = this.VFS[j].d; let x = d[0] + (R() - 0.5) * 2.2, y = d[1] + (R() - 0.5) * 2.2, z = d[2] + (R() - 0.5) * 2.2; const l = Math.hypot(x, y, z) || 1;
+        this.vfJ[i] = j; this.vfD[i * 3] = x / l; this.vfD[i * 3 + 1] = y / l; this.vfD[i * 3 + 2] = z / l; this.vfA[i] = R() * 6.283; this.vfS[i] = R() < 0.14 ? R() * 0.18 : 0.72 + R() * 0.28; this.hue[i] = this.VFS[j].hue; this.bb[i] = 0; } }
     this.rgb0 = Array.from(this.hue, hh => { const l = S === 'pálma' ? 0.49 : 0.65, c = (1 - Math.abs(2 * l - 1)), x = c * (1 - Math.abs((hh / 60) % 2 - 1)), m = l - c / 2, k = Math.floor(hh / 60) % 6, r = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][k]; return r.map(q => Math.round((q + m) * 255)); });
     this.exploded = true;
+  }
+  mus() { const ac = this.props['_ac'] || this._ownAc, url = this.props['_zene'], want = !!(ac && url && this.props['_hang'] && this.on !== false), M = this._mu;
+    if (!want) { if (M && M.src) this.musStop(); return; } if (ac.state !== 'running') return;
+    if (!M || M.ac !== ac || M.url !== url) { if (M && M.src) this.musStop(); const N = this._mu = { ac, url, buf: null, src: null }; fetch(url).then(r => r.arrayBuffer()).then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no))).then(b => { N.buf = this.musLevel(ac, b); }).catch(() => {}); return; }
+    if (M.buf && !M.src) { const g = ac.createGain(), t = ac.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(this.props['_zeneHang'] ?? 0.1, t + 1.5); g.connect(ac.destination); const s = ac.createBufferSource(); s.buffer = M.buf; s.loop = true; s.loopStart = 0; s.loopEnd = Math.max(1, M.buf.duration - 5); s.connect(g); s.start(); M.src = s; M.g = g; }
+    if (M.g) { const v = this.props['_zeneHang'] ?? 0.1; if (Math.abs((M.v ?? v) - v) > 1e-3) M.g.gain.setTargetAtTime(v, ac.currentTime, 0.2); M.v = v; } }
+  musLevel(ac, b) { const sr = b.sampleRate, L = b.length, C = b.numberOfChannels, W = Math.floor(sr * 0.25), nW = Math.ceil(L / W), rm = new Float32Array(nW), ch = []; for (let c = 0; c < C; c++) ch.push(b.getChannelData(c));
+    for (let w = 0; w < nW; w++) { let a = 0, k = 0; for (let i = w * W; i < Math.min(L, (w + 1) * W); i += 3) { for (let c = 0; c < C; c++) a += ch[c][i] * ch[c][i]; k += C; } rm[w] = Math.sqrt(a / Math.max(1, k)); }
+    const sm = new Float32Array(nW), R = 6; for (let w = 0; w < nW; w++) { let a = 0, k = 0; for (let j = Math.max(0, w - R); j <= Math.min(nW - 1, w + R); j++) { a += rm[j]; k++; } sm[w] = a / k; }
+    const srt = Array.from(sm).sort((x, y) => x - y), tg = srt[Math.floor(nW * 0.6)] || 0.1, gn = Array.from(sm, v => Math.max(0.4, Math.min(4, tg / Math.max(1e-4, v))));
+    const o = ac.createBuffer(C, L, sr); for (let c = 0; c < C; c++) { const d = ch[c], od = o.getChannelData(c); for (let i = 0; i < L; i++) { const f = i / W - 0.5, w0 = Math.max(0, Math.min(nW - 1, Math.floor(f))), w1 = Math.min(nW - 1, w0 + 1), k = Math.max(0, Math.min(1, f - w0)); od[i] = Math.max(-1, Math.min(1, d[i] * (gn[w0] + (gn[w1] - gn[w0]) * k))); } }
+    return o; }
+  musStop() { const M = this._mu; if (!M || !M.src) return; const t = M.ac.currentTime; try { M.g.gain.setTargetAtTime(0.0001, t, 0.25); M.src.stop(t + 1.2); } catch (e) {} M.src = null; M.g = null; }
+  sfxOut() { const ac = this.props['_ac'] || this._ownAc; if (!ac || !this.props['_hang'] || ac.state !== 'running') return null;
+    if (this._sAc !== ac) { this._sAc = ac; const o = ac.createGain(); o.gain.value = 2.2; const cp = ac.createDynamicsCompressor(); cp.threshold.value = -4; cp.knee.value = 4; cp.ratio.value = 8; cp.attack.value = 0.002; cp.release.value = 0.15; o.connect(cp); cp.connect(ac.destination); this._sO = o;
+      const L = ac.sampleRate * 2, b = ac.createBuffer(1, L, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < L; i++) d[i] = Math.random() * 2 - 1; this._nz = b; }
+    return ac; }
+  sNode(ac, x) { const o = this._sO; if (!ac.createStereoPanner) return o; const p = ac.createStereoPanner(); p.pan.value = Math.max(-0.8, Math.min(0.8, x * 0.7)); p.connect(o); return p; }
+  sNoise(ac, t, dur, type, f0, f1, q, vol, x, att) { const src = ac.createBufferSource(); src.buffer = this._nz; src.loop = true; const f = ac.createBiquadFilter(); f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, t); if (f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + (att || 0.004)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); src.connect(f); f.connect(g); g.connect(this.sNode(ac, x)); src.start(t, Math.random() * 1.5); src.stop(t + dur + 0.05); }
+  sTone(ac, t, dur, f0, f1, vol, x, type) { const o = ac.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur); const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(this.sNode(ac, x)); o.start(t); o.stop(t + dur + 0.05); }
+  sBoom(ac, t, x, big) { const k = big ? 2.2 : 1, p = 0.85 + Math.random() * 0.3;
+    this.sNoise(ac, t, 0.05, 'highpass', 1800, 1800, 0.7, 0.9 * k, x, 0.002);
+    this.sTone(ac, t, 0.5 * k, 95 * p, 32, 1.0 * k, x);
+    this.sNoise(ac, t, 1.6 * k, 'lowpass', 900 * p, 90, 0.8, 0.95 * k, x, 0.006);
+    this.sNoise(ac, t + 0.05, 2.4 * k, 'bandpass', 600, 200, 0.5, 0.25 * k, -x, 0.2);
+    if (big) { this.sNoise(ac, t, 0.9, 'bandpass', 320, 110, 1, 2.2, x, 0.003); this.sTone(ac, t, 0.8, 200, 50, 1.1, x, 'triangle'); this.sNoise(ac, t + 0.09, 0.6, 'bandpass', 520, 170, 1, 1.4, -x * 0.5, 0.004); this.sNoise(ac, t + 0.22, 1.2, 'bandpass', 380, 120, 0.9, 1.1, x * 0.5, 0.005); this.sTone(ac, t + 0.22, 0.7, 150, 45, 0.8, -x * 0.4, 'triangle'); this.sNoise(ac, t + 0.45, 2.0, 'lowpass', 700, 120, 0.7, 0.9, 0, 0.02); } }
+  sCrk(ac, t, x, v) { const f = 1800 + Math.random() * 5000; this.sNoise(ac, t, 0.008 + Math.random() * 0.03, 'highpass', f, f, 1.2, v * 2.6, x, 0.0008); if (Math.random() < 0.3) this.sNoise(ac, t, 0.04 + Math.random() * 0.05, 'bandpass', 900 + Math.random() * 900, 400, 1.5, v * 1.8, x, 0.001); }
+  sfx(t, XE, bxg, dt) { const ac = this.sfxOut(); if (!ac) return; const now = ac.currentTime + 0.02, EC = this.exC || [[0, -0.32]], st = this._sf || (this._sf = {});
+    if (t < (st.pt ?? 1e9) - 0.5 || t < 0.05 && !st.L) { this._sf = { L: false, X: false, B: false, pt: t }; } const S = this._sf; S.pt = t;
+    if (!S.L && t < 0.5) { S.L = true; EC.forEach((c, q) => { const d = q * 0.07, x = c[0]; this.sTone(ac, now + d, 1.05, 700 + q * 180, 2300 + q * 300, 0.12, x, 'triangle'); this.sNoise(ac, now + d, 1.1, 'bandpass', 900, 4200, 2.5, 0.3, x, 0.3); }); }
+    if (!S.X && t >= 1.1) { S.X = true; EC.forEach((c, q) => this.sBoom(ac, now + q * 0.06, c[0], false)); }
+    const te = t - 1.1, vf = this.exS === 'virágfénygömb', act = t < XE && (vf ? te > 2.3 : te > 1.3);
+    if (act) { const rate = (vf ? 180 : 260) * EC.length, nn = Math.min(30, Math.floor(rate * dt + Math.random())); for (let q = 0; q < nn; q++) { const c = EC[Math.floor(Math.random() * EC.length)]; this.sCrk(ac, now + Math.random() * dt, c[0] + (Math.random() - 0.5) * 0.8, 0.4 + Math.random() * 0.6); } }
+    if (t >= XE && bxg <= 0 && !(this.F === 'kép' && (this._tkN ?? 0) > 6.75)) { const nn = Math.min(20, Math.floor(110 * dt + Math.random())); for (let q = 0; q < nn; q++) this.sCrk(ac, now + Math.random() * dt, (Math.random() - 0.5) * 1.4, 0.3 + Math.random() * 0.5); }
+    if (!S.B && bxg > 0) { S.B = true; this.sBoom(ac, now, 0, true); if (this.F === 'kép') this.sBoom(ac, now + 0.03, 0, true); this.sNoise(ac, now + 0.1, 3.2, 'bandpass', 6500, 3000, 0.8, 0.35, 0, 0.3); }
+    if (bxg > 0.15 && bxg < 2.4) { const nn = Math.min(30, Math.floor(320 * Math.max(0, 1 - bxg / 2.4) * dt + Math.random())); for (let q = 0; q < nn; q++) this.sCrk(ac, now + Math.random() * dt, (Math.random() - 0.5) * 1.6, 0.4 + Math.random() * 0.6); } }
+  fitEx(W, H, R) { const EC = this.exC || [[0, -0.32]], d = Math.min(0.97, this.exD ?? 0.25), Fd = (1 - Math.pow(d, 1.6)) / -Math.log(d), gy = 0.55 * (this.exG ?? 1) * 1.6 * Fd * 0.5, xm = W / 2 / R * 0.82, ym = H / 2 / R * 0.78, n = this.n, p = this.p, v = this.v, sc = EC.map(() => 1), ci = new Uint8Array(n);
+    for (let i = 0; i < n; i++) { const b = i % EC.length; ci[i] = b; const c = EC[b], dx = v[0][i] * Fd, dy = v[1][i] * Fd;
+      if (dx > 1e-4) sc[b] = Math.min(sc[b], (xm - c[0]) / dx); else if (dx < -1e-4) sc[b] = Math.min(sc[b], (-xm - c[0]) / dx); if (dy > 1e-4) sc[b] = Math.min(sc[b], (ym - gy - c[1]) / dy); else if (dy < -1e-4) sc[b] = Math.min(sc[b], (-ym - c[1]) / dy); }
+    for (let i = 0; i < n; i++) { const k = Math.max(0.25, sc[ci[i]]); if (k < 1) { v[0][i] *= k; v[1][i] *= k; v[2][i] *= k; } } }
+  drawVFG(g, u, D, prjW, dpr, tt) {
+    const S = this.VFS, p = this.p, n = this.n, r1 = this.vfR, sh = 1 - Math.pow(1 - Math.min(1, u / 2.1), 3), w = Math.max(0, u - 2.7), wN = Math.min(1, w / Math.max(1, D - 2.7)), mv = Math.pow(wN, 1.2) * this.vfV * 3.6;
+    let m = Math.min(1, w / 0.7); m = m * m * (3 - 2 * m); let bl = Math.min(1, w / 1.0); bl = 1 - Math.pow(1 - bl, 2);
+    const al0 = 1 - 0.2 * wN, rr = r1 * sh + mv, gy = 0.35 * wN * wN, grow = 1 + 0.35 * mv;
+    const o0 = prjW(0, 0, 0), ru = prjW(1, 0, 0)[0] - o0[0], bx = o0[0] / ru * 0.94, by = o0[1] / ru * 0.94;
+    for (const q of S) { q.P[0] = q.c[0] + q.d[0] * rr; q.P[1] = q.c[1] + q.d[1] * rr + gy; q.P[2] = q.d[2] * Math.min(rr, 1.2) * 0.4; const kq = 3 / (3 + q.P[2]), m = q.sz * grow * 1.15, lx = bx / kq - m, ly = by / kq - m; q.ex = lx * Math.tanh(q.P[0] / lx) - q.P[0]; q.ey = ly * Math.tanh(q.P[1] / ly) - q.P[1]; q.P[0] += q.ex; q.P[1] += q.ey; }
+    if (bl > 0 && al0 > 0) for (const q of S) { const [sx, sy, k] = prjW(q.P[0], q.P[1], q.P[2]), R0 = prjW(q.P[0] + q.sz * grow * 1.5, q.P[1], q.P[2])[0] - sx; if (R0 < 1) continue;
+      const gr = g.createRadialGradient(sx, sy, 0, sx, sy, R0); gr.addColorStop(0, 'hsla(' + q.hue + ',100%,70%,' + 0.22 * bl * al0 + ')'); gr.addColorStop(1, 'hsla(' + q.hue + ',100%,55%,0)'); g.fillStyle = gr; g.beginPath(); g.arc(sx, sy, R0, 0, 7); g.fill(); }
+    for (let i = 0; i < n; i++) { const q = S[this.vfJ[i]], dx = this.vfD[i * 3] + (q.d[0] - this.vfD[i * 3]) * m, dy = this.vfD[i * 3 + 1] + (q.d[1] - this.vfD[i * 3 + 1]) * m, dz = this.vfD[i * 3 + 2] + (q.d[2] - this.vfD[i * 3 + 2]) * m;
+      const th = this.vfA[i], fr = this.vfS[i], pe = q.sz * grow * bl * fr * (0.3 + 0.7 * Math.pow(Math.abs(Math.cos(q.k / 2 * (th + q.ph))), 0.6));
+      const X = q.c[0] + dx * rr + Math.cos(th) * pe + q.ex * (0.4 + 0.6 * m), Y = q.c[1] + dy * rr + gy + Math.sin(th) * pe + q.ey * (0.4 + 0.6 * m), Z = dz * Math.min(rr, 1.2) * 0.4; p[0][i] = X; p[1][i] = Y; p[2][i] = Z;
+      const [sx, sy, k] = prjW(X, Y, Z), tw = Math.random() < 0.1 ? 1.6 : 1, ctr = fr < 0.2 && bl > 0, a = Math.min(1, al0 * (w > 0 ? 0.9 : 0.55 + 0.45 * Math.sin(tt * 7 + i))) * tw; if (a <= 0.01) continue;
+      g.fillStyle = ctr ? 'rgba(255,245,215,' + a + ')' : 'hsla(' + q.hue + ',100%,' + (w > 0 ? 58 + 20 * fr * (1 - bl * 0.3) : 74) + '%,' + a + ')'; const z = Math.max(1, (ctr ? 2.8 : 2.2 + 0.4 * bl) * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
   }
   restart = () => { this.init(); this.t0 = performance.now(); this.cs = 0; };
   loop = now => {
@@ -259,14 +353,15 @@ class TuziCore {
     const g = cv.getContext('2d'), dt = Math.min(0.05, (now - this.last) / 1000); this.last = now;
     const md = 'tűzijáték', rnd = false; if (rnd && this.rf === undefined) this.rf = true;
     const fire = rnd ? this.rf : md !== 'hologram';
-    const XE = 1.1 + Math.max(2, +(this.props['robbanásMp'] ?? 5)) + (this.exS === 'pálma' ? 1.8 : 0), CE = XE + 2.8, T = CE + 8 + (this.F === 'virág' ? 6.8 : this.F === 'kép' ? 3 : 3.2), tt = (now - this.t0) / 1000, t = fire ? tt - (this.cs || 0) : CE + 1 + tt;
+    const XE = 1.1 + Math.max(2, +(this.props['robbanásMp'] ?? 5)) + (this.exS === 'pálma' ? 1.8 : this.exS === 'virágfénygömb' ? 1.5 : 0), CE = XE + 2.8, T = CE + 8 + (this.F === 'virág' ? 6.8 : this.F === 'kép' ? 3 : 3.2), tt = (now - this.t0) / 1000, t = fire ? tt - (this.cs || 0) : CE + 1 + tt;
     const bS = this.F === 'virág' ? CE + 8 + 3.57 : T - 3.2, bxg = fire && this.F !== 'kép' && t > bS ? t - bS : 0;
+    this._tkN = t - CE; this.mus(); if (fire) this.sfx(t, XE, bxg || (this.F === 'kép' && t - CE > 7.2 ? t - CE - 7.2 : 0), dt);
     const fzS = CE + 8, vz = this.F === 'virág' && fire, ttf = vz && t > fzS ? tt - (t - fzS) : tt; let fz = vz ? Math.max(0, Math.min(1, (t - fzS) / 1.2)) : 0; fz = fz * fz * (3 - 2 * fz); this._ttf = ttf;
     let lnk = vz ? Math.max(0, Math.min(0.74, (t - fzS) / 2.8)) : 0; this._vf = 1 - Math.max(0, Math.min(1, (lnk - 0.74) / 0.26)); this._lnk = lnk; { let q = (this.F === 'felirat' || this.F === 'kép') && fire ? Math.max(0, Math.min(1, (t - CE - 0.3) / (this.F === 'kép' ? 1.8 : 1.5))) : 0; this._flt = q * q * (3 - 2 * q) * (bxg > 0 ? Math.max(0, 1 - bxg / 0.35) : 1); this._tk = t - CE; }
-    const trl = Math.max(0, Math.min(100, +(this.props['csíkHossz'] ?? 90))) / 100, trA = (this.exS === 'bazsarózsa' || this.exS === 'virágfej' || this.exS === 'folyondár' || this.exS === 'banánlevél') && fire && t > 1.1 && t < XE ? 0.38 : this.exS === 'pálma' && fire && t > 1.1 && t < XE ? 0.22 : this.exS === 'gyűrű' && fire && t > 1.1 && t < XE ? 0.35 : this.exS === 'szomorúfűz' && fire && t > 1.1 && t < XE ? 0.09 : 0.2 - 0.17 * trl;
+    const trl = Math.max(0, Math.min(100, +(this.props['csíkHossz'] ?? 90))) / 100, trA = this.exS === 'virágfénygömb' && fire && t > 1.1 && t < XE ? 0.3 : (this.exS === 'bazsarózsa' || this.exS === 'virágfej' || this.exS === 'folyondár' || this.exS === 'banánlevél') && fire && t > 1.1 && t < XE ? 0.38 : this.exS === 'pálma' && fire && t > 1.1 && t < XE ? 0.22 : this.exS === 'gyűrű' && fire && t > 1.1 && t < XE ? 0.35 : this.exS === 'szomorúfűz' && fire && t > 1.1 && t < XE ? 0.09 : 0.2 - 0.17 * trl;
     if (rnd && tt > (this.rf ? T : 18)) { this.rf = this.rf ? Math.random() < 0.55 : true; if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.t0 = now; this.cycle = 1; this.cs = 0; }
     else if (!rnd && fire && t > T) { if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.cs = tt; }
-    const rot = Math.PI * 2 / Math.max(3, +(this.props['forgásMp'] ?? 29)), heart = this.F === 'szív' || this.F === '3 szív', sway = this.F !== 'gömb', a = this.F === 'virág' ? ttf * rot : sway ? Math.sin(tt * rot) * (heart ? 0.85 : this.F === 'felirat' || this.F === 'kép' ? 0 : 0.45) : tt * rot, ca = Math.cos(a), sa = Math.sin(a), b = this.F === 'virág' ? 0.62 + 0.95 * fz : sway ? 0.1 : 0.38, cb = Math.cos(b), sb = Math.sin(b);
+    const rot = Math.PI * 2 / Math.max(3, +(this.props['forgásMp'] ?? 29)), heart = this.F === 'szív' || this.F === '3 szív', sway = this.F !== 'gömb' && this.F !== 'csápos', a = this.F === 'virág' ? ttf * rot : sway ? Math.sin(tt * rot) * (heart ? 0.85 : this.F === 'felirat' || this.F === 'kép' ? 0 : 0.45) : tt * rot, ca = Math.cos(a), sa = Math.sin(a), b = this.F === 'virág' ? 0.62 + 0.95 * fz : sway ? 0.1 : 0.38, cb = Math.cos(b), sb = Math.sin(b);
     const cx = W / 2, cy = H / 2, R = this.F === 'felirat' ? Math.min(Math.min(W, H) * 0.3, W * 0.44 / (2.5 * 1.25)) : Math.min(W, H) * 0.3;
     const prj = (x, y, z) => { const x1 = x * ca + z * sa, z1 = -x * sa + z * ca, y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb; const k = 3 / (3 + z2); return [cx + x1 * R * k, cy + y1 * R * k, k, z2]; };
     const prjW = (x, y, z) => { const k = 3 / (3 + z); return [cx + x * R * k, cy + y * R * k, k, z]; };
@@ -285,18 +380,30 @@ class TuziCore {
       g.fillStyle = 'hsla(45,100%,75%,0.95)'; g.beginPath(); g.arc(sx, sy, 3 * dpr, 0, 7); g.fill();
       for (let j = 0; j < 6; j++) { g.fillStyle = 'hsla(35,100%,60%,' + (0.5 - j * 0.07) + ')'; g.fillRect(sx - dpr + (Math.random() - 0.5) * 3 * dpr, sy + j * 6 * dpr + Math.random() * 6 * dpr, 2 * dpr, 2 * dpr); } }
     } else if (fire && t < XE) {
-      if (!this.exploded) this.explode();
-      const dr = Math.pow(this.exD ?? 0.25, dt), gv = 0.55 * (this.exG ?? 1);
-      for (let i = 0; i < n; i++) {
+      if (!this.exploded) { this.explode(); if (this.exS !== 'virágfénygömb') this.fitEx(W, H, R); }
+      const te = t - 1.1, tH = 1.4, hold = te > tH, hk = hold ? Math.min(1, (te - tH) / 0.4) : 0, pa = 0;
+      const dr = Math.pow(this.exD ?? 0.25, dt) * (1 - hk) + Math.pow(0.03, dt) * hk, gv = 0.55 * (this.exG ?? 1) * (1 - hk), xm = W / 2 / R * 0.85, ym = H / 2 / R * 0.8, cl = 1 - Math.pow(0.15, dt), EC = this.exC || [[0, -0.32]];
+      if (!hold || !this.crk) this.crk = [];
+      if (!hold) this.hs = null; else if (!this.hs) { const S = new Float32Array(n * 2), CI = new Uint8Array(n), D = new Float32Array(n * 2), M = EC.map(() => 1);
+        for (let i = 0; i < n; i++) { const x = p[0][i], y = p[1][i]; S[i * 2] = x; S[i * 2 + 1] = y; const b = i % EC.length; CI[i] = b; const c = EC[b];
+          if (Math.abs(x - c[0]) > 1e-3) M[b] = Math.max(M[b], Math.abs(x) / xm > 1 ? Math.abs(x - c[0]) / Math.max(0.05, xm - Math.sign(x) * c[0]) : 0); if (Math.abs(y - c[1]) > 1e-3) M[b] = Math.max(M[b], Math.abs(y) / ym > 1 ? Math.abs(y - c[1]) / Math.max(0.05, ym - Math.sign(y) * c[1]) : 0);
+          const an = Math.random() * 6.283, sp = 0.015 + Math.random() * 0.045; D[i * 2] = Math.cos(an) * sp; D[i * 2 + 1] = Math.sin(an) * sp; v[0][i] = 0; v[1][i] = 0; v[2][i] = 0; }
+        this.hs = { S, CI, D, sc: M.map(() => 1) }; }
+      const HS = this.hs, hd = hold ? te - tH : 0, hk2 = hk * hk * (3 - 2 * hk);
+      if (this.exS === 'virágfénygömb') this.drawVFG(g, t - 1.1, XE - 1.1, prjW, dpr, tt); else for (let i = 0; i < n; i++) {
         v[0][i] *= dr; v[1][i] = v[1][i] * dr + gv * dt; if (this.wv) { v[0][i] += this.wv[0][i] * dt; v[1][i] += this.wv[1][i] * dt; } if (this.cu && this.cu[i]) { const w = this.cu[i] * dt, cw = Math.cos(w), sw = Math.sin(w), vx = v[0][i]; v[0][i] = vx * cw - v[1][i] * sw; v[1][i] = vx * sw + v[1][i] * cw; } v[2][i] *= dr; p[0][i] += v[0][i] * dt; p[1][i] += v[1][i] * dt; p[2][i] += v[2][i] * dt;
-        const [sx, sy, k] = prjW(p[0][i], p[1][i], p[2][i]), life = Math.max(0, 1 - (t - 1.1) / (XE - 1.1 + 1)), tw = Math.random() < 0.12 ? 1.6 : 1;
+        let ecx = EC[0][0], ecy = EC[0][1];
+        if (hold) { const b = HS.CI[i], c = EC[b], f = 1 + (HS.sc[b] - 1) * hk2; ecx = c[0]; ecy = c[1]; p[0][i] = c[0] + (HS.S[i * 2] - c[0]) * f + HS.D[i * 2] * hd; p[1][i] = c[1] + (HS.S[i * 2 + 1] - c[1]) * f + HS.D[i * 2 + 1] * hd;
+          if (t < XE - 0.3 && Math.random() < 0.006) this.crk.push({ x: p[0][i], y: p[1][i], vx: (p[0][i] - ecx) * (0.6 + Math.random()) + (Math.random() - 0.5) * 0.5, vy: (p[1][i] - ecy) * (0.6 + Math.random()) + (Math.random() - 0.5) * 0.5, l: 0.35 + Math.random() * 0.3 }); }
+        const [sx, sy, k] = prjW(p[0][i] + (p[0][i] - ecx) * pa, p[1][i] + (p[1][i] - ecy) * pa, p[2][i]), life = Math.max(0, 1 - (t - 1.1) / (XE - 1.1 + 1)), tw = hold ? (Math.random() < 0.2 ? 2 : 0.85) : Math.random() < 0.12 ? 1.6 : 1;
         if (this.bb && this.bb[i]) { g.fillStyle = ['', 'rgba(255,105,180,', 'rgba(255,225,40,', 'rgba(255,255,255,'][this.bb[i]] + Math.min(1, 0.55 + life) * tw + ')'; const z = Math.max(1.2, 2.6 * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
         else if ((heart || this.trgb) && this.exS !== 'pálma') { const cf = Math.max(0, Math.min(1, (t - 1.1) / (XE - 1.1) * 1.7 - 0.7)) * 0.6, z = 6 * k * dpr; g.fillStyle = this.colAt(i, cf, tt, Math.min(1, 0.35 + life) * tw); if (heart) { g.setTransform(z, 0, 0, z, sx, sy); g.fill(this.HP); g.setTransform(1, 0, 0, 1, 0, 0); } else { const zz = Math.max(1, 2.4 * k * dpr); g.fillRect(sx - zz / 2, sy - zz / 2, zz, zz); } }
         else { const wl = this.exS === 'szomorúfűz'; g.fillStyle = 'hsla(' + this.hue[i] + ',100%,' + (wl ? 48 + 10 * life : this.exS === 'pálma' ? 46 + 6 * life : this.exS === 'folyondár' ? 52 + 8 * life : 62 + 20 * life) + '%,' + Math.min(1, 0.35 + life) * tw * (wl ? 0.4 : this.exS === 'pálma' ? 0.2 : this.exS === 'banánlevél' || this.exS === 'folyondár' ? 0.45 : 1) + ')'; const z = Math.max(1, 2.2 * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
       }
+      if (this.crk.length) { const cr = this.crk; let w = 0; for (const c of cr) { c.l -= dt; if (c.l <= 0) continue; c.vy += 0.4 * dt; c.x += c.vx * dt; c.y += c.vy * dt; const [sx, sy, k] = prjW(c.x, c.y, 0), z = Math.max(1, 1.8 * k * dpr); g.fillStyle = 'rgba(255,240,200,' + Math.min(1, c.l * 2.5) + ')'; g.fillRect(sx - z / 2, sy - z / 2, z, z); cr[w++] = c; } cr.length = w; }
     } else {
       const br = this.F === 'gömb' ? 1 + 0.12 * Math.sin(tt * 2 * Math.PI / 5) : 1;
-      if (this.F === 'logó' || this.F === 'virág' || this.F === 'felirat') g.globalCompositeOperation = 'source-over';
+      if (this.F === 'logó' || this.F === 'virág' || this.F === 'felirat' || (this.F === 'csápos' && this.csBone)) g.globalCompositeOperation = 'source-over';
       let ck = 1; const kk = fire && t < CE ? (t - XE) / 2.8 : 1, pg = this.exS === 'pálma' && fire && t < CE, cfC = pg ? Math.pow(Math.max(0, Math.min(1, (kk - 0.8) / 0.2)), 1.5) : Math.min(1, 0.6 + 0.4 * Math.min(1, kk * 2.5)), pgA = pg ? 0.2 + 0.8 * Math.pow(Math.max(0, Math.min(1, (kk - 0.75) / 0.25)), 1.5) : 1;
       if (fire && t < CE) { if (!this.conv0) { for (let q = 0; q < 3; q++) s[q].set(p[q]); this.conv0 = true; } const k = (t - XE) / 2.8; ck = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
       const hu = this.holoHue(0, tt, 0);
@@ -313,6 +420,7 @@ class TuziCore {
         const ox = this.ox[i]; let tx = tg[0][i] - ox, ty = tg[1][i], tz = tg[2][i], sl = -1; const qq = this.ty8 ? this.ty8[i] : -1;
         if (this.ty8) { const q = this.ty8[i];
           if (q === 12 || q === 13) { let o = Math.max(0, Math.min(1, (t - CE - 0.2) / 3.5)); o = o * o * (3 - 2 * o); o *= 0.9 + 0.1 * Math.sin(this._ttf * 2 * Math.PI / 7); const P3 = this._p3 || (this._p3 = [0, 0, 0]); this.viragPt(i, o, tt, P3); tx = P3[0]; ty = P3[1]; tz = P3[2]; }
+          else if (q === 14) { const P3 = this._p3 || (this._p3 = [0, 0, 0]); this.csPt(i, tt, P3); tx = P3[0]; ty = P3[1]; tz = P3[2]; }
           else if (q === 8) { let m = Math.max(0, Math.min(1, (t - CE - 0.6) / 1.8)); m = m * m * (3 - 2 * m); tx = this.al[0][i] + (tx - this.al[0][i]) * m; ty = this.al[1][i] + (ty - this.al[1][i]) * m; tz = this.al[2][i] + (tz - this.al[2][i]) * m; }
           else if (q === 3) { const bx = this.cc[i], aa = tt * (bx > 0.5 ? -1.1 : 1.3), dx = tx - bx, dz = tz; tx = bx + dx * Math.cos(aa) + dz * Math.sin(aa); tz = -dx * Math.sin(aa) + dz * Math.cos(aa); }
           else if (q === 5 && ck >= 1) { const sdi = this.sd[i]; sl = (tt * 1.1 + sdi * 7) % 1; const an = sdi * 40, sp = 0.18 + (sdi * 13 % 1) * 0.32; tx += Math.cos(an) * sl * sp; ty += Math.sin(an) * sl * sp + sl * sl * 0.22; tz += Math.sin(an * 1.7) * sl * sp * 0.6; } }
@@ -338,9 +446,11 @@ class TuziCore {
         const bx = tk - 7.2, bo = bx > 0 ? Math.max(0, 1 - bx / 0.35) : 1;
         g.save(); g.globalCompositeOperation = 'source-over'; g.globalAlpha = this._flt * (bx > 0 ? bo : fade); if (g.globalAlpha > 0) g.drawImage(K.body, x0, y0, w, hh);
         let ea = Math.max(0, Math.min(1, (tk - 2.4) / 0.8)); ea = ea * ea * (3 - 2 * ea) * bo;
+        if (K.wolf && g.globalAlpha > 0) { const sn = Math.max(0, tk - 2.6), c0 = Math.max(0, Math.min(1, (sn - 0.3) / 0.7)), cy = c0 * c0 * (3 - 2 * c0), op = ea * (0.03 + 0.14 * cy), hx = p0[0] + K.hx * u, hy = p0[1] + K.hy * u;
+          if (ea > 0) { g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = ea * fade * (0.55 + 0.45 * Math.sin(tt * 3.1)); g.shadowColor = 'rgba(255,110,25,1)'; g.shadowBlur = 26 * dpr; g.drawImage(K.eye, x0, y0, w, hh); g.restore(); } }
         if (bx > 0) { g.globalCompositeOperation = 'lighter'; const e2 = Math.pow(bx, 1.35); for (const s2 of K.ST) { const sx = p0[0] + (s2[0] + s2[2] * e2) * u, sy = p0[1] + (s2[1] + s2[3] * e2) * u, tw2 = 0.65 + 0.35 * Math.sin(tt * 9 + s2[7]), z = s2[8] * dpr * (1 + bx * 0.5);
             if (sx < -20 || sy < -20 || sx > W + 20 || sy > H + 20) continue; g.globalAlpha = Math.min(1, 0.3 + bx * 2) * tw2; g.fillStyle = 'rgb(' + s2[4] + ',' + s2[5] + ',' + s2[6] + ')'; g.fillRect(sx - z * 1.6, sy - z * 0.3, z * 3.2, z * 0.6); g.fillRect(sx - z * 0.3, sy - z * 1.6, z * 0.6, z * 3.2); } g.globalCompositeOperation = 'source-over'; }
-        if (ea > 0) { const bt = tk - 5.2, bl = bt > 0 && bt < 0.45 ? 1 - Math.abs(Math.cos(bt / 0.45 * Math.PI)) * 0 - Math.sin(bt / 0.45 * Math.PI) : 1, sy = Math.max(0.04, bl), ey = p0[1] + K.ecy * u;
+        if (ea > 0 && !K.wolf) { const bt = tk - 5.2, bl = bt > 0 && bt < 0.45 ? 1 - Math.abs(Math.cos(bt / 0.45 * Math.PI)) * 0 - Math.sin(bt / 0.45 * Math.PI) : 1, sy = Math.max(0.04, bl), ey = p0[1] + K.ecy * u;
           g.globalAlpha = ea * fade; g.translate(0, ey); g.scale(1, sy); g.translate(0, -ey); g.shadowColor = 'rgba(80,170,255,' + 0.9 * ea + ')'; g.shadowBlur = 22 * dpr; g.drawImage(K.eye, x0, y0, w, hh); }
         g.restore(); }
       if (this.F === 'felirat' && this._flt > 0 && this.FTS) { const S = this.FTS, p0 = prjW(S.ax, S.ay * cb, S.ay * sb), p1 = prjW(S.ax + 1, S.ay * cb, S.ay * sb), ppu = p1[0] - p0[0], al2 = this._flt * fade;
@@ -385,8 +495,9 @@ class TuziCore {
 class Tuzijatek extends TuziCore {
   constructor(cv, gp) { super(); this.cvRef = { current: cv }; this._gp = gp; this._pp = null; this.on = false; }
   get props() { return (this._gp && this._gp()) || {}; }
-  start() { if (this.on) return; this.on = true; this._pp = Object.assign({}, this.props); this.componentDidMount(); }
-  stop() { if (!this.on) return; this.on = false; cancelAnimationFrame(this.raf); }
+  clr() { const c = this.cvRef.current; if (c && c.width) { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, c.width, c.height); } }
+  start() { if (this.on) return; this.on = true; this.clr(); this.cs = 0; this._sf = null; this._pp = Object.assign({}, this.props); this.componentDidMount(); }
+  stop() { if (!this.on) return; this.on = false; cancelAnimationFrame(this.raf); this.musStop(); this.clr(); }
   sync() { if (!this.on) return; const p = this.props, pp = this._pp || {}; if (Object.keys(p).some(k => p[k] !== pp[k])) { this.componentDidUpdate(pp); this._pp = Object.assign({}, p); } }
 }
 window.Tuzijatek = Tuzijatek;
