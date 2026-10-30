@@ -96,7 +96,7 @@ class TuziCore {
   componentDidUpdate(pp) { if (pp['mód'] !== this.props['mód']) this.rf = undefined; if (pp['pontszám'] !== this.props['pontszám'] || pp['mód'] !== this.props['mód'] || pp['alakzat'] !== this.props['alakzat'] || pp['felirat'] !== this.props['felirat'] || pp['robbanásStílus'] !== this.props['robbanásStílus'] || pp['rakéták'] !== this.props['rakéták'] || pp['csápSzín'] !== this.props['csápSzín'] || pp['kép'] !== this.props['kép']) { this.applyAlak(); this.init(); this.t0 = performance.now(); this.cs = 0; } }
   init() {
     this.pickEx();
-    const n0 = Math.max(200, Math.min(2500, +(this.props['pontszám'] ?? 900))), n1 = this.F === 'logó' ? Math.max(n0, 7500) : this.F === 'virág' ? Math.max(n0, 3200) : this.F === 'felirat' ? Math.max(n0, 9000) : this.F === 'kép' ? Math.max(n0, 7000) : this.F === 'csápos' ? Math.max(n0, 5200) : n0; const n = this.exS === 'pálma' ? Math.max(n1, 7000) : this.exS === 'virágfénygömb' ? Math.max(n1, 3600) : n1;
+    const n0 = Math.max(200, Math.min(2500, +(this.props['pontszám'] ?? 900))), n1 = this.F === 'logó' ? Math.max(n0, 7500) : this.F === 'virág' ? Math.max(n0, 8000) : this.F === 'felirat' ? Math.max(n0, 9000) : this.F === 'kép' ? Math.max(n0, 7000) : this.F === 'csápos' ? Math.max(n0, 5200) : n0; const n = this.exS === 'pálma' ? Math.max(n1, 7000) : this.exS === 'virágfénygömb' ? Math.max(n1, 3600) : n1;
     const A = k => new Float32Array(n);
     this.n = n; this.p = [A(), A(), A()]; this.v = [A(), A(), A()]; this.s = [A(), A(), A()]; this.tg = [A(), A(), A()]; this.hue = A();
     const ga = Math.PI * (3 - Math.sqrt(5));
@@ -121,19 +121,19 @@ class TuziCore {
     const NP = this.VSH[this.vt].NP, lerp = (a, b, k) => a.map((v, j) => Math.round(v + (b[j] - v) * k));
     for (let i = 0; i < n; i++) { const r = i / n;
       if (r < 0.08) { const a = R() * 6.283, rr = Math.sqrt(R()) * 0.09; VP[i * 4] = -1; VP[i * 4 + 1] = a; VP[i * 4 + 2] = rr; VP[i * 4 + 3] = R(); T[i] = R() < 0.5 ? [255, 205, 60] : [255, 240, 160]; Q[i] = 13; }
-      else { const TH = this.VSH[this.vt].TH, L = r < TH[0] ? 0 : r < TH[1] ? 1 : 2, j = Math.floor(R() * NP[L]), al = (j + (L % 2) * 0.5) / NP[L] * 6.283, rim = R() < 0.38, u = rim ? (R() < 0.3 ? 0.95 + R() * 0.05 : Math.pow(R(), 0.7)) : Math.pow(R(), 0.75), v = rim ? (R() < 0.5 ? -1 : 1) * (0.88 + R() * 0.12) : (R() * 2 - 1) * Math.sqrt(R()) * 0.85;
+      else { const TH = this.VSH[this.vt].TH, L = r < TH[0] ? 0 : r < TH[1] ? 1 : 2, j = Math.floor(R() * NP[L]), al = (j + (L % 2) * 0.5) / NP[L] * 6.283, rim = R() < 0.5, cap = rim && R() < 0.24, u = cap ? 0.9 + Math.sqrt(R()) * 0.1 : rim ? Math.pow(R(), 0.6) : Math.pow(R(), 0.75), v = cap ? (R() < 0.5 ? -1 : 1) * (0.9 + R() * 0.1) : rim ? (R() < 0.5 ? -1 : 1) * (0.88 + R() * 0.12) : (R() * 2 - 1) * Math.sqrt(R()) * 0.85;
         VP[i * 4] = L; VP[i * 4 + 1] = al; VP[i * 4 + 2] = u; VP[i * 4 + 3] = v;
         const c0 = lerp(ci, co, L / 2), c = lerp(c0, ct, Math.pow(u, 1.5) * 0.55), sh = (0.62 + 0.38 * u) * (1.08 - Math.abs(v) * 0.32) * (j % 2 ? 0.88 : 1.06); T[i] = c.map(x => Math.min(255, Math.round(x * sh))); Q[i] = 12; }
       tg[0][i] = 0; tg[1][i] = 0.2; tg[2][i] = 0; }
   }
   viragPt(i, open, tt, out) { const VP = this.vp, L = VP[i * 4], u = VP[i * 4 + 2]; let v = VP[i * 4 + 3]; const lk = this._lnk || 0;
-    if (lk > 0 && L >= 0) { let m = Math.min(1, lk / 0.6); m = m * m * (3 - 2 * m); let tv; if (Math.abs(v) >= 0.88) tv = Math.sign(v); else { const sn = Math.sin(Math.PI * u) * 1.1; tv = 0; let bd = Math.abs(v); for (const v0 of [-0.75, -0.45, 0.45, 0.75]) { const c = v0 * sn, d = Math.abs(v - c); if (d < bd) { bd = d; tv = c; } } } v += (tv - v) * m; }
+    if (lk > 0 && L >= 0 && u < 0.96) { let m = Math.min(1, lk / 0.6); m = m * m * (3 - 2 * m); let tv; if (Math.abs(v) >= 0.88) tv = Math.sign(v); else { const sn = Math.sin(Math.PI * u) * 1.1; tv = 0; let bd = Math.abs(v); for (const v0 of [-0.75, -0.45, 0.45, 0.75]) { const c = v0 * sn, d = Math.abs(v - c); if (d < bd) { bd = d; tv = c; } } } v += (tv - v) * m; }
     this.vpAt(L, VP[i * 4 + 1], u, v, open, tt, out); }
   vpAt(L, a, u, v, open, tt, out) {
     const Y0 = 0.1;
     if (L < 0) { const rr = u * 1.4, hh = 0.09 * (1 - u / 0.09) + 0.02 * Math.sin(tt * 3 + v * 20); out[0] = Math.cos(a) * rr; out[1] = Y0 - 0.06 - hh; out[2] = Math.sin(a) * rr; return; }
     const VS = this.VSH[this.vt], LP = VS.LP[L], W = VS.W[L], th0 = 1.45, th1 = VS.th1[L], th = th0 - (th0 - th1) * open, curl = -0.55 * open * (0.4 + L * 0.3) * VS.cu;
-    const ph = th + curl * u * 0.5, r0 = 0.05 + L * 0.03, rho = r0 + LP * u * Math.cos(ph), y = -LP * u * Math.sin(ph), w = (VS.pt ? Math.pow(Math.sin(Math.PI * Math.min(1, u * 0.97 + 0.03)), 0.85) : Math.sqrt(Math.sin(Math.PI * Math.min(1, u * 0.92 + 0.04)))) * W * LP * 0.68 * (0.35 + 0.65 * open), lat = v * w;
+    const ph = th + curl * u * 0.5, r0 = 0.05 + L * 0.03, rho = r0 + LP * u * Math.cos(ph), y = -LP * u * Math.sin(ph), w = (VS.pt ? Math.pow(Math.sin(Math.PI * Math.min(1, u * 0.97 + 0.03)), 0.7) : Math.sqrt(Math.sin(Math.PI * Math.min(1, u * 0.96 + 0.04)))) * W * LP * 0.68 * (0.35 + 0.65 * open), lat = v * w;
     const cup = v * v * w * 0.5 * (1 - u * 0.5) * (VS.cp ?? 1), rr2 = rho - cup * Math.cos(th) * 0.3;
     out[0] = rr2 * Math.cos(a) - lat * Math.sin(a); out[1] = Y0 + y - cup * Math.sin(th) * 0.6; out[2] = rr2 * Math.sin(a) + lat * Math.cos(a);
   }
@@ -222,21 +222,26 @@ class TuziCore {
     return (200 + ty * 90 + t * 35) % 360;
   }
   colAt(i, cf, tt, al) {
-    if (this.trgb) { const T = this.trgb[i], S = (this.rgb0 && this.rgb0[i]) || T; return 'rgba(' + Math.round(S[0] + (T[0] - S[0]) * cf) + ',' + Math.round(S[1] + (T[1] - S[1]) * cf) + ',' + Math.round(S[2] + (T[2] - S[2]) * cf) + ',' + al + ')'; }
+    if (this.trgb) { const T = this.trgb[i]; let S = (this.rgb0 && this.rgb0[i]) || T; if (this._csOn && this.exR2) { const c2 = this.exR2[i % this.exR2.length].rgb, a = this.exIn && this.exIn[i] ? 0 : this._csS, b = this._csF; S = S.map((v, k) => { const u = v + (c2[k] - v) * a; return u + (255 - u) * b; }); } return 'rgba(' + Math.round(S[0] + (T[0] - S[0]) * cf) + ',' + Math.round(S[1] + (T[1] - S[1]) * cf) + ',' + Math.round(S[2] + (T[2] - S[2]) * cf) + ',' + al + ')'; }
     if ((this.F) === '3 szív') { const T = [[230, 30, 45], [250, 250, 250], [25, 170, 75]][this.hj[i]], S = (this.rgb0 && this.rgb0[i]) || T;
       return 'rgba(' + Math.round(S[0] + (T[0] - S[0]) * cf) + ',' + Math.round(S[1] + (T[1] - S[1]) * cf) + ',' + Math.round(S[2] + (T[2] - S[2]) * cf) + ',' + al + ')'; }
     const hh = this.hue[i] + (this.holoHue(this.tg[1][i], tt, i) - this.hue[i]) * cf; return 'hsla(' + hh + ',100%,68%,' + al + ')';
   }
-  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma', 'virágfénygömb']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'], 'farkas': ['bazsarózsa', 'krizantém'] };
+  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma', 'virágfénygömb', 'sípolófűz']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'], 'farkas': ['bazsarózsa', 'krizantém'] };
   loadPalm() { if (this.PALMI) return; const im = new Image(); im.onload = () => { const W = im.naturalWidth, H = im.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, W, H).data, P = [], S = H / 2.5, ox = W * 0.5, oy = H * 0.405;
       for (let y = 0; y < H; y += 2) for (let x = 0; x < W; x += 2) { const k = (y * W + x) * 4, L = d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11; if (L > 110) P.push([(x - ox) / S, (y - oy) / S]); }
       this.PALMP = P; }; im.src = 'mintak/kiserlet-palma.png'; this.PALMI = im; }
   pickEx() { this.loadPalm(); const R = Math.random, st = ({ 'pálmalevél': 'banánlevél' })[this.props['robbanásStílus']] ?? this.props['robbanásStílus'] ?? 'véletlen', rk = this.props['rakéták'] ?? 'véletlen';
     if (st === 'véletlen') { const o = this.EXS.filter(x => x !== this.exS); this.exS = o[Math.floor(R() * o.length)]; } else this.exS = st;
-    let nr = rk === 'véletlen' ? 1 + Math.floor(R() * 3) : Math.max(1, Math.min(3, +rk || 1)); this.exHue = null;
+    this.exWh = this.exS === 'sípolófűz'; if (this.exWh) this.exS = 'szomorúfűz';
+    let nr = this.exWh ? 1 : rk === 'véletlen' ? 1 + Math.floor(R() * 3) : Math.max(1, Math.min(3, +rk || 1)); this.exHue = null;
     if (this.F === 'kép') { const kp = this.props['kép'] ?? 'véletlen'; if (this._kre) this._kre = false; else this.kk = kp === 'farkas' || kp === 'macska' ? kp : this.kk === 'macska' ? 'farkas' : 'macska'; }
     if (this.F === 'kép') { const ks = this.KEPS[this.kk || 'macska']; if (st === 'véletlen') { this._ki = ((this._ki ?? -1) + 1) % ks.length; this.exS = ks[this._ki]; } if (rk === 'véletlen') nr = 2; this.exHue = this.kk === 'farkas' ? [40, 18] : [44, 205]; }
-    this.exC = nr === 1 ? [[0, -0.32]] : nr === 2 ? [[-1.2, -0.15 - R() * 0.2], [1.2, -0.4 - R() * 0.2]] : [[-1.45, -0.05 - R() * 0.15], [0, -0.6 - R() * 0.12], [1.45, -0.1 - R() * 0.15]];
+    const xm = this._xm || 0.95, ym = this._ym || 1.9, po = ym > xm * 1.25, fl = R() < 0.5 ? 1 : -1, j = () => (R() - 0.5) * 0.08 * ym;
+    this.exC = nr === 1 ? [[0, -0.32]] : nr === 2 ? (po ? [[-0.46 * xm, -0.42 * ym + j()], [0.46 * xm, 0.12 * ym + j()]] : [[-0.5 * xm, -0.3 * ym + j()], [0.5 * xm, 0.02 * ym + j()]]) : (po ? [[-0.56 * xm, -0.5 * ym + j()], [0, -0.08 * ym + j()], [0.56 * xm, 0.3 * ym + j()]] : [[-0.64 * xm, -0.02 * ym + j()], [0, -0.22 * ym + j()], [0.64 * xm, -0.32 * ym + j()]]);
+    if (nr > 1 && fl < 0) this.exC = this.exC.map(([x, y]) => [-x, y]);
+    if (this.exWh) this.exC = [[(R() - 0.5) * 0.6 * xm, -0.6 * ym]];
+    { const Z = nr === 1 ? [0.82 + R() * 0.18] : nr === 2 ? [1, 0.6] : [1, 0.74, 0.55]; for (let q = Z.length - 1; q > 0; q--) { const k = Math.floor(R() * (q + 1)); [Z[q], Z[k]] = [Z[k], Z[q]]; } this.exZ = Z; }
     if (this.exS === 'pálma') this.exC = this.exC.map(([x, y]) => [x, y + 0.3]);
     this.exG = { 'pálma': 0.12, 'banánlevél': 0.12, 'szomorúfűz': 1.7, 'folyondár': 0.1 }[this.exS] ?? 1; this.exD = { 'szomorúfűz': 0.12, 'gyűrű': 0.3 }[this.exS] ?? 0.25; }
   explode() {
@@ -274,7 +279,7 @@ class TuziCore {
       if (SH[ci]) { const q = SH[ci][Math.floor(R() * SH[ci].length)], scl = nC === 1 ? 1 : nC === 2 ? 0.62 : 0.45; x = q[0] + (R() - 0.5) * 0.012; y = q[1] + (R() - 0.5) * 0.012; z = (R() - 0.5) * 0.02; sp = Math.hypot(x, y, z) / 0.72 * scl * (S === 'folyondár' ? 1.25 : 1);
  }
       else if (S === 'virágfej' || S === 'folyondár') { const an = R() * 6.283, ph = this._vph || (this._vph = R() * 6.283); x = Math.cos(an); y = Math.sin(an); z = (R() - 0.5) * 0.12;
-        if (S === 'virágfej') { if (R() < 0.16) { sp = 0.34 * Math.sqrt(R()); z = (R() - 0.5) * 0.3; ctr = true; } else sp = 2.3 * (0.22 + 0.78 * Math.pow(Math.abs(Math.cos(2.5 * (an + ph + ci))), 0.7)) * (0.94 + R() * 0.12); }
+        if (S === 'virágfej') { if (R() < 0.06) { sp = 0.16 + 0.18 * Math.sqrt(R()); z = (R() - 0.5) * 0.2; ctr = true; } else sp = 2.3 * (0.22 + 0.78 * Math.pow(Math.abs(Math.cos(2.5 * (an + ph + ci))), 0.7)) * (0.94 + R() * 0.12); }
         else { const K = 5, arm = Math.floor(R() * K), a0 = arm / K * 6.283 + ph + ci; x = Math.cos(a0); y = Math.sin(a0); sp = 2.4 * (0.15 + 0.85 * Math.floor(R() * 9) / 8); this.cu[i] = (ci % 2 ? -1 : 1) * 2.4; } }
       else if (S === 'pálma' || S === 'banánlevél') { const A = arms[ci], a = A[Math.floor(R() * A.length)]; x = a[0] + (R() - 0.5) * 0.07; y = a[1] + (R() - 0.5) * 0.07; z = a[2] + (R() - 0.5) * 0.07; sp = 2.7 * (0.35 + 0.65 * R()); }
       else if (S === 'gyűrű') { const [u, w] = rings[ci], an = R() * 6.283; x = Math.cos(an) * u[0] + Math.sin(an) * w[0]; y = Math.cos(an) * u[1] + Math.sin(an) * w[1]; z = Math.cos(an) * u[2] + Math.sin(an) * w[2]; sp = 2.4 * (0.97 + R() * 0.06); }
@@ -288,6 +293,10 @@ class TuziCore {
       for (let i = 0; i < this.n; i++) { const ci = i % nC, j = ci * K + Math.floor(R() * K), d = this.VFS[j].d; let x = d[0] + (R() - 0.5) * 2.2, y = d[1] + (R() - 0.5) * 2.2, z = d[2] + (R() - 0.5) * 2.2; const l = Math.hypot(x, y, z) || 1;
         this.vfJ[i] = j; this.vfD[i * 3] = x / l; this.vfD[i * 3 + 1] = y / l; this.vfD[i * 3 + 2] = z / l; this.vfA[i] = R() * 6.283; this.vfS[i] = R() < 0.14 ? R() * 0.18 : 0.72 + R() * 0.28; this.hue[i] = this.VFS[j].hue; this.bb[i] = 0; } }
     this.rgb0 = Array.from(this.hue, hh => { const l = S === 'pálma' ? 0.49 : 0.65, c = (1 - Math.abs(2 * l - 1)), x = c * (1 - Math.abs((hh / 60) % 2 - 1)), m = l - c / 2, k = Math.floor(hh / 60) % 6, r = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][k]; return r.map(q => Math.round((q + m) * 255)); });
+    { const hs = (h, l) => { h = ((h % 360) + 360) % 360; const c = 1 - Math.abs(2 * l - 1), x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][Math.floor(h / 60) % 6]; return r.map(q => Math.round((q + m) * 255)); };
+      this.exL2 = false; this.exIn = null; if (['bazsarózsa', 'gyűrű'].includes(S) && !this.exWh) { this.exL2 = true; const nC2 = C.length, H2 = C.map((c, ci) => ((this.hue[ci] ?? 40) + 140 + R() * 80) % 360);
+        const IN = this.exIn = new Uint8Array(this.n); for (let i = 0; i < this.n; i++) { if (Math.floor(i / nC2) % 3) continue; IN[i] = 1; const k = (S === 'krizantém' ? 0.36 : 0.44) + R() * 0.05; v[0][i] *= k; v[1][i] *= k; v[2][i] *= k; const h = H2[i % nC2]; this.hue[i] = h; if (this.rgb0) this.rgb0[i] = hs(h, S === 'krizantém' ? 0.5 : 0.58); } }
+      this.exR2 = C.map((c, ci) => { const h0 = this.hue[ci] ?? 40, o = [8, 42, h0 + 160, 285, 190]; let h2 = this.exS === 'szomorúfűz' ? 16 : o[Math.floor(R() * o.length)]; if (Math.abs(((h2 - h0) % 360 + 540) % 360 - 180) < 40) h2 = h0 + 160; return { h: h2, rgb: hs(h2, 0.6) }; }); }
     this.exploded = true;
   }
   mus() { const ac = this.props['_ac'] || this._ownAc, url = this.props['_zene'], want = !!(ac && url && this.props['_hang'] && this.on !== false), M = this._mu;
@@ -302,6 +311,81 @@ class TuziCore {
     const o = ac.createBuffer(C, L, sr); for (let c = 0; c < C; c++) { const d = ch[c], od = o.getChannelData(c); for (let i = 0; i < L; i++) { const f = i / W - 0.5, w0 = Math.max(0, Math.min(nW - 1, Math.floor(f))), w1 = Math.min(nW - 1, w0 + 1), k = Math.max(0, Math.min(1, f - w0)); od[i] = Math.max(-1, Math.min(1, d[i] * (gn[w0] + (gn[w1] - gn[w0]) * k))); } }
     return o; }
   musStop() { const M = this._mu; if (!M || !M.src) return; const t = M.ac.currentTime; try { M.g.gain.setTargetAtTime(0.0001, t, 0.25); M.src.stop(t + 1.2); } catch (e) {} M.src = null; M.g = null; }
+  PZ = 8;
+  pz() { if (this._pzN == null) this._pzN = 2 + Math.floor(Math.random() * 2); if (--this._pzN > 0) { this.BMS = null; return 0.6; } this._pzN = null; this.newBeams(); return this.PZ; }
+  newBeams() { const R = Math.random, n = R() < 0.5 ? 2 : 3, B = this.BMS = []; for (let q = 0; q < n; q++) B.push({ x: (q + 0.5) / n + (R() - 0.5) * 0.12, a0: (R() - 0.5) * 0.5, am: 0.35 + R() * 0.25, w: 0.5 + R() * 0.5, ph: R() * 6.3, d: q % 2 ? 1 : -1, h: R() < 0.7 ? 215 : 45 }); }
+  beam(c, x0, y0, ang, len, w0, w1, a, h) { c.save(); c.translate(x0, y0); c.rotate(ang); const gr = c.createLinearGradient(0, 0, 0, -len); gr.addColorStop(0, 'hsla(' + h + ',40%,88%,' + a + ')'); gr.addColorStop(0.5, 'hsla(' + h + ',35%,80%,' + a * 0.45 + ')'); gr.addColorStop(1, 'hsla(' + h + ',30%,75%,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-w0, 0); c.lineTo(w0, 0); c.lineTo(w1, -len); c.lineTo(-w1, -len); c.closePath(); c.fill(); c.restore(); }
+  litUpd(t, XE, bxg) { const L = this.lit || (this.lit = []), st = this._ls || (this._ls = {}); if (t < (st.pt ?? 1e9) - 0.5) { st.X = false; st.B = false; } st.pt = t; const now = performance.now() / 1000, EC = this.exC || [[0, -0.32]], hu = i => this.hue && this.hue.length ? this.hue[i % this.hue.length] : 40;
+    const SM = this.SM || (this.SM = []), R = Math.random, puff = (x, y, sp, r, k, d) => { for (let q = 0; q < k; q++) { const an = R() * 6.283, dd = Math.sqrt(R()) * sp; SM.push({ x: x + Math.cos(an) * dd, y: y + Math.sin(an) * dd * 0.8, r: r * (0.7 + R() * 0.6), t0: now + R() * 0.8, d: d * (0.8 + R() * 0.4) }); } if (SM.length > 48) SM.splice(0, SM.length - 48); };
+    if (!st.X && t >= 1.1) { st.X = true; EC.forEach((c, q) => { const z = (this.exZ || [])[q] ?? 1; L.push({ x: c[0], y: c[1], h: hu(q), t0: now, a: 0.35 + 0.65 * z, d: 2.2 }); puff(c[0], c[1], 0.45 * z, 0.26 * z, 7, 9); }); }
+    if (!st.B && bxg > 0) { st.B = true; L.push({ x: 0, y: -0.1, h: hu(0), t0: now, a: 1.25, d: 2.6 }); puff(0, -0.1, 0.6, 0.3, 9, 10); }
+    if (L.length > 6) L.splice(0, L.length - 6); }
+  mkSky(W, H) { const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }, R = Math.random, S = mk(W, H), g = S.getContext('2d');
+    const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#02030a'); gr.addColorStop(0.6, '#060a1a'); gr.addColorStop(1, '#0d1328'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    for (let q = 0; q < (W * H) / 9000; q++) { const y = Math.pow(R(), 1.6) * H * 0.85, a = 0.15 + R() * 0.55, z = R() < 0.06 ? 1.6 : 1; g.fillStyle = 'rgba(220,228,255,' + a + ')'; g.fillRect(R() * W, y, z * (this._dpr || 1), z * (this._dpr || 1)); }
+    const w = Math.max(64, Math.round(W / 6)), h = Math.max(64, Math.round(H / 6)), M = mk(w, h), m = M.getContext('2d');
+    const hz = this.hzF(W, H), blob = (x, y, r, a) => { for (const ox of [-w, 0, w]) { const X = x + ox; if (X + r < 0 || X - r > w) continue; const rg = m.createRadialGradient(X, y, 0, X, y, r); rg.addColorStop(0, 'rgba(255,255,255,' + a + ')'); rg.addColorStop(1, 'rgba(255,255,255,0)'); m.fillStyle = rg; m.beginPath(); m.arc(X, y, r, 0, 7); m.fill(); } };
+    for (let b = 0; b < 7; b++) { const cy = h * (0.12 + R() * (hz - 0.22)), cx = R() * w, len = w * (0.3 + R() * 0.5); for (let q = 0; q < 26; q++) blob(cx + (R() - 0.5) * len, cy + (R() - 0.5) * h * 0.09, h * (0.04 + R() * 0.09), 0.16 + R() * 0.2); }
+    for (let q = 0; q < 26; q++) blob(R() * w, h * (hz - 0.09 + R() * 0.07), h * (0.04 + R() * 0.07), 0.12 + R() * 0.14);
+    const tint = mk(w, h), tg = tint.getContext('2d'); tg.drawImage(M, 0, 0); tg.globalCompositeOperation = 'source-in'; tg.fillStyle = '#2c3456'; tg.fillRect(0, 0, w, h);
+    const yH = Math.round(H * this.hzF(W, H)), ns = (x, f, o) => Math.sin(x * f + o) * 0.5 + Math.sin(x * f * 2.3 + o * 1.7) * 0.3 + Math.sin(x * f * 5.1 + o * 0.6) * 0.2;
+    [[0.075, 1.3, '#0d1328', R() * 9], [0.045, 2.4, '#05091a', R() * 9]].forEach(([hh, f, col, o]) => { g.fillStyle = col; g.beginPath(); g.moveTo(0, yH); for (let x = 0; x <= W; x += 4) g.lineTo(x, yH - H * hh * (0.35 + 0.65 * Math.max(0, ns(x / W * 6.283, f, o) * 0.5 + 0.5))); g.lineTo(W, yH); g.closePath(); g.fill(); });
+    const wg = g.createLinearGradient(0, yH, 0, H); wg.addColorStop(0, '#16203f'); wg.addColorStop(0.3, '#0e1630'); wg.addColorStop(1, '#060a18'); g.fillStyle = wg; g.fillRect(0, yH, W, H - yH);
+    for (let q = 0; q < (H - yH) / 3; q++) { const y = yH + Math.pow(R(), 1.4) * (H - yH), l = W * (0.05 + R() * 0.25); g.fillStyle = 'rgba(130,150,210,' + (0.05 + R() * 0.07) + ')'; g.fillRect(R() * W - l / 2, y, l, Math.max(1, (this._dpr || 1) * 0.8)); }
+    g.fillStyle = 'rgba(160,180,235,0.16)'; g.fillRect(0, yH, W, Math.max(1, this._dpr || 1));
+    const FG = mk(W, H), fg = FG.getContext('2d'), FL = mk(W, H), fl = FL.getContext('2d'), po = H > W * 1.2, d0 = this._dpr || 1, U = Math.min(W, H), sw = R() < 0.5, sx = x => sw ? W - x : x, RD = [];
+    const fb = (x, y, r) => { fg.beginPath(); fg.arc(sx(x), y, r, 0, 7); fg.fill(); }, trunk = (x, y0, y1, w) => { fg.beginPath(); fg.moveTo(sx(x - w), y0); fg.lineTo(sx(x - w * 0.4), y1); fg.lineTo(sx(x + w * 0.4), y1); fg.lineTo(sx(x + w), y0); fg.fill(); };
+    const TB = [], TL = [], tree = (x, ht) => { const grow = (x0, y0, an, ln, w, d) => { const x1 = x0 + Math.sin(an) * ln, y1 = y0 - Math.cos(an) * ln; TB.push([sx(x0), y0, sx(x1), y1, w]);
+        if (d >= 2) for (let q = 0; q < (d >= 4 ? 7 : 3); q++) { const t = 0.4 + R() * 0.6, lx = x0 + (x1 - x0) * t + (R() - 0.5) * ln * 0.5, ly = y0 + (y1 - y0) * t + (R() - 0.5) * ln * 0.4; TL.push({ x: sx(lx), y: ly, a: R() * 6.283, l: U * (0.007 + R() * 0.008), sw: Math.max(0, (yH - ly) / ht), ph: R() * 6.3 }); }
+        if (d < 5) { const nb = d < 1 ? 3 : 2 + (R() < 0.4 ? 1 : 0); for (let q = 0; q < nb; q++) grow(x1, y1, an + (q - (nb - 1) / 2) * (0.45 + R() * 0.35) + (R() - 0.5) * 0.3, ln * (0.62 + R() * 0.16), w * 0.62, d + 1); } };
+      grow(x, yH + 2 * d0, (R() - 0.5) * 0.12, ht * 0.34, U * 0.009, 0); };
+    const bush = (x, ht, wd) => { const gr = (x0, y0, an, ln, w, d) => { const x1 = x0 + Math.sin(an) * ln, y1 = y0 - Math.cos(an) * ln; TB.push([sx(x0), y0, sx(x1), y1, w]);
+        if (d >= 1) for (let q = 0; q < 3; q++) { const t = 0.3 + R() * 0.7, lx = x0 + (x1 - x0) * t + (R() - 0.5) * ln * 0.5, ly = y0 + (y1 - y0) * t + (R() - 0.5) * ln * 0.4; TL.push({ x: sx(lx), y: ly, a: R() * 6.283, l: U * (0.005 + R() * 0.006), sw: Math.max(0, (yH - ly) / (ht * 2.2)), ph: R() * 6.3 }); }
+        if (d < 3) for (let q = 0; q < 2; q++) gr(x1, y1, an + (q ? 1 : -1) * (0.35 + R() * 0.4), ln * (0.6 + R() * 0.2), w * 0.6, d + 1); };
+      for (let q = 0; q < 6; q++) { const t = R(); gr(x + (t - 0.5) * wd * 0.6, yH + d0, (t - 0.5) * 1.3 + (R() - 0.5) * 0.3, ht * (0.4 + R() * 0.25), U * 0.0035, 0); } };
+    fg.fillStyle = '#010206';
+    if (po) bush(W * 0.07, U * 0.06, W * 0.2);
+    else { tree(W * 0.045, U * 0.3); tree(W * 0.12, U * 0.21); bush(W * 0.015, U * 0.07, W * 0.06); }
+    fg.save(); fg.strokeStyle = '#080d22'; fg.lineCap = 'round'; for (const [a, b, c, e, w] of TB) { fg.lineWidth = Math.max(0.7 * d0, w); fg.beginPath(); fg.moveTo(a, b); fg.lineTo(c, e); fg.stroke(); } fg.restore();
+    fg.fillRect(0, yH, sw ? W : W * (po ? 0.3 : 0.24), 2 * d0); if (sw) fg.clearRect(0, yH, W * (po ? 0.7 : 0.76), 2 * d0);
+    fl.drawImage(FG, 0, 0); fl.globalCompositeOperation = 'source-in'; fl.fillStyle = '#5a6a9a'; fl.fillRect(0, 0, W, H);
+    const nR = po ? 78 : 120, rx0 = sw ? W * 0.02 : W * (po ? 0.72 : 0.8), rx1 = sw ? W * (po ? 0.28 : 0.2) : W * 0.985;
+    for (let q = 0; q < nR; q++) RD.push({ x: rx0 + (rx1 - rx0) * Math.pow(R(), 0.8), h: U * (0.025 + R() * 0.045) * (po ? 0.85 : 1), w: (0.7 + R() * 0.9) * d0, ph: R() * 6.3, k: 0.6 + R() * 0.8, cat: R() < 0.3, y: yH + R() * 4 * d0 });
+    const G = mk(w, h), GM = mk(w, h), MS = mk(w, h); return { W, H, S, M, G, GM, MS, CT: tint, w, h, yH, FG, FL, RD, TL }; }
+  compose(now) { const cv = this.cvRef.current; if (!cv || !this.BF || !cv.width) return; const W = cv.width, H = cv.height, c = cv.getContext('2d'); if (!this.SKY || this.SKY.W !== W || this.SKY.H !== H) this.SKY = this.mkSky(W, H); const K = this.SKY;
+    c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; c.drawImage(K.S, 0, 0);
+    const L = this.lit || [], ts = now / 1000, P = this._prjW, co = ((ts * K.w / 60) % K.w + K.w) % K.w, cX = co * W / K.w;
+    c.globalAlpha = 0.36; c.drawImage(K.CT, -cX, 0, W, H); c.drawImage(K.CT, W - cX, 0, W, H); c.globalAlpha = 1;
+    { const ms = K.MS.getContext('2d'); ms.globalCompositeOperation = 'source-over'; ms.clearRect(0, 0, K.w, K.h); ms.drawImage(K.M, -co, 0); ms.drawImage(K.M, K.w - co, 0); }
+    const SM = this.SM || []; if (SM.length && P) { const o0 = P(0, 0, 0), ru = P(1, 0, 0)[0] - o0[0], ms = K.MS.getContext('2d'), sx = K.w / W; let w = 0;
+      for (const q of SM) { const age = ts - q.t0; if (age > q.d) continue; SM[w++] = q; const a = Math.min(1, age / 1.2) * Math.pow(1 - age / q.d, 1.5), [x, y] = P(q.x + age * 0.035 + age * age * 0.0015, q.y - age * 0.006, 0), r = q.r * ru * (1 + age * 0.09); if (a < 0.01) continue;
+        const rg = c.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, 'rgba(175,165,160,' + 0.3 * a + ')'); rg.addColorStop(0.55, 'rgba(140,135,140,' + 0.16 * a + ')'); rg.addColorStop(1, 'rgba(110,110,120,0)'); c.fillStyle = rg; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+        const X = x * sx, Y = y * sx, rr = r * sx, mg = ms.createRadialGradient(X, Y, 0, X, Y, rr); mg.addColorStop(0, 'rgba(255,255,255,' + 0.85 * a + ')'); mg.addColorStop(1, 'rgba(255,255,255,0)'); ms.fillStyle = mg; ms.beginPath(); ms.arc(X, Y, rr, 0, 7); ms.fill(); }
+      SM.length = w; }
+    const bT = this._bmT || 0, bm = bT > 0 && this.BMS ? Math.max(0, Math.min(1, bT / 0.9, (this.PZ - bT) / 0.9)) : 0;
+    if (bm > 0) { const el = this.PZ - bT; c.globalCompositeOperation = 'lighter'; for (const b of this.BMS) this.beam(c, b.x * W, K.yH, b.a0 + b.d * b.am * Math.sin(el * b.w + b.ph), H * 1.25, W * 0.006, W * 0.09, 0.13 * bm, b.h); c.globalCompositeOperation = 'source-over'; }
+    if ((L.length && P) || bm > 0) { const g = K.G.getContext('2d'), sx = K.w / W; g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, K.w, K.h); let any = bm > 0;
+      if (bm > 0) { const el = this.PZ - bT; g.globalCompositeOperation = 'lighter'; for (const b of this.BMS) this.beam(g, b.x * K.w, K.yH * K.w / W, b.a0 + b.d * b.am * Math.sin(el * b.w + b.ph), K.h * 1.25, K.w * 0.006, K.w * 0.11, 0.95 * bm, b.h); }
+      for (const e of L) { const age = ts - e.t0, I = e.a * Math.min(1, age / 0.06) * Math.exp(-age / e.d); if (I < 0.01) continue; any = true; const [x, y] = P(e.x, e.y, 0), r = Math.max(K.w, K.h) * 0.75, X = x * sx, Y = y * sx;
+        const rg = g.createRadialGradient(X, Y, 0, X, Y, r); rg.addColorStop(0, 'hsla(' + e.h + ',85%,62%,' + Math.min(1, 0.7 * I) + ')'); rg.addColorStop(0.35, 'hsla(' + e.h + ',80%,45%,' + 0.35 * I + ')'); rg.addColorStop(1, 'hsla(' + e.h + ',80%,40%,0)'); g.globalCompositeOperation = 'lighter'; g.fillStyle = rg; g.fillRect(0, 0, K.w, K.h); }
+      this.lit = L.filter(e => ts - e.t0 < e.d * 4);
+      if (any) { const m = K.GM.getContext('2d'); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, K.w, K.h); m.drawImage(K.G, 0, 0); m.globalCompositeOperation = 'destination-in'; m.drawImage(K.MS, 0, 0);
+        c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.1; c.drawImage(K.G, 0, 0, W, H); c.globalAlpha = 1; c.drawImage(K.GM, 0, 0, W, H); } }
+    c.globalCompositeOperation = 'lighter'; c.globalAlpha = 1; c.drawImage(this.BF, 0, 0);
+    { let li = bm * 0.9; for (const e of L) { const age = ts - e.t0; li += e.a * Math.min(1, age / 0.06) * Math.exp(-age / e.d); } li = Math.min(1, li * 0.5); const d0 = this._dpr || 1;
+      if (li > 0.02) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = li * 0.4; c.drawImage(K.FL, 0, -1.4 * d0); }
+      c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1; c.drawImage(K.FG, 0, 0);
+      const gu = Math.sin(ts * 0.37) * 0.5 + Math.sin(ts * 0.83 + 1) * 0.3; c.lineCap = 'round';
+      if (K.TL.length) { const lc = li > 0.02 ? 'rgb(' + Math.round(8 + 14 * li) + ',' + Math.round(13 + 16 * li) + ',' + Math.round(34 + 26 * li) + ')' : '#080d22'; c.strokeStyle = lc; c.lineWidth = 1.6 * d0;
+        c.beginPath(); for (const f of K.TL) { const sw = f.sw * f.sw, dx = (Math.sin(ts * 1.9 + f.ph) * 0.0022 + gu * 0.004) * K.H * sw, a = f.a + Math.sin(ts * 3.1 + f.ph) * 0.35 * (0.3 + sw), x = f.x + dx, y = f.y + Math.abs(dx) * 0.15; c.moveTo(x - Math.cos(a) * f.l * 0.5, y - Math.sin(a) * f.l * 0.5); c.lineTo(x + Math.cos(a) * f.l * 0.5, y + Math.sin(a) * f.l * 0.5); } c.stroke(); }
+      for (const r of K.RD) { const a = (Math.sin(ts * 1.6 * r.k + r.ph) * 0.07 + gu * 0.09 + 0.03) , bx = r.x, by = r.y, tx = bx + Math.sin(a) * r.h, ty = by - Math.cos(a) * r.h, mx = bx + Math.sin(a * 0.4) * r.h * 0.5, my = by - r.h * 0.5;
+        c.strokeStyle = li > 0.02 ? 'rgb(' + Math.round(1 + 12 * li) + ',' + Math.round(2 + 14 * li) + ',' + Math.round(6 + 24 * li) + ')' : '#010206'; c.lineWidth = r.w; c.beginPath(); c.moveTo(bx, by); c.quadraticCurveTo(mx, my, tx, ty); c.stroke();
+        if (r.cat) { c.fillStyle = c.strokeStyle; c.save(); c.translate(mx + (tx - mx) * 0.72, my + (ty - my) * 0.72); c.rotate(a); c.beginPath(); c.ellipse(0, 0, r.w * 1.6, r.h * 0.09, 0, 0, 7); c.fill(); c.restore(); } } }
+    c.globalCompositeOperation = 'lighter';
+    { const yH = K.yH, wh = H - yH, d0 = this._dpr || 1, st = Math.max(2, Math.round(2.5 * d0)); c.save(); c.beginPath(); c.rect(0, yH, W, wh); c.clip();
+      for (let d = 0; d < wh; d += st) { const sy = yH - d * 1.1 - st, ox = Math.sin(d * 0.09 / d0 + ts * 1.7) * (1 + d * 0.025) * d0 + Math.sin(d * 0.023 / d0 - ts * 0.9) * 2 * d0; if (sy < 0) break; c.globalAlpha = 0.5 * Math.pow(1 - d / wh, 1.3); c.drawImage(c.canvas, 0, sy, W, st, ox, yH + d, W, st); }
+      c.restore(); }
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; }
   sfxOut() { const ac = this.props['_ac'] || this._ownAc; if (!ac || !this.props['_hang'] || ac.state !== 'running') return null;
     if (this._sAc !== ac) { this._sAc = ac; const o = ac.createGain(); o.gain.value = 2.2; const cp = ac.createDynamicsCompressor(); cp.threshold.value = -4; cp.knee.value = 4; cp.ratio.value = 8; cp.attack.value = 0.002; cp.release.value = 0.15; o.connect(cp); cp.connect(ac.destination); this._sO = o;
       const L = ac.sampleRate * 2, b = ac.createBuffer(1, L, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < L; i++) d[i] = Math.random() * 2 - 1; this._nz = b; }
@@ -310,7 +394,14 @@ class TuziCore {
   sNoise(ac, t, dur, type, f0, f1, q, vol, x, att) { const src = ac.createBufferSource(); src.buffer = this._nz; src.loop = true; const f = ac.createBiquadFilter(); f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, t); if (f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
     const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + (att || 0.004)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); src.connect(f); f.connect(g); g.connect(this.sNode(ac, x)); src.start(t, Math.random() * 1.5); src.stop(t + dur + 0.05); }
   sTone(ac, t, dur, f0, f1, vol, x, type) { const o = ac.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur); const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(this.sNode(ac, x)); o.start(t); o.stop(t + dur + 0.05); }
-  sBoom(ac, t, x, big) { const k = big ? 2.2 : 1, p = 0.85 + Math.random() * 0.3;
+  sWhistle(ac, t, d, x) { const o = ac.createOscillator(), o2 = ac.createOscillator(), lf = ac.createOscillator(), lg = ac.createGain(), g = ac.createGain(), g2 = ac.createGain(), f0 = 2300 + Math.random() * 300;
+    o.type = 'sine'; o2.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * 1.32, t + d * 0.85); o.frequency.linearRampToValueAtTime(f0 * 1.2, t + d);
+    o2.frequency.setValueAtTime(f0 * 2, t); o2.frequency.linearRampToValueAtTime(f0 * 2.64, t + d * 0.85); o2.frequency.linearRampToValueAtTime(f0 * 2.4, t + d);
+    lf.frequency.value = 7 + Math.random() * 3; lg.gain.value = f0 * 0.025; lf.connect(lg); lg.connect(o.frequency);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.06); g.gain.setValueAtTime(0.5, t + d * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(0.09, t + 0.06); g2.gain.setValueAtTime(0.09, t + d * 0.8); g2.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    const nd = this.sNode(ac, x); o.connect(g); o2.connect(g2); g.connect(nd); g2.connect(nd); [o, o2, lf].forEach(q => { q.start(t); q.stop(t + d + 0.05); }); }
+  sBoom(ac, t, x, big, m) { const k = (big ? 2.2 : 1) * (m ?? 1), p = 0.85 + Math.random() * 0.3;
     this.sNoise(ac, t, 0.05, 'highpass', 1800, 1800, 0.7, 0.9 * k, x, 0.002);
     this.sTone(ac, t, 0.5 * k, 95 * p, 32, 1.0 * k, x);
     this.sNoise(ac, t, 1.6 * k, 'lowpass', 900 * p, 90, 0.8, 0.95 * k, x, 0.006);
@@ -319,16 +410,21 @@ class TuziCore {
   sCrk(ac, t, x, v) { const f = 1800 + Math.random() * 5000; this.sNoise(ac, t, 0.008 + Math.random() * 0.03, 'highpass', f, f, 1.2, v * 2.6, x, 0.0008); if (Math.random() < 0.3) this.sNoise(ac, t, 0.04 + Math.random() * 0.05, 'bandpass', 900 + Math.random() * 900, 400, 1.5, v * 1.8, x, 0.001); }
   sfx(t, XE, bxg, dt) { const ac = this.sfxOut(); if (!ac) return; const now = ac.currentTime + 0.02, EC = this.exC || [[0, -0.32]], st = this._sf || (this._sf = {});
     if (t < (st.pt ?? 1e9) - 0.5 || t < 0.05 && !st.L) { this._sf = { L: false, X: false, B: false, pt: t }; } const S = this._sf; S.pt = t;
+    if (!S.L && t < 0.5 && this.exWh) { S.L = true; const x = EC[0][0]; this.sWhistle(ac, now, 1.45, x); this.sNoise(ac, now, 1.3, 'highpass', 3000, 5000, 0.8, 0.35, x, 0.08); for (let q = 0; q < 26; q++) this.sCrk(ac, now + Math.random() * 1.2, x + (Math.random() - 0.5) * 0.3, 0.3 + Math.random() * 0.3); }
     if (!S.L && t < 0.5) { S.L = true; EC.forEach((c, q) => { const d = q * 0.07, x = c[0]; this.sTone(ac, now + d, 1.05, 700 + q * 180, 2300 + q * 300, 0.12, x, 'triangle'); this.sNoise(ac, now + d, 1.1, 'bandpass', 900, 4200, 2.5, 0.3, x, 0.3); }); }
-    if (!S.X && t >= 1.1) { S.X = true; EC.forEach((c, q) => this.sBoom(ac, now + q * 0.06, c[0], false)); }
-    const te = t - 1.1, vf = this.exS === 'virágfénygömb', act = t < XE && (vf ? te > 2.3 : te > 1.3);
-    if (act) { const rate = (vf ? 180 : 260) * EC.length, nn = Math.min(30, Math.floor(rate * dt + Math.random())); for (let q = 0; q < nn; q++) { const c = EC[Math.floor(Math.random() * EC.length)]; this.sCrk(ac, now + Math.random() * dt, c[0] + (Math.random() - 0.5) * 0.8, 0.4 + Math.random() * 0.6); } }
+    if (!S.X && t >= 1.1) { S.X = true; const Z = this.exZ || []; EC.forEach((c, q) => { const z = Z[q] ?? 1; this.sBoom(ac, now + q * 0.06 + (1 - z) * 0.9, c[0], false, 0.45 + 0.55 * z); }); }
+    const te = t - 1.1, vf = this.exS === 'virágfénygömb', act = t < XE && (vf ? te > 2.3 : te > 0.9);
+    if (act) { const rate = (vf ? 180 : 260) * EC.length, nn = Math.min(30, Math.floor(rate * dt + Math.random())); for (let q = 0; q < nn; q++) { const c = EC[Math.floor(Math.random() * EC.length)]; const z = (this.exZ || [])[EC.indexOf(c)] ?? 1; this.sCrk(ac, now + Math.random() * dt + (1 - z) * 0.9, c[0] + (Math.random() - 0.5) * 0.8, (0.4 + Math.random() * 0.6) * (0.4 + 0.6 * z)); } }
     if (t >= XE && bxg <= 0 && !(this.F === 'kép' && (this._tkN ?? 0) > 6.75)) { const nn = Math.min(20, Math.floor(110 * dt + Math.random())); for (let q = 0; q < nn; q++) this.sCrk(ac, now + Math.random() * dt, (Math.random() - 0.5) * 1.4, 0.3 + Math.random() * 0.5); }
     if (!S.B && bxg > 0) { S.B = true; this.sBoom(ac, now, 0, true); if (this.F === 'kép') this.sBoom(ac, now + 0.03, 0, true); this.sNoise(ac, now + 0.1, 3.2, 'bandpass', 6500, 3000, 0.8, 0.35, 0, 0.3); }
     if (bxg > 0.15 && bxg < 2.4) { const nn = Math.min(30, Math.floor(320 * Math.max(0, 1 - bxg / 2.4) * dt + Math.random())); for (let q = 0; q < nn; q++) this.sCrk(ac, now + Math.random() * dt, (Math.random() - 0.5) * 1.6, 0.4 + Math.random() * 0.6); } }
-  fitEx(W, H, R) { const EC = this.exC || [[0, -0.32]], d = Math.min(0.97, this.exD ?? 0.25), Fd = (1 - Math.pow(d, 1.6)) / -Math.log(d), gy = 0.55 * (this.exG ?? 1) * 1.6 * Fd * 0.5, xm = W / 2 / R * 0.82, ym = H / 2 / R * 0.78, n = this.n, p = this.p, v = this.v, sc = EC.map(() => 1), ci = new Uint8Array(n);
+  hzF(W, H) { return H > W * 1.2 ? 0.82 : 0.8; }
+  applyDepth() { const Z = this.exZ, EC = this.exC; if (!Z || !EC) return; const nC = EC.length, v = this.v, n = this.n, vf = this.exS === 'virágfénygömb';
+    if (vf && this.VFS) { for (const q of this.VFS) { const z = Z[q.ci] ?? 1; q.sz *= 0.55 + 0.45 * z; q.dz = z; } }
+    for (let i = 0; i < n; i++) { const z = Z[i % nC] ?? 1; if (z >= 0.99) continue; if (!vf) { v[0][i] *= z; v[1][i] *= z; v[2][i] *= z; } const c = this.rgb0 && this.rgb0[i]; if (c) { const b = 1 - z; this.rgb0[i] = [Math.round(c[0] * (1 - 0.75 * b)), Math.round(c[1] * (1 - 0.6 * b)), Math.round(Math.min(255, c[2] * (1 - 0.3 * b) + 40 * b))]; } } }
+  fitEx(W, H, R) { const EC = this.exC || [[0, -0.32]], d = Math.min(0.97, this.exD ?? 0.25), Fd = (1 - Math.pow(d, 1.6)) / -Math.log(d), gy = 0.55 * (this.exG ?? 1) * 1.6 * Fd * 0.5, xm = W / 2 / R * 0.82, ym = H / 2 / R * 0.78, ymB = Math.min(ym, (this._yHw ?? ym) - 0.06), n = this.n, p = this.p, v = this.v, sc = EC.map(() => 1), ci = new Uint8Array(n);
     for (let i = 0; i < n; i++) { const b = i % EC.length; ci[i] = b; const c = EC[b], dx = v[0][i] * Fd, dy = v[1][i] * Fd;
-      if (dx > 1e-4) sc[b] = Math.min(sc[b], (xm - c[0]) / dx); else if (dx < -1e-4) sc[b] = Math.min(sc[b], (-xm - c[0]) / dx); if (dy > 1e-4) sc[b] = Math.min(sc[b], (ym - gy - c[1]) / dy); else if (dy < -1e-4) sc[b] = Math.min(sc[b], (-ym - c[1]) / dy); }
+      if (dx > 1e-4) sc[b] = Math.min(sc[b], (xm - c[0]) / dx); else if (dx < -1e-4) sc[b] = Math.min(sc[b], (-xm - c[0]) / dx); if (dy > 1e-4) sc[b] = Math.min(sc[b], (ymB - gy - c[1]) / dy); else if (dy < -1e-4) sc[b] = Math.min(sc[b], (-ym - c[1]) / dy); }
     for (let i = 0; i < n; i++) { const k = Math.max(0.25, sc[ci[i]]); if (k < 1) { v[0][i] *= k; v[1][i] *= k; v[2][i] *= k; } } }
   drawVFG(g, u, D, prjW, dpr, tt) {
     const S = this.VFS, p = this.p, n = this.n, r1 = this.vfR, sh = 1 - Math.pow(1 - Math.min(1, u / 2.1), 3), w = Math.max(0, u - 2.7), wN = Math.min(1, w / Math.max(1, D - 2.7)), mv = Math.pow(wN, 1.2) * this.vfV * 3.6;
@@ -338,33 +434,61 @@ class TuziCore {
     for (const q of S) { q.P[0] = q.c[0] + q.d[0] * rr; q.P[1] = q.c[1] + q.d[1] * rr + gy; q.P[2] = q.d[2] * Math.min(rr, 1.2) * 0.4; const kq = 3 / (3 + q.P[2]), m = q.sz * grow * 1.15, lx = bx / kq - m, ly = by / kq - m; q.ex = lx * Math.tanh(q.P[0] / lx) - q.P[0]; q.ey = ly * Math.tanh(q.P[1] / ly) - q.P[1]; q.P[0] += q.ex; q.P[1] += q.ey; }
     if (bl > 0 && al0 > 0) for (const q of S) { const [sx, sy, k] = prjW(q.P[0], q.P[1], q.P[2]), R0 = prjW(q.P[0] + q.sz * grow * 1.5, q.P[1], q.P[2])[0] - sx; if (R0 < 1) continue;
       const gr = g.createRadialGradient(sx, sy, 0, sx, sy, R0); gr.addColorStop(0, 'hsla(' + q.hue + ',100%,70%,' + 0.22 * bl * al0 + ')'); gr.addColorStop(1, 'hsla(' + q.hue + ',100%,55%,0)'); g.fillStyle = gr; g.beginPath(); g.arc(sx, sy, R0, 0, 7); g.fill(); }
+    if (al0 > 0) { const a = Math.max(0, w - 0.75), gw = Math.min(1, a / 0.6), gr = 1 - Math.pow(1 - gw, 3), en = Math.max(0, Math.min(1, (D - u) / 0.5)), f = gr * en, HU = [120, 52, 212, 0, 282], bX = (this._xm || 0.9) * 0.93, bY = (this._ym || 1.9) * 0.93;
+      if (f > 0.01) S.forEach((q, qi) => { const pe = q.sz * grow * bl; for (let m = 0; m < q.k; m++) { const th = -q.ph + m * 2 * Math.PI / q.k, ux = Math.cos(th), uy = Math.sin(th), x0 = q.P[0] + ux * pe * 1.05, y0 = q.P[1] + uy * pe * 1.05, rr = pe * 0.32, md = Math.max(0, Math.min(ux > 1e-3 ? (bX - rr - x0) / ux : ux < -1e-3 ? (-bX + rr - x0) / ux : 9, uy > 1e-3 ? (Math.min(bY, (this._yHw ?? bY) - 0.03) - rr - y0) / uy : uy < -1e-3 ? (-bY + rr - y0) / uy : 9, 1.3)), om = pe * 1.05 + md * (1 - Math.exp(-0.34 * a / Math.max(0.05, md))), rx = ux * om, ry = uy * om;
+        this.drawMini(g, prjW, dpr, q.P[0] + rx, q.P[1] + ry, q.P[2], pe * 0.3 * f, 5, q.ph + m + u * 0.3, HU[(qi * 3 + m) % 5], Math.min(1, gw * 2) * (0.5 + 0.5 * en) * al0, qi * 7 + m, 130); } }); }
     for (let i = 0; i < n; i++) { const q = S[this.vfJ[i]], dx = this.vfD[i * 3] + (q.d[0] - this.vfD[i * 3]) * m, dy = this.vfD[i * 3 + 1] + (q.d[1] - this.vfD[i * 3 + 1]) * m, dz = this.vfD[i * 3 + 2] + (q.d[2] - this.vfD[i * 3 + 2]) * m;
       const th = this.vfA[i], fr = this.vfS[i], pe = q.sz * grow * bl * fr * (0.3 + 0.7 * Math.pow(Math.abs(Math.cos(q.k / 2 * (th + q.ph))), 0.6));
       const X = q.c[0] + dx * rr + Math.cos(th) * pe + q.ex * (0.4 + 0.6 * m), Y = q.c[1] + dy * rr + gy + Math.sin(th) * pe + q.ey * (0.4 + 0.6 * m), Z = dz * Math.min(rr, 1.2) * 0.4; p[0][i] = X; p[1][i] = Y; p[2][i] = Z;
       const [sx, sy, k] = prjW(X, Y, Z), tw = Math.random() < 0.1 ? 1.6 : 1, ctr = fr < 0.2 && bl > 0, a = Math.min(1, al0 * (w > 0 ? 0.9 : 0.55 + 0.45 * Math.sin(tt * 7 + i))) * tw; if (a <= 0.01) continue;
       g.fillStyle = ctr ? 'rgba(255,245,215,' + a + ')' : 'hsla(' + q.hue + ',100%,' + (w > 0 ? 58 + 20 * fr * (1 - bl * 0.3) : 74) + '%,' + a + ')'; const z = Math.max(1, (ctr ? 2.8 : 2.2 + 0.4 * bl) * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
   }
+  akna(g, prjW, dpr, t, XE, dt, CE, bxg) { const A = this.AK || (this.AK = []); if (t < (this._akT ?? 1e9) - 0.5) A.length = 0; this._akT = t; const fin = t > CE + 0.5 && !(bxg > 0), side = fin && this.F !== 'kép';
+    if (((t > 1.5 && t < XE + 1.2) || side) && A.length < (side ? 3 : 4) && Math.random() < (side ? 0.7 : 1.1) * dt) { const R = Math.random, xw = this._xm || 0.9, xm = xw * 0.85, yH = this._yHw ?? 1.4, sd = R() < 0.5 ? -1 : 1, x = side ? sd * xw * (0.72 + R() * 0.16) : (R() * 2 - 1) * xm, y = side ? yH - 0.35 - R() * 0.55 : yH - 0.16 - R() * 0.2, hu = [0, 40, 52, 120, 200, 280, 320][Math.floor(R() * 7)], N = 70 + Math.floor(R() * 40), P = [];
+      for (let q = 0; q < N; q++) { const an = R() * 6.283, sp = (0.42 + R() * 0.5) * (R() < 0.2 ? 0.5 : 1); P.push([x, y, Math.cos(an) * sp, Math.sin(an) * sp - 0.08, R() < 0.18]); }
+      A.push({ P, hu, l: 0, d: side ? 1.8 + R() * 0.8 : 0.9 + R() * 0.5, x, s: side }); const ac = this.sfxOut(); if (ac) { const now = ac.currentTime + 0.02; this.sBoom(ac, now, x, false, 0.32); for (let q = 0; q < 10; q++) this.sCrk(ac, now + 0.05 + Math.random() * 0.5, x, 0.35); }
+      (this.lit || (this.lit = [])).push({ x, y, h: hu, t0: performance.now() / 1000, a: 0.3, d: 1.1 }); }
+    let w = 0; for (const a of A) { a.l += dt; if (a.l > a.d) continue; const k = a.l / a.d, al = (k < 0.1 ? 1 : Math.pow(1 - k, a.s ? 1.1 : 1.4)), dr = Math.pow(a.s ? 0.2 : 0.12, dt);
+      for (const p of a.P) { p[2] *= dr; p[3] = p[3] * dr + (a.s ? 0.22 : 0.35) * dt; p[0] += p[2] * dt; p[1] += p[3] * dt; const [sx, sy, kk] = prjW(p[0], p[1], 0), tw = Math.random() < 0.15 ? 1.5 : 1, z = Math.max(1, 1.9 * kk * dpr);
+        g.fillStyle = p[4] ? 'rgba(255,245,220,' + Math.min(1, al * tw) + ')' : 'hsla(' + a.hu + ',100%,' + (60 + 18 * (1 - k)) + '%,' + Math.min(1, al * tw) + ')'; g.fillRect(sx - z / 2, sy - z / 2, z, z); }
+      A[w++] = a; } A.length = w; }
+  twX(c, e) { const w = this._tw || (this._tw = [Math.random() * 6.3, Math.random() * 6.3, Math.random() * 6.3]), q = (this.exC || []).indexOf(c); return this.exWh ? Math.sin(e * 14 + w[0]) * 0.13 * (1 - e * 0.7) + Math.sin(e * 31 + w[1]) * 0.03 : Math.sin(e * 3.2 + w[Math.max(0, q) % 3]) * 0.035 * (1 - e) * (this.exS === 'pálma' ? 2.2 : 1); }
+  drawTrail(g, prjW, dpr, e, fa, pal, te) { const EC = this.exC || [[0, -0.32]], N = 46, L = pal ? 1 : 0.92;
+    for (const c of EC) { const pts = []; for (let j = 0; j <= N; j++) { const ee = Math.max(0, e - L + L * j / N), y = c[1] + ((this._yHw ?? 1.7) - c[1]) * (1 - ee), [sx, sy] = prjW(c[0] * (0.7 + 0.3 * ee) + this.twX(c, ee), y + (pal ? 0.06 : 0), 0); pts.push([sx, sy]); }
+      const [hx, hy] = pts[N], [tx, ty] = pts[0], gr = g.createLinearGradient(hx, hy, tx, ty);
+      if (pal) { gr.addColorStop(0, 'hsla(38,95%,62%,' + 0.55 * fa + ')'); gr.addColorStop(0.5, 'hsla(28,90%,42%,' + 0.42 * fa + ')'); gr.addColorStop(1, 'hsla(22,80%,30%,' + 0.12 * fa + ')'); }
+      else { gr.addColorStop(0, 'hsla(48,100%,82%,' + 0.5 * fa + ')'); gr.addColorStop(0.35, 'hsla(35,100%,60%,' + 0.22 * fa + ')'); gr.addColorStop(1, 'hsla(30,90%,50%,0)'); }
+      g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = gr;
+      const wd = pal ? [10, 4.2] : [6, 1.8];
+      for (const [k, lw] of [[0.35, wd[0]], [1, wd[1]]]) { g.globalAlpha = k; g.lineWidth = lw * dpr; g.beginPath(); pts.forEach(([x, y], j) => j ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); }
+      g.globalAlpha = 1;
+      if (pal) { g.strokeStyle = 'hsla(30,70%,20%,' + 0.5 * fa + ')'; g.lineWidth = 1.2 * dpr; for (let j = 3; j < N; j += 3) { const [x0, y0] = pts[j - 1], [x1, y1] = pts[j + 1], dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1, w = (2 + 2.5 * (1 - j / N)) * dpr, [x, y] = pts[j]; g.beginPath(); g.moveTo(x - dy / l * w, y + dx / l * w); g.lineTo(x + dy / l * w, y - dx / l * w); g.stroke(); } }
+      const ns = pal ? 5 : this.exWh ? 14 : 3; for (let q = 0; q < ns; q++) { const j = Math.floor(Math.random() * N), [x, y] = pts[j]; g.fillStyle = 'rgba(255,230,180,' + 0.8 * fa + ')'; g.fillRect(x + (Math.random() - 0.5) * 4 * dpr, y + (Math.random() - 0.5) * 4 * dpr, 1.6 * dpr, 1.6 * dpr); } } }
+  drawMini(g, prjW, dpr, X, Y, Z, r, k, ph, hue, al, sd, M) { for (let j = 0; j < M; j++) { const an = j * 2.39996 + sd, fr = (j * 0.6180339 + sd) % 1, ctr = fr < 0.12, f = ctr ? fr * 2 : 0.62 + 0.38 * Math.sqrt((fr - 0.12) / 0.88), rr = r * f * (ctr ? 1 : 0.22 + 0.78 * Math.pow(Math.abs(Math.cos(k / 2 * (an + ph))), 0.7));
+      const [sx, sy, kk] = prjW(X + Math.cos(an) * rr, Y + Math.sin(an) * rr, Z), a = al * (Math.random() < 0.12 ? 1 : 0.8); if (a < 0.02) continue; g.fillStyle = ctr ? 'rgba(255,248,225,' + a + ')' : 'hsla(' + hue + ',100%,' + (56 + 16 * (1 - f)) + '%,' + a + ')'; const z = Math.max(1, (ctr ? 2 : 1.8) * kk * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); } }
   restart = () => { this.init(); this.t0 = performance.now(); this.cs = 0; };
-  loop = now => {
-    this.raf = requestAnimationFrame(this.loop);
+  loop = now => { this.raf = requestAnimationFrame(this.loop); this.loop0(now); this.compose(now); };
+  loop0 = now => {
     const cv = this.cvRef.current; if (!cv) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
-    const g = cv.getContext('2d'), dt = Math.min(0.05, (now - this.last) / 1000); this.last = now;
+    if (!this.BF) this.BF = document.createElement('canvas'); if (this.BF.width !== W || this.BF.height !== H) { this.BF.width = W; this.BF.height = H; }
+    const g = this.BF.getContext('2d'), dt = Math.min(0.05, (now - this.last) / 1000); this.last = now; this._dpr = dpr;
     const md = 'tűzijáték', rnd = false; if (rnd && this.rf === undefined) this.rf = true;
     const fire = rnd ? this.rf : md !== 'hologram';
     const XE = 1.1 + Math.max(2, +(this.props['robbanásMp'] ?? 5)) + (this.exS === 'pálma' ? 1.8 : this.exS === 'virágfénygömb' ? 1.5 : 0), CE = XE + 2.8, T = CE + 8 + (this.F === 'virág' ? 6.8 : this.F === 'kép' ? 3 : 3.2), tt = (now - this.t0) / 1000, t = fire ? tt - (this.cs || 0) : CE + 1 + tt;
+    if (fire && t < 0) { this._bmT = -t; this.mus(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(0, 0, W, H); return; } this._bmT = 0;
     const bS = this.F === 'virág' ? CE + 8 + 3.57 : T - 3.2, bxg = fire && this.F !== 'kép' && t > bS ? t - bS : 0;
-    this._tkN = t - CE; this.mus(); if (fire) this.sfx(t, XE, bxg || (this.F === 'kép' && t - CE > 7.2 ? t - CE - 7.2 : 0), dt);
+    this._tkN = t - CE; if (fire) this.litUpd(t, XE, bxg || (this.F === 'kép' && t - CE > 7.2 ? t - CE - 7.2 : 0)); this.mus(); if (fire) this.sfx(t, XE, bxg || (this.F === 'kép' && t - CE > 7.2 ? t - CE - 7.2 : 0), dt);
     const fzS = CE + 8, vz = this.F === 'virág' && fire, ttf = vz && t > fzS ? tt - (t - fzS) : tt; let fz = vz ? Math.max(0, Math.min(1, (t - fzS) / 1.2)) : 0; fz = fz * fz * (3 - 2 * fz); this._ttf = ttf;
     let lnk = vz ? Math.max(0, Math.min(0.74, (t - fzS) / 2.8)) : 0; this._vf = 1 - Math.max(0, Math.min(1, (lnk - 0.74) / 0.26)); this._lnk = lnk; { let q = (this.F === 'felirat' || this.F === 'kép') && fire ? Math.max(0, Math.min(1, (t - CE - 0.3) / (this.F === 'kép' ? 1.8 : 1.5))) : 0; this._flt = q * q * (3 - 2 * q) * (bxg > 0 ? Math.max(0, 1 - bxg / 0.35) : 1); this._tk = t - CE; }
     const trl = Math.max(0, Math.min(100, +(this.props['csíkHossz'] ?? 90))) / 100, trA = this.exS === 'virágfénygömb' && fire && t > 1.1 && t < XE ? 0.3 : (this.exS === 'bazsarózsa' || this.exS === 'virágfej' || this.exS === 'folyondár' || this.exS === 'banánlevél') && fire && t > 1.1 && t < XE ? 0.38 : this.exS === 'pálma' && fire && t > 1.1 && t < XE ? 0.22 : this.exS === 'gyűrű' && fire && t > 1.1 && t < XE ? 0.35 : this.exS === 'szomorúfűz' && fire && t > 1.1 && t < XE ? 0.09 : 0.2 - 0.17 * trl;
-    if (rnd && tt > (this.rf ? T : 18)) { this.rf = this.rf ? Math.random() < 0.55 : true; if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.t0 = now; this.cycle = 1; this.cs = 0; }
-    else if (!rnd && fire && t > T) { if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.cs = tt; }
+    if (rnd && tt > (this.rf ? T : 18)) { this.rf = this.rf ? Math.random() < 0.55 : true; if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.t0 = now + this.pz() * 1000; this.cycle = 1; this.cs = 0; }
+    else if (!rnd && fire && t > T) { if ((this.props['alakzat'] ?? 'Virág') === 'Véletlen') { this.pickAl(); this.applyAlak(); } else this.nextLook(); this.init(); this.cs = tt + this.pz(); }
     const rot = Math.PI * 2 / Math.max(3, +(this.props['forgásMp'] ?? 29)), heart = this.F === 'szív' || this.F === '3 szív', sway = this.F !== 'gömb' && this.F !== 'csápos', a = this.F === 'virág' ? ttf * rot : sway ? Math.sin(tt * rot) * (heart ? 0.85 : this.F === 'felirat' || this.F === 'kép' ? 0 : 0.45) : tt * rot, ca = Math.cos(a), sa = Math.sin(a), b = this.F === 'virág' ? 0.62 + 0.95 * fz : sway ? 0.1 : 0.38, cb = Math.cos(b), sb = Math.sin(b);
     const cx = W / 2, cy = H / 2, R = this.F === 'felirat' ? Math.min(Math.min(W, H) * 0.3, W * 0.44 / (2.5 * 1.25)) : Math.min(W, H) * 0.3;
     const prj = (x, y, z) => { const x1 = x * ca + z * sa, z1 = -x * sa + z * ca, y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb; const k = 3 / (3 + z2); return [cx + x1 * R * k, cy + y1 * R * k, k, z2]; };
-    const prjW = (x, y, z) => { const k = 3 / (3 + z); return [cx + x * R * k, cy + y * R * k, k, z]; };
+    const prjW = (x, y, z) => { const k = 3 / (3 + z); return [cx + x * R * k, cy + y * R * k, k, z]; }; this._prjW = prjW; this._xm = W / 2 / R; this._ym = H / 2 / R; this._yHw = (H * this.hzF(W, H) - cy) / R;
     const holoPh = t >= CE, fade = bxg > 0 ? 1 - Math.max(0, (bxg - 2.6) / 0.6) : fire && t > T - 1 ? 1 - (t - (T - 1)) : 1;
     g.globalCompositeOperation = 'source-over'; g.fillStyle = holoPh ? (bxg > 0 ? 'rgba(0,0,0,0.62)' : 'rgba(0,0,0,0.38)') : 'rgba(0,0,0,' + (fire && t > 1.1 && t < XE + 0.6 ? (heart ? 0.32 : trA) : 0.2) + ')'; g.fillRect(0, 0, W, H);
     g.globalCompositeOperation = 'lighter';
@@ -376,30 +500,43 @@ class TuziCore {
     const n = this.n, [p, v, s, tg] = [this.p, this.v, this.s, this.tg];
     if (fire && t < 1.1) {
       const k = t / 1.1, e = 1 - Math.pow(1 - k, 2);
-      for (const c of (this.exC || [[0, -0.32]])) { const y = c[1] + (1.7 - c[1]) * (1 - e), [sx, sy] = prjW(c[0] * (0.7 + 0.3 * e), y, 0);
-      g.fillStyle = 'hsla(45,100%,75%,0.95)'; g.beginPath(); g.arc(sx, sy, 3 * dpr, 0, 7); g.fill();
+      this.drawTrail(g, prjW, dpr, e, 1, false);
+      for (const c of (this.exC || [[0, -0.32]])) { const y = c[1] + ((this._yHw ?? 1.7) - c[1]) * (1 - e), [sx, sy] = prjW(c[0] * (0.7 + 0.3 * e) + this.twX(c, e), y, 0);
+      g.fillStyle = 'hsla(45,100%,80%,1)'; g.beginPath(); g.arc(sx, sy, 3.4 * dpr, 0, 7); g.fill();
       for (let j = 0; j < 6; j++) { g.fillStyle = 'hsla(35,100%,60%,' + (0.5 - j * 0.07) + ')'; g.fillRect(sx - dpr + (Math.random() - 0.5) * 3 * dpr, sy + j * 6 * dpr + Math.random() * 6 * dpr, 2 * dpr, 2 * dpr); } }
     } else if (fire && t < XE) {
-      if (!this.exploded) { this.explode(); if (this.exS !== 'virágfénygömb') this.fitEx(W, H, R); }
-      const te = t - 1.1, tH = 1.4, hold = te > tH, hk = hold ? Math.min(1, (te - tH) / 0.4) : 0, pa = 0;
-      const dr = Math.pow(this.exD ?? 0.25, dt) * (1 - hk) + Math.pow(0.03, dt) * hk, gv = 0.55 * (this.exG ?? 1) * (1 - hk), xm = W / 2 / R * 0.85, ym = H / 2 / R * 0.8, cl = 1 - Math.pow(0.15, dt), EC = this.exC || [[0, -0.32]];
+      if (!this.exploded) { this.explode(); if (this.exWh) { const v = this.v, k = Math.min(1.5, (this._xm || 0.9) * 1.1) * 0.45; this.exD = 0.5; this.exG = 0.45; for (let i = 0; i < this.n; i++) { const sp = 0.75 + Math.random() * 0.5; v[0][i] *= k * 0.72 * sp; v[1][i] = (v[1][i] < 0 ? v[1][i] * 0.5 : v[1][i] * 0.35) * sp; } } else if (this.exS !== 'virágfénygömb') this.fitEx(W, H, R); this.applyDepth(); }
+      { const te0 = t - 1.1, pal = this.exS === 'pálma', fa = pal ? Math.max(0, Math.min(1, (XE - t) / 0.8)) * Math.min(1, 0.55 + te0 * 0.8) : Math.exp(-te0 / 0.7); if (fa > 0.02) this.drawTrail(g, prjW, dpr, 1, fa, pal, te0); }
+      const te = t - 1.1, tH = 0.9, hold = te > tH && this.exS !== 'szomorúfűz', hk = hold ? Math.min(1, (te - tH) / 0.4) : 0, pa = 0;
+      const dE = hold ? dt : dt * 1.6, dr = Math.pow(this.exD ?? 0.25, dE) * (1 - hk) + Math.pow(0.03, dt) * hk, gv = 0.55 * (this.exG ?? 1) * (1 - hk), xm = W / 2 / R * 0.85, ym = H / 2 / R * 0.8, cl = 1 - Math.pow(0.15, dt), EC = this.exC || [[0, -0.32]];
       if (!hold || !this.crk) this.crk = [];
-      if (!hold) this.hs = null; else if (!this.hs) { const S = new Float32Array(n * 2), CI = new Uint8Array(n), D = new Float32Array(n * 2), M = EC.map(() => 1);
+      { const D = XE - 1.1, u = Math.max(0, Math.min(1, (te / D - 0.3) / 0.5)), on = this.exS !== 'pálma'; this._csOn = on; this._csS = on ? u * u * (3 - 2 * u) * (this.exS === 'szomorúfűz' ? 0.45 : 0.85) : 0; this._csF = on ? Math.pow(Math.max(0, 1 - te / 0.22), 1.5) : 0;
+        if (te < 0.16) { const Z = this.exZ || []; g.globalCompositeOperation = 'lighter'; EC.forEach((c, q) => { const z = Z[q] ?? 1, [sx, sy] = prjW(c[0], c[1], 0), r0 = (prjW(c[0] + 0.32 * z, c[1], 0)[0] - sx) * (0.6 + te * 3), a = 1 - te / 0.16; const gr = g.createRadialGradient(sx, sy, 0, sx, sy, r0); gr.addColorStop(0, 'rgba(255,255,255,' + 0.9 * a + ')'); gr.addColorStop(0.3, 'rgba(255,245,220,' + 0.4 * a + ')'); gr.addColorStop(1, 'rgba(255,240,210,0)'); g.fillStyle = gr; g.fillRect(sx - r0, sy - r0, 2 * r0, 2 * r0); }); } }
+      if (!hold) { this.hs = null; this.MF = null; } else if (!this.hs) { const S = new Float32Array(n * 2), CI = new Uint8Array(n), D = new Float32Array(n * 2), M = EC.map(() => 1);
         for (let i = 0; i < n; i++) { const x = p[0][i], y = p[1][i]; S[i * 2] = x; S[i * 2 + 1] = y; const b = i % EC.length; CI[i] = b; const c = EC[b];
           if (Math.abs(x - c[0]) > 1e-3) M[b] = Math.max(M[b], Math.abs(x) / xm > 1 ? Math.abs(x - c[0]) / Math.max(0.05, xm - Math.sign(x) * c[0]) : 0); if (Math.abs(y - c[1]) > 1e-3) M[b] = Math.max(M[b], Math.abs(y) / ym > 1 ? Math.abs(y - c[1]) / Math.max(0.05, ym - Math.sign(y) * c[1]) : 0);
-          const an = Math.random() * 6.283, sp = 0.015 + Math.random() * 0.045; D[i * 2] = Math.cos(an) * sp; D[i * 2 + 1] = Math.sin(an) * sp; v[0][i] = 0; v[1][i] = 0; v[2][i] = 0; }
-        this.hs = { S, CI, D, sc: M.map(() => 1) }; }
+          const an = Math.random() * 6.283, sp = (0.015 + Math.random() * 0.045) * ((this.exZ || [])[b] ?? 1) * (this.exIn && this.exIn[i] ? 0.35 : 1); D[i * 2] = Math.cos(an) * sp; D[i * 2 + 1] = Math.sin(an) * sp; v[0][i] = 0; v[1][i] = 0; v[2][i] = 0; }
+        this.hs = { S, CI, D, sc: M.map(() => 1) };
+        if (this.exS === 'virágfej') { const ph = this._vph || 0, MF = this.MF = [], HU = [120, 52, 212, 0, 282]; let hc = 0;
+          EC.forEach((c, b) => { for (let m = 0; m < 5; m++) { const an = m * Math.PI / 2.5 - ph - b, ca = Math.cos(an), sa = Math.sin(an); let best = 0, bx = c[0] + ca * 0.3, by = c[1] + sa * 0.3;
+            for (let i = 0; i < n; i += 2) { if (CI[i] !== b) continue; const dx = S[i * 2] - c[0], dy = S[i * 2 + 1] - c[1], d = Math.hypot(dx, dy); if (d > best && (dx * ca + dy * sa) / (d || 1) > 0.97) { best = d; bx = S[i * 2]; by = S[i * 2 + 1]; } }
+            const dd = Math.hypot(bx - c[0], by - c[1]);
+            MF.push({ x: bx + ca * dd * 0.4, y: by + sa * dd * 0.4, d: dd * 1.4, r: dd * 0.4, k: 5, ph: Math.random() * 6.3, h: HU[hc++ % 5], sd: Math.random() * 9, cx: c[0], cy: c[1] });
+            MF.push({ x: c[0] + Math.cos(an + 0.63) * dd * 0.95, y: c[1] + Math.sin(an + 0.63) * dd * 0.95, d: dd * 0.95, r: dd * 0.28, k: 5, ph: Math.random() * 6.3, h: HU[hc++ % 5], sd: Math.random() * 9, cx: c[0], cy: c[1] }); } }); } }
       const HS = this.hs, hd = hold ? te - tH : 0, hk2 = hk * hk * (3 - 2 * hk);
       if (this.exS === 'virágfénygömb') this.drawVFG(g, t - 1.1, XE - 1.1, prjW, dpr, tt); else for (let i = 0; i < n; i++) {
-        v[0][i] *= dr; v[1][i] = v[1][i] * dr + gv * dt; if (this.wv) { v[0][i] += this.wv[0][i] * dt; v[1][i] += this.wv[1][i] * dt; } if (this.cu && this.cu[i]) { const w = this.cu[i] * dt, cw = Math.cos(w), sw = Math.sin(w), vx = v[0][i]; v[0][i] = vx * cw - v[1][i] * sw; v[1][i] = vx * sw + v[1][i] * cw; } v[2][i] *= dr; p[0][i] += v[0][i] * dt; p[1][i] += v[1][i] * dt; p[2][i] += v[2][i] * dt;
+        v[0][i] *= dr; v[1][i] = v[1][i] * dr + gv * dE; if (this.wv) { v[0][i] += this.wv[0][i] * dt; v[1][i] += this.wv[1][i] * dt; } if (this.cu && this.cu[i]) { const w = this.cu[i] * dt, cw = Math.cos(w), sw = Math.sin(w), vx = v[0][i]; v[0][i] = vx * cw - v[1][i] * sw; v[1][i] = vx * sw + v[1][i] * cw; } v[2][i] *= dr; p[0][i] += v[0][i] * dE; p[1][i] += v[1][i] * dE; p[2][i] += v[2][i] * dE;
         let ecx = EC[0][0], ecy = EC[0][1];
-        if (hold) { const b = HS.CI[i], c = EC[b], f = 1 + (HS.sc[b] - 1) * hk2; ecx = c[0]; ecy = c[1]; p[0][i] = c[0] + (HS.S[i * 2] - c[0]) * f + HS.D[i * 2] * hd; p[1][i] = c[1] + (HS.S[i * 2 + 1] - c[1]) * f + HS.D[i * 2 + 1] * hd;
+        if (hold) { const b = HS.CI[i], c = EC[b], f = 1 + (HS.sc[b] - 1) * hk2; ecx = c[0]; ecy = c[1]; p[0][i] = c[0] + (HS.S[i * 2] - c[0]) * f + HS.D[i * 2] * hd; p[1][i] = c[1] + (HS.S[i * 2 + 1] - c[1]) * f + HS.D[i * 2 + 1] * hd + 0.028 * hd * hd * (0.35 + Math.hypot(HS.S[i * 2] - c[0], HS.S[i * 2 + 1] - c[1]));
           if (t < XE - 0.3 && Math.random() < 0.006) this.crk.push({ x: p[0][i], y: p[1][i], vx: (p[0][i] - ecx) * (0.6 + Math.random()) + (Math.random() - 0.5) * 0.5, vy: (p[1][i] - ecy) * (0.6 + Math.random()) + (Math.random() - 0.5) * 0.5, l: 0.35 + Math.random() * 0.3 }); }
         const [sx, sy, k] = prjW(p[0][i] + (p[0][i] - ecx) * pa, p[1][i] + (p[1][i] - ecy) * pa, p[2][i]), life = Math.max(0, 1 - (t - 1.1) / (XE - 1.1 + 1)), tw = hold ? (Math.random() < 0.2 ? 2 : 0.85) : Math.random() < 0.12 ? 1.6 : 1;
         if (this.bb && this.bb[i]) { g.fillStyle = ['', 'rgba(255,105,180,', 'rgba(255,225,40,', 'rgba(255,255,255,'][this.bb[i]] + Math.min(1, 0.55 + life) * tw + ')'; const z = Math.max(1.2, 2.6 * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
-        else if ((heart || this.trgb) && this.exS !== 'pálma') { const cf = Math.max(0, Math.min(1, (t - 1.1) / (XE - 1.1) * 1.7 - 0.7)) * 0.6, z = 6 * k * dpr; g.fillStyle = this.colAt(i, cf, tt, Math.min(1, 0.35 + life) * tw); if (heart) { g.setTransform(z, 0, 0, z, sx, sy); g.fill(this.HP); g.setTransform(1, 0, 0, 1, 0, 0); } else { const zz = Math.max(1, 2.4 * k * dpr); g.fillRect(sx - zz / 2, sy - zz / 2, zz, zz); } }
-        else { const wl = this.exS === 'szomorúfűz'; g.fillStyle = 'hsla(' + this.hue[i] + ',100%,' + (wl ? 48 + 10 * life : this.exS === 'pálma' ? 46 + 6 * life : this.exS === 'folyondár' ? 52 + 8 * life : 62 + 20 * life) + '%,' + Math.min(1, 0.35 + life) * tw * (wl ? 0.4 : this.exS === 'pálma' ? 0.2 : this.exS === 'banánlevél' || this.exS === 'folyondár' ? 0.45 : 1) + ')'; const z = Math.max(1, 2.2 * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z); }
+        else if ((heart || this.trgb) && this.exS !== 'pálma') { const cf = Math.max(0, Math.min(1, (t - 1.1) / (XE - 1.1) * 1.7 - 0.7)) * 0.6, z = 6 * k * dpr; g.fillStyle = this.colAt(i, cf, tt, Math.min(1, 0.35 + life) * tw); if (heart) { g.setTransform(z, 0, 0, z, sx, sy); g.fill(this.HP); g.setTransform(1, 0, 0, 1, 0, 0); } else { const zz = Math.max(1, 2.4 * k * dpr * (this.exIn && this.exIn[i] ? 1.7 : 1)); if (this.exIn && this.exIn[i] && this.exS === 'krizantém') (this._ip || (this._ip = [])).push(sx, sy, zz, g.fillStyle); else g.fillRect(sx - zz / 2, sy - zz / 2, zz, zz); } }
+        else { const wl = this.exS === 'szomorúfűz', h2 = this._csOn && this.exR2 ? this.exR2[i % this.exR2.length].h : this.hue[i], dh = ((h2 - this.hue[i]) % 360 + 540) % 360 - 180, csF = this._csOn ? this._csF : 0, inr = this.exIn && this.exIn[i]; g.fillStyle = 'hsla(' + (this.hue[i] + (inr ? 0 : dh * (this._csOn ? this._csS : 0))) + ',' + (100 - 85 * csF) + '%,' + Math.min(97, csF * 40 + (inr ? (this.exS === 'krizantém' ? 50 : 48) + 6 * life : wl ? 48 + 10 * life : this.exS === 'pálma' ? 46 + 6 * life : this.exS === 'folyondár' ? 52 + 8 * life : 62 + 20 * life)) + '%,' + Math.min(1, 0.35 + life) * tw * (wl ? 0.4 : this.exS === 'pálma' ? 0.2 : this.exS === 'banánlevél' || this.exS === 'folyondár' ? 0.45 : 1) + ')'; const z = Math.max(1, 2.2 * k * dpr * (inr ? 1.7 : 1)); if (inr && this.exS === 'krizantém') (this._ip || (this._ip = [])).push(sx, sy, z, g.fillStyle); else g.fillRect(sx - z / 2, sy - z / 2, z, z); }
       }
+      if (this._ip && this._ip.length) { const ip = this._ip, oc = g.globalCompositeOperation; g.globalCompositeOperation = 'source-over'; for (let q = 0; q < ip.length; q += 4) { g.fillStyle = ip[q + 3]; g.fillRect(ip[q] - ip[q + 2] / 2, ip[q + 1] - ip[q + 2] / 2, ip[q + 2], ip[q + 2]); } g.globalCompositeOperation = oc; ip.length = 0; }
+      if (this.MF && hold) { const a = Math.max(0, hd - 0.12), gw = Math.min(1, a / 0.5), gr = 1 - Math.pow(1 - gw, 3), en = Math.max(0, Math.min(1, (XE - t) / 0.5)), f = gr * en, bX = W / 2 / R * 0.93, bY = H / 2 / R * 0.93;
+        if (f > 0.01) for (const q of this.MF) { const dx = q.x - q.cx, dy = q.y - q.cy, l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, rr = q.r * 1.05, md = Math.max(0, Math.min(ux > 1e-3 ? (bX - rr - q.x) / ux : ux < -1e-3 ? (-bX + rr - q.x) / ux : 9, uy > 1e-3 ? (Math.min(bY, (this._yHw ?? bY) - 0.03) - rr - q.y) / uy : uy < -1e-3 ? (-bY + rr - q.y) / uy : 9, 1.6)), mv = md * (1 - Math.exp(-0.38 * a / Math.max(0.05, md))); this.drawMini(g, prjW, dpr, q.x + ux * mv, q.y + uy * mv, 0, q.r * f, q.k, q.ph + hd * 0.25, q.h, Math.min(1, gw * 2) * (0.5 + 0.5 * en), q.sd, 220); } }
       if (this.crk.length) { const cr = this.crk; let w = 0; for (const c of cr) { c.l -= dt; if (c.l <= 0) continue; c.vy += 0.4 * dt; c.x += c.vx * dt; c.y += c.vy * dt; const [sx, sy, k] = prjW(c.x, c.y, 0), z = Math.max(1, 1.8 * k * dpr); g.fillStyle = 'rgba(255,240,200,' + Math.min(1, c.l * 2.5) + ')'; g.fillRect(sx - z / 2, sy - z / 2, z, z); cr[w++] = c; } cr.length = w; }
     } else {
       const br = this.F === 'gömb' ? 1 + 0.12 * Math.sin(tt * 2 * Math.PI / 5) : 1;
@@ -487,15 +624,16 @@ class TuziCore {
         if (sk) { g.fillStyle = 'rgba(0,0,0,0.16)'; for (let y = (Math.floor(tt * 40) % 4) * dpr; y < H; y += 4 * dpr) g.fillRect(0, y, W, dpr);
         const by = ((tt * 0.35) % 1.3 - 0.15) * H, bg = g.createLinearGradient(0, by - 40 * dpr, 0, by + 40 * dpr); bg.addColorStop(0, 'rgba(255,255,255,0)'); bg.addColorStop(0.5, 'hsla(' + hu + ',100%,80%,0.07)'); bg.addColorStop(1, 'rgba(255,255,255,0)');
         g.fillStyle = bg; g.fillRect(0, by - 40 * dpr, W, 80 * dpr); }
-        if (sk && Math.random() < 0.012) { const y = Math.random() * H, hh = (8 + Math.random() * 30) * dpr; g.drawImage(cv, 0, y, W, hh, (Math.random() - 0.5) * 24 * dpr, y, W, hh); }
+        if (sk && Math.random() < 0.012) { const y = Math.random() * H, hh = (8 + Math.random() * 30) * dpr; g.drawImage(g.canvas, 0, y, W, hh, (Math.random() - 0.5) * 24 * dpr, y, W, hh); }
       }
     }
+    if (fire) this.akna(g, prjW, dpr, t, XE, dt, CE, bxg);
   };
 }
 class Tuzijatek extends TuziCore {
   constructor(cv, gp) { super(); this.cvRef = { current: cv }; this._gp = gp; this._pp = null; this.on = false; }
   get props() { return (this._gp && this._gp()) || {}; }
-  clr() { const c = this.cvRef.current; if (c && c.width) { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, c.width, c.height); } }
+  clr() { if (this.BF && this.BF.width) { const b = this.BF.getContext('2d'); b.setTransform(1, 0, 0, 1, 0, 0); b.globalCompositeOperation = 'source-over'; b.fillStyle = '#000'; b.fillRect(0, 0, this.BF.width, this.BF.height); } this.lit = []; this.SM = []; const c = this.cvRef.current; if (c && c.width) { const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, c.width, c.height); } }
   start() { if (this.on) return; this.on = true; this.clr(); this.cs = 0; this._sf = null; this._pp = Object.assign({}, this.props); this.componentDidMount(); }
   stop() { if (!this.on) return; this.on = false; cancelAnimationFrame(this.raf); this.musStop(); this.clr(); }
   sync() { if (!this.on) return; const p = this.props, pp = this._pp || {}; if (Object.keys(p).some(k => p[k] !== pp[k])) { this.componentDidUpdate(pp); this._pp = Object.assign({}, p); } }
