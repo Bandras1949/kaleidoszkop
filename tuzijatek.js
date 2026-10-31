@@ -19,8 +19,9 @@ class TuziCore {
   kep() { return this.alk() === 'Kép'; }
   buildKep(n) {
     const kk = this.kk || 'macska'; this.KC = this.KC || {}; if (this._kcur !== kk) { if (this._kcur) this.KC[this._kcur] = { KI: this.KI, KIok: this.KIok, KP: this.KP }; const c0 = this.KC[kk] || {}; this.KI = c0.KI; this.KIok = c0.KIok; this.KP = c0.KP; this._kcur = kk; }
-    if (!this.KI) { const im = new Image(); im.onload = () => { if (this._kcur === kk) this.KIok = true; else (this.KC[kk] = this.KC[kk] || {}).KIok = true; if (this.F === 'kép' && this._kcur === kk) { const cy = this.cycle; this._kre = true; this.init(); this.cycle = cy; } }; im.src = kk === 'farkas' ? 'mintak/kep-farkas.jpg' : 'mintak/kep-macska.png'; this.KI = im; }
+    if (!this.KI) { const im = new Image(); im.onload = () => { if (this._kcur === kk) this.KIok = true; else (this.KC[kk] = this.KC[kk] || {}).KIok = true; if (this.F === 'kép' && this._kcur === kk) { const cy = this.cycle; this._kre = true; this.init(); this.cycle = cy; } }; im.src = ({ farkas: 'mintak/kep-farkas.jpg', korona: 'mintak/kep-korona.png', szem: 'mintak/kep-szem.png' })[kk] || 'mintak/kep-macska.png'; this.KI = im; }
     if (this.KIok && !this.KP && kk === 'farkas') this.KP = this.buildWolf();
+    if (this.KIok && !this.KP && (kk === 'korona' || kk === 'szem')) this.KP = this.buildGlow(kk);
     const tg = this.tg, T = this.trgb = new Array(n), Q = this.ty8 = new Uint8Array(n), R = Math.random;
     if (!this.KIok) { for (let i = 0; i < n; i++) { const a = R() * 6.283, r = Math.sqrt(R()) * 0.9; tg[0][i] = Math.cos(a) * r; tg[1][i] = Math.sin(a) * r; tg[2][i] = 0; T[i] = [255, 210, 110]; Q[i] = 0; } return; }
     if (!this.KP) { const im = this.KI, W = im.naturalWidth, H = im.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const id = g.getImageData(0, 0, W, H), d = id.data;
@@ -36,8 +37,8 @@ class TuziCore {
       const ecy = ((bb[0][1] + bb[0][3] + bb[1][1] + bb[1][3]) / 4 - H / 2) / S;
       const ST = []; for (let q = 0; q < 1600; q++) { const p = P[Math.floor(Math.random() * P.length)], r = Math.hypot(p[0], p[1]) || 0.01, sp = 1.2 + Math.random() * 3; ST.push([p[0], p[1], p[0] / r * sp + (Math.random() - 0.5) * 0.6, p[1] / r * sp + (Math.random() - 0.5) * 0.6, p[2], p[3], p[4], Math.random() * 6.283, 0.6 + Math.random() * 1.2]); }
       this.KP = { P, body: c, eye, hw: W / S, hh: H / S, ecy, ST }; }
-    const P = this.KP.P;
-    for (let i = 0; i < n; i++) { const p = P[Math.floor(R() * P.length)]; tg[0][i] = p[0]; tg[1][i] = p[1]; tg[2][i] = 0; T[i] = R() < 0.1 ? [255, 248, 225] : [p[2], p[3], p[4]]; Q[i] = 0; }
+    const P = this.KP.P; if (this.KP.my == null) { let my = -9; for (const p of P) if (p[1] > my) my = p[1]; this.KP.my = my; } let ks = 1, oy; if (this.kk === 'szem') { const top = -(this._ym ?? 1.9) * 0.94, bot = (this._yHw ?? 1.5) - 0.06, RIu = 0.39 * this.KP.hw; ks = Math.min(1, (bot - top) / (3.0 * RIu), ((this._xm ?? 0.9) * 2 * 0.94) / (3.0 * RIu)); const fr = bot - top - 2.95 * RIu * ks; oy = top + 1.75 * RIu * ks + fr * 0.35; } else oy = Math.min(0, ((this._yHw ?? 1.5) - 0.12) - this.KP.my); this.kSc = ks; this.kOy = oy;
+    for (let i = 0; i < n; i++) { const p = P[Math.floor(R() * P.length)]; tg[0][i] = p[0] * ks; tg[1][i] = p[1] * ks + oy; tg[2][i] = 0; T[i] = R() < 0.1 ? [255, 248, 225] : [p[2], p[3], p[4]]; Q[i] = 0; }
   }
   buildCsapos(n) {
     const tg = this.tg, T = this.trgb = new Array(n), Q = this.ty8 = new Uint8Array(n), R = Math.random, N = 28, PH = (1 + Math.sqrt(5)) / 2, bone = false, h0 = R() * 360;
@@ -70,9 +71,17 @@ class TuziCore {
    
     const ST = []; for (let q = 0; q < 1600; q++) { const p = P[Math.floor(Math.random() * P.length)], r = Math.hypot(p[0], p[1]) || 0.01, sp = 1.2 + Math.random() * 3; ST.push([p[0], p[1], p[0] / r * sp + (Math.random() - 0.5) * 0.6, p[1] / r * sp + (Math.random() - 0.5) * 0.6, p[2], p[3], p[4], Math.random() * 6.283, 0.6 + Math.random() * 1.2]); }
     return { P, body, jaw, eye, wolf: true, hw: W / S, hh: H / S, hx: (458 * sc - W / 2) / S, hy: (470 * sc - H / 2) / S, ecy: 0, ST }; }
+  buildGlow(kk) { const im = this.KI, W = im.naturalWidth, H = im.naturalHeight, S = H / 2.6, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+    const id = g.getImageData(0, 0, W, H), d = id.data, P = [], Lm = k => d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11;
+    for (let y = 0; y < H; y += 2) for (let x = (y / 2) % 2; x < W; x += 2) { const k = (y * W + x) * 4; if (Lm(k) > 80) P.push([(x - W / 2) / S, (y - H / 2) / S, d[k], d[k + 1], d[k + 2]]); }
+    const JW = []; if (kk === 'korona') { const y0 = Math.round(H * 0.68), y1 = Math.round(H * 0.78), cols = new Float32Array(W); for (let y = y0; y < y1; y++) for (let x = 0; x < W; x++) { const k = (y * W + x) * 4; if (Lm(k) > 235) cols[x]++; }
+      let inb = false, a = 0, sx = 0, sw = 0; for (let x = 0; x < W; x++) { const v = cols[x] > 6; if (v && !inb) { inb = true; a = x; sx = 0; sw = 0; } if (v) { sx += x * cols[x]; sw += cols[x]; } if (!v && inb) { inb = false; if (x - a > 8) { let sy = 0, sn = 0; for (let y = y0; y < y1; y++) for (let xx = a; xx < x; xx++) { const k = (y * W + xx) * 4; if (Lm(k) > 235) { sy += y; sn++; } } JW.push([sx / sw, sn ? sy / sn : (y0 + y1) / 2, (x - a) / 2]); } } } }
+    for (let k = 0; k < d.length; k += 4) { const L = Lm(k), bl = d[k + 2] > d[k] + 12, a = Math.max(0, Math.min(1, (L - (bl && kk === 'szem' ? 8 : 22)) / (bl && kk === 'szem' ? 40 : 70))); d[k + 3] = Math.round(d[k + 3] * a); } g.putImageData(id, 0, 0);
+    const ST = []; for (let q = 0; q < 1600; q++) { const p = P[Math.floor(Math.random() * P.length)], r = Math.hypot(p[0], p[1]) || 0.01, sp = 1.2 + Math.random() * 3; ST.push([p[0], p[1], p[0] / r * sp + (Math.random() - 0.5) * 0.6, p[1] / r * sp + (Math.random() - 0.5) * 0.6, p[2], p[3], p[4], Math.random() * 6.283, 0.6 + Math.random() * 1.2]); }
+    return { P, body: c, eye: null, glow: kk, JW: JW.map(([x, y, r]) => [(x - W / 2) / S, (y - H / 2) / S, r / S]), pr: (W * 0.105) / S, hw: W / S, hh: H / S, ecy: 0, ST }; }
   felirat() { return this.alk() === 'Felirat'; }
   buildFelirat(n) {
-    const txt = String(this.props['felirat'] ?? 'incredible') || 'incredible', FN = '"DM Sans"';
+    const txt = String(this.props['felirat'] ?? 'KALEIDOSZKÓP') || 'KALEIDOSZKÓP', FN = '"DM Sans"';
     if (!this.FTok && document.fonts && !this.FTwait) { this.FTwait = true; document.fonts.load('600 200px ' + FN).then(() => { this.FTok = true; this.FTP = null; if (this.F === 'felirat') { const cy = this.cycle; this.init(); this.cycle = cy; } }).catch(() => {}); }
     if (!this.FTP || this.FTk !== txt) { const c = document.createElement('canvas'), W = 1800, H = 520; c.width = W; c.height = H; const g = c.getContext('2d');
       let fs = 300; g.font = '600 ' + fs + 'px ' + (this.FTok ? FN : 'sans-serif'); const mw = g.measureText(txt).width; if (mw > W * 0.92) { fs = fs * W * 0.92 / mw; g.font = '600 ' + fs + 'px ' + (this.FTok ? FN : 'sans-serif'); }
@@ -114,7 +123,7 @@ class TuziCore {
         const j = three ? i % 3 : 1, sc = three ? 0.42 : 1, ox = three ? (j - 1) * 0.95 : 0; this.hj[i] = j; this.ox[i] = ox;
         this.tg[0][i] = hx(u) * s * sc + ox; this.tg[1][i] = hy(u) * s * sc; this.tg[2][i] = d * sc; }
     } else for (let i = 0; i < n; i++) { const y = 1 - 2 * (i + 0.5) / n, r = Math.sqrt(1 - y * y), a = i * ga; this.tg[0][i] = Math.cos(a) * r; this.tg[1][i] = y; this.tg[2][i] = Math.sin(a) * r; }
-    this.exploded = false; this.conv0 = false; this.cycle = 1; this.conf = null;
+    this.exploded = false; this.conv0 = false; this.cycle = 1; this.conf = null; this._fyB = -9; this._fyT = 9; this._fS = null;
   }
   buildVirag(n) {
     const tg = this.tg, T = this.trgb = new Array(n), Q = this.ty8 = new Uint8Array(n), VP = this.vp = new Float32Array(n * 4), R = Math.random, [ci, co, ct] = this.VPAL[this.vpk];
@@ -227,7 +236,7 @@ class TuziCore {
       return 'rgba(' + Math.round(S[0] + (T[0] - S[0]) * cf) + ',' + Math.round(S[1] + (T[1] - S[1]) * cf) + ',' + Math.round(S[2] + (T[2] - S[2]) * cf) + ',' + al + ')'; }
     const hh = this.hue[i] + (this.holoHue(this.tg[1][i], tt, i) - this.hue[i]) * cf; return 'hsla(' + hh + ',100%,68%,' + al + ')';
   }
-  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma', 'virágfénygömb', 'sípolófűz']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'], 'farkas': ['bazsarózsa', 'krizantém'] };
+  EXS = ['krizantém', 'bazsarózsa', 'gyűrű', 'virágfej', 'pálma', 'virágfénygömb', 'sípolófűz']; KEPS = { 'macska': ['gyűrű', 'bazsarózsa'], 'farkas': ['bazsarózsa', 'krizantém'], 'korona': ['bazsarózsa', 'gyűrű'], 'szem': ['gyűrű', 'krizantém'] }; KORD = ['macska', 'farkas', 'korona', 'szem'];
   loadPalm() { if (this.PALMI) return; const im = new Image(); im.onload = () => { const W = im.naturalWidth, H = im.naturalHeight, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, W, H).data, P = [], S = H / 2.5, ox = W * 0.5, oy = H * 0.405;
       for (let y = 0; y < H; y += 2) for (let x = 0; x < W; x += 2) { const k = (y * W + x) * 4, L = d[k] * 0.3 + d[k + 1] * 0.59 + d[k + 2] * 0.11; if (L > 110) P.push([(x - ox) / S, (y - oy) / S]); }
       this.PALMP = P; }; im.src = 'mintak/kiserlet-palma.png'; this.PALMI = im; }
@@ -235,8 +244,8 @@ class TuziCore {
     if (st === 'véletlen') { const o = this.EXS.filter(x => x !== this.exS); this.exS = o[Math.floor(R() * o.length)]; } else this.exS = st;
     this.exWh = this.exS === 'sípolófűz'; if (this.exWh) this.exS = 'szomorúfűz';
     let nr = this.exWh ? 1 : rk === 'véletlen' ? 1 + Math.floor(R() * 3) : Math.max(1, Math.min(3, +rk || 1)); this.exHue = null;
-    if (this.F === 'kép') { const kp = this.props['kép'] ?? 'véletlen'; if (this._kre) this._kre = false; else this.kk = kp === 'farkas' || kp === 'macska' ? kp : this.kk === 'macska' ? 'farkas' : 'macska'; }
-    if (this.F === 'kép') { const ks = this.KEPS[this.kk || 'macska']; if (st === 'véletlen') { this._ki = ((this._ki ?? -1) + 1) % ks.length; this.exS = ks[this._ki]; } if (rk === 'véletlen') nr = 2; this.exHue = this.kk === 'farkas' ? [40, 18] : [44, 205]; }
+    if (this.F === 'kép') { const kp = this.props['kép'] ?? 'véletlen'; if (this._kre) this._kre = false; else this.kk = this.KORD.includes(kp) ? kp : this.KORD[(this.KORD.indexOf(this.kk) + 1) % this.KORD.length]; }
+    if (this.F === 'kép') { const ks = this.KEPS[this.kk || 'macska']; if (st === 'véletlen') { this._ki = ((this._ki ?? -1) + 1) % ks.length; this.exS = ks[this._ki]; } if (rk === 'véletlen') nr = 2; this.exHue = ({ farkas: [40, 18], korona: [42, 30], szem: [190, 44] })[this.kk] || [44, 205]; if (this.kk === 'szem' && st === 'véletlen') this.exS = R() < 0.6 ? 'gyűrű' : 'krizantém'; }
     const xm = this._xm || 0.95, ym = this._ym || 1.9, po = ym > xm * 1.25, fl = R() < 0.5 ? 1 : -1, j = () => (R() - 0.5) * 0.08 * ym;
     this.exC = nr === 1 ? [[0, -0.32]] : nr === 2 ? (po ? [[-0.46 * xm, -0.42 * ym + j()], [0.46 * xm, 0.12 * ym + j()]] : [[-0.5 * xm, -0.3 * ym + j()], [0.5 * xm, 0.02 * ym + j()]]) : (po ? [[-0.56 * xm, -0.5 * ym + j()], [0, -0.08 * ym + j()], [0.56 * xm, 0.3 * ym + j()]] : [[-0.64 * xm, -0.02 * ym + j()], [0, -0.22 * ym + j()], [0.64 * xm, -0.32 * ym + j()]]);
     if (nr > 1 && fl < 0) this.exC = this.exC.map(([x, y]) => [-x, y]);
@@ -312,7 +321,7 @@ class TuziCore {
     return o; }
   musStop() { const M = this._mu; if (!M || !M.src) return; const t = M.ac.currentTime; try { M.g.gain.setTargetAtTime(0.0001, t, 0.25); M.src.stop(t + 1.2); } catch (e) {} M.src = null; M.g = null; }
   PZ = 8;
-  pz() { if (this._pzN == null) this._pzN = 2 + Math.floor(Math.random() * 2); if (--this._pzN > 0) { this.BMS = null; return 0.6; } this._pzN = null; this.newBeams(); return this.PZ; }
+  pz() { if (this._pzN == null) this._pzN = 3; if (--this._pzN > 0) { this.BMS = null; return 0.6; } this._pzN = null; this.newBeams(); return this.PZ; }
   newBeams() { const R = Math.random, n = R() < 0.5 ? 2 : 3, B = this.BMS = []; for (let q = 0; q < n; q++) B.push({ x: (q + 0.5) / n + (R() - 0.5) * 0.12, a0: (R() - 0.5) * 0.5, am: 0.35 + R() * 0.25, w: 0.5 + R() * 0.5, ph: R() * 6.3, d: q % 2 ? 1 : -1, h: R() < 0.7 ? 215 : 45 }); }
   beam(c, x0, y0, ang, len, w0, w1, a, h) { c.save(); c.translate(x0, y0); c.rotate(ang); const gr = c.createLinearGradient(0, 0, 0, -len); gr.addColorStop(0, 'hsla(' + h + ',40%,88%,' + a + ')'); gr.addColorStop(0.5, 'hsla(' + h + ',35%,80%,' + a * 0.45 + ')'); gr.addColorStop(1, 'hsla(' + h + ',30%,75%,0)'); c.fillStyle = gr; c.beginPath(); c.moveTo(-w0, 0); c.lineTo(w0, 0); c.lineTo(w1, -len); c.lineTo(-w1, -len); c.closePath(); c.fill(); c.restore(); }
   litUpd(t, XE, bxg) { const L = this.lit || (this.lit = []), st = this._ls || (this._ls = {}); if (t < (st.pt ?? 1e9) - 0.5) { st.X = false; st.B = false; } st.pt = t; const now = performance.now() / 1000, EC = this.exC || [[0, -0.32]], hu = i => this.hue && this.hue.length ? this.hue[i % this.hue.length] : 40;
@@ -431,7 +440,7 @@ class TuziCore {
     let m = Math.min(1, w / 0.7); m = m * m * (3 - 2 * m); let bl = Math.min(1, w / 1.0); bl = 1 - Math.pow(1 - bl, 2);
     const al0 = 1 - 0.2 * wN, rr = r1 * sh + mv, gy = 0.35 * wN * wN, grow = 1 + 0.35 * mv;
     const o0 = prjW(0, 0, 0), ru = prjW(1, 0, 0)[0] - o0[0], bx = o0[0] / ru * 0.94, by = o0[1] / ru * 0.94;
-    for (const q of S) { q.P[0] = q.c[0] + q.d[0] * rr; q.P[1] = q.c[1] + q.d[1] * rr + gy; q.P[2] = q.d[2] * Math.min(rr, 1.2) * 0.4; const kq = 3 / (3 + q.P[2]), m = q.sz * grow * 1.15, lx = bx / kq - m, ly = by / kq - m; q.ex = lx * Math.tanh(q.P[0] / lx) - q.P[0]; q.ey = ly * Math.tanh(q.P[1] / ly) - q.P[1]; q.P[0] += q.ex; q.P[1] += q.ey; }
+    for (const q of S) { q.P[0] = q.c[0] + q.d[0] * rr; q.P[1] = q.c[1] + q.d[1] * rr + gy; q.P[2] = q.d[2] * Math.min(rr, 1.2) * 0.4; const kq = 3 / (3 + q.P[2]), m = q.sz * grow * 1.15, lx = bx / kq - m, ly = Math.max(0.15, (q.P[1] > 0 ? Math.min(by, (this._yHw ?? by) - 0.06) : by) / kq - m); q.ex = lx * Math.tanh(q.P[0] / lx) - q.P[0]; q.ey = ly * Math.tanh(q.P[1] / ly) - q.P[1]; q.P[0] += q.ex; q.P[1] += q.ey; }
     if (bl > 0 && al0 > 0) for (const q of S) { const [sx, sy, k] = prjW(q.P[0], q.P[1], q.P[2]), R0 = prjW(q.P[0] + q.sz * grow * 1.5, q.P[1], q.P[2])[0] - sx; if (R0 < 1) continue;
       const gr = g.createRadialGradient(sx, sy, 0, sx, sy, R0); gr.addColorStop(0, 'hsla(' + q.hue + ',100%,70%,' + 0.22 * bl * al0 + ')'); gr.addColorStop(1, 'hsla(' + q.hue + ',100%,55%,0)'); g.fillStyle = gr; g.beginPath(); g.arc(sx, sy, R0, 0, 7); g.fill(); }
     if (al0 > 0) { const a = Math.max(0, w - 0.75), gw = Math.min(1, a / 0.6), gr = 1 - Math.pow(1 - gw, 3), en = Math.max(0, Math.min(1, (D - u) / 0.5)), f = gr * en, HU = [120, 52, 212, 0, 282], bX = (this._xm || 0.9) * 0.93, bY = (this._ym || 1.9) * 0.93;
@@ -543,15 +552,16 @@ class TuziCore {
       if (this.F === 'logó' || this.F === 'virág' || this.F === 'felirat' || (this.F === 'csápos' && this.csBone)) g.globalCompositeOperation = 'source-over';
       let ck = 1; const kk = fire && t < CE ? (t - XE) / 2.8 : 1, pg = this.exS === 'pálma' && fire && t < CE, cfC = pg ? Math.pow(Math.max(0, Math.min(1, (kk - 0.8) / 0.2)), 1.5) : Math.min(1, 0.6 + 0.4 * Math.min(1, kk * 2.5)), pgA = pg ? 0.2 + 0.8 * Math.pow(Math.max(0, Math.min(1, (kk - 0.75) / 0.25)), 1.5) : 1;
       if (fire && t < CE) { if (!this.conv0) { for (let q = 0; q < 3; q++) s[q].set(p[q]); this.conv0 = true; } const k = (t - XE) / 2.8; ck = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
-      const hu = this.holoHue(0, tt, 0);
+      const fitF = this.F !== 'kép'; let fS = 1, fO = 0; if (fitF) { const gm = this.F === 'gömb' ? 1.16 : 1.04, bl = (this._yHw ?? 1.5) - 0.12, tl = -(this._ym ?? 1.9) + 0.06, B = Math.max(0.3, this._fyB ?? 1) * gm, Tp = Math.min(-0.3, this._fyT ?? -1) * gm; const sc = Math.min(1, (bl - tl) / Math.max(0.01, B - Tp)); let o = Math.min(0, bl - B * sc); if (Tp * sc + o < tl) o = tl - Tp * sc; if (this._fS == null) { this._fS = sc; this._fO = o; } else { this._fS += (sc - this._fS) * 0.12; this._fO += (o - this._fO) * 0.12; } fS = this._fS; fO = this._fO; }
+      const hu = this.holoHue(0, tt, 0), cyF = cy + fO * R, brF = br * fS;
       if (this.fv === 'cukor' && this.F === 'fenyő' && ck >= 1 && this.BL) for (const L of this.BL) { const fx = L.x, fy = L.fy - 0.07, x1 = fx * ca, z1 = -fx * sa, y1 = fy * cb - z1 * sb, z2 = fy * sb + z1 * cb, [gx, gy] = prjW(x1, y1, z2), pu = 0.5 + 0.5 * Math.sin(tt * 3.2 + L.ph * 1.3), fl = 0.8 + 0.4 * pu, hb = (tt * 45 + L.ph * 72) % 360;
         const gr = g.createRadialGradient(gx, gy, 0, gx, gy, R * 0.26 * fl); gr.addColorStop(0, 'hsla(' + hb + ',100%,60%,' + (0.1 + 0.2 * pu) * fade + ')'); gr.addColorStop(1, 'hsla(' + hb + ',100%,55%,0)'); g.fillStyle = gr; g.beginPath(); g.arc(gx, gy, R * 0.28 * fl, 0, 7); g.fill(); }
       if (holoPh && this.F === 'gömb' && bxg > 0) { g.globalCompositeOperation = 'lighter'; const al3 = Math.max(0, 1 - Math.max(0, bxg - 2.4) / 0.8);
-        for (let q = 0; q < 260; q++) { const an = q / 260 * 6.283 + ((q * 0.37) % 1) * 0.05, rr = R * (0.97 * br + Math.pow(bxg, 1.25) * (0.5 + ((q * 0.618) % 1) * 1.6)), sx = cx + Math.cos(an) * rr, sy = cy + Math.sin(an) * rr, z = (1.6 + bxg * 0.6) * dpr;
+        for (let q = 0; q < 260; q++) { const an = q / 260 * 6.283 + ((q * 0.37) % 1) * 0.05, rr = R * (0.97 * brF + Math.pow(bxg, 1.25) * (0.5 + ((q * 0.618) % 1) * 1.6)), sx = cx + Math.cos(an) * rr, sy = cyF + Math.sin(an) * rr, z = (1.6 + bxg * 0.6) * dpr;
           g.fillStyle = 'hsla(' + hu + ',100%,65%,' + al3 * (0.6 + 0.4 * Math.sin(tt * 9 + q)) + ')'; g.fillRect(sx - z * 1.5, sy - z * 0.28, z * 3, z * 0.56); g.fillRect(sx - z * 0.28, sy - z * 1.5, z * 0.56, z * 3); } }
       if (holoPh && this.F === 'gömb' && bxg <= 0) {
-        const gr = g.createRadialGradient(cx, cy, R * 0.82 * br, cx, cy, R * 1.12 * br); gr.addColorStop(0, 'hsla(' + hu + ',100%,60%,0)'); gr.addColorStop(0.55, 'hsla(' + hu + ',100%,60%,' + 0.16 * fade + ')'); gr.addColorStop(1, 'hsla(' + hu + ',100%,60%,0)');
-        g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, R * 1.15 * br, 0, 7); g.fill();
+        const gr = g.createRadialGradient(cx, cyF, R * 0.82 * brF, cx, cyF, R * 1.12 * brF); gr.addColorStop(0, 'hsla(' + hu + ',100%,60%,0)'); gr.addColorStop(0.55, 'hsla(' + hu + ',100%,60%,' + 0.16 * fade + ')'); gr.addColorStop(1, 'hsla(' + hu + ',100%,60%,0)');
+        g.fillStyle = gr; g.beginPath(); g.arc(cx, cyF, R * 1.15 * brF, 0, 7); g.fill();
       }
       for (let i = 0; i < n; i++) {
         const ox = this.ox[i]; let tx = tg[0][i] - ox, ty = tg[1][i], tz = tg[2][i], sl = -1; const qq = this.ty8 ? this.ty8[i] : -1;
@@ -563,8 +573,9 @@ class TuziCore {
           else if (q === 5 && ck >= 1) { const sdi = this.sd[i]; sl = (tt * 1.1 + sdi * 7) % 1; const an = sdi * 40, sp = 0.18 + (sdi * 13 % 1) * 0.32; tx += Math.cos(an) * sl * sp; ty += Math.sin(an) * sl * sp + sl * sl * 0.22; tz += Math.sin(an * 1.7) * sl * sp * 0.6; } }
         const x1 = tx * ca + tz * sa + ox, z1 = -tx * sa + tz * ca, y1 = ty * cb - z1 * sb, z2 = ty * sb + z1 * cb;
         let X = x1 * br, Y = y1 * br, Z = z2 * br, h = this.holoHue(ty, tt, i);
+        if (fitF) { if (Y > this._fyB) this._fyB = Y; if (Y < this._fyT) this._fyT = Y; X *= fS; Y = Y * fS + fO; Z *= fS; }
         if (ck < 1) { X = s[0][i] + (X - s[0][i]) * ck; Y = s[1][i] + (Y - s[1][i]) * ck; Z = s[2][i] + (Z - s[2][i]) * ck; h = this.hue[i] + (h - this.hue[i]) * ck; }
-        if (bxg > 0) { const r = Math.hypot(X, Y) || 0.01, e2 = Math.pow(bxg, 1.25) * (0.5 + ((i * 0.618) % 1) * 1.6), ja = (((i * 0.37) % 1) - 0.5) * 0.9, ux = X / r, uy = Y / r; X += (ux * Math.cos(ja) - uy * Math.sin(ja)) * e2; Y += (ux * Math.sin(ja) + uy * Math.cos(ja)) * e2; }
+        if (bxg > 0) { const r = Math.hypot(X, Y - fO) || 0.01, e2 = Math.pow(bxg, 1.25) * (0.5 + ((i * 0.618) % 1) * 1.6), ja = (((i * 0.37) % 1) - 0.5) * 0.9, ux = X / r, uy = (Y - fO) / r; X += (ux * Math.cos(ja) - uy * Math.sin(ja)) * e2; Y += (ux * Math.sin(ja) + uy * Math.cos(ja)) * e2; }
         const [sx, sy, k] = prjW(X, Y, Z), front = 0.35 + 0.65 * (1 - (Z + 1) / 2), tw = Math.random() < 0.04 ? 1.7 : 1;
         if (heart || this.trgb) { const al = Math.min(1, front * tw) * fade * pgA * (vz ? this._vf : 1) * (this.F === 'felirat' || this.F === 'kép' ? 1 - (this._flt || 0) : 1) * (qq === 13 ? 1 : 1 - Math.max(0, Math.min(1, ((this._lnk || 0) - 0.72) / 0.28))) * (sl >= 0 ? 1 - sl : 1) * (sl >= 0 ? 1.6 : 1);
           if (heart && holoPh && i % 10 < 3) { g.fillStyle = this.colAt(i, 1, tt, 0.07 * fade); const gz = 9 * k * dpr; g.fillRect(sx - gz / 2, sy - gz / 2, gz, gz); }
@@ -579,7 +590,7 @@ class TuziCore {
           continue; }
         g.fillStyle = 'hsla(' + h + ',100%,' + (58 + 22 * front) + '%,' + Math.min(1, front * tw) * fade + ')'; const z = Math.max(1, 2.1 * k * dpr); g.fillRect(sx - z / 2, sy - z / 2, z, z);
       }
-      if (this.F === 'kép' && this._flt > 0 && this.KP) { const K = this.KP, p0 = prjW(0, 0, 0), p1 = prjW(1, 0, 0), u = p1[0] - p0[0], w = K.hw * u, hh = K.hh * u, x0 = p0[0] - w / 2, y0 = p0[1] - hh / 2, tk = this._tk;
+      if (this.F === 'kép' && this._flt > 0 && this.KP) { const K = this.KP, p0 = prjW(0, this.kOy || 0, 0), p1 = prjW(1, this.kOy || 0, 0), u = (p1[0] - p0[0]) * (this.kSc || 1), w = K.hw * u, hh = K.hh * u, x0 = p0[0] - w / 2, y0 = p0[1] - hh / 2, tk = this._tk;
         const bx = tk - 7.2, bo = bx > 0 ? Math.max(0, 1 - bx / 0.35) : 1;
         g.save(); g.globalCompositeOperation = 'source-over'; g.globalAlpha = this._flt * (bx > 0 ? bo : fade); if (g.globalAlpha > 0) g.drawImage(K.body, x0, y0, w, hh);
         let ea = Math.max(0, Math.min(1, (tk - 2.4) / 0.8)); ea = ea * ea * (3 - 2 * ea) * bo;
@@ -587,7 +598,26 @@ class TuziCore {
           if (ea > 0) { g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = ea * fade * (0.55 + 0.45 * Math.sin(tt * 3.1)); g.shadowColor = 'rgba(255,110,25,1)'; g.shadowBlur = 26 * dpr; g.drawImage(K.eye, x0, y0, w, hh); g.restore(); } }
         if (bx > 0) { g.globalCompositeOperation = 'lighter'; const e2 = Math.pow(bx, 1.35); for (const s2 of K.ST) { const sx = p0[0] + (s2[0] + s2[2] * e2) * u, sy = p0[1] + (s2[1] + s2[3] * e2) * u, tw2 = 0.65 + 0.35 * Math.sin(tt * 9 + s2[7]), z = s2[8] * dpr * (1 + bx * 0.5);
             if (sx < -20 || sy < -20 || sx > W + 20 || sy > H + 20) continue; g.globalAlpha = Math.min(1, 0.3 + bx * 2) * tw2; g.fillStyle = 'rgb(' + s2[4] + ',' + s2[5] + ',' + s2[6] + ')'; g.fillRect(sx - z * 1.6, sy - z * 0.3, z * 3.2, z * 0.6); g.fillRect(sx - z * 0.3, sy - z * 1.6, z * 0.6, z * 3.2); } g.globalCompositeOperation = 'source-over'; }
-        if (ea > 0 && !K.wolf) { const bt = tk - 5.2, bl = bt > 0 && bt < 0.45 ? 1 - Math.abs(Math.cos(bt / 0.45 * Math.PI)) * 0 - Math.sin(bt / 0.45 * Math.PI) : 1, sy = Math.max(0.04, bl), ey = p0[1] + K.ecy * u;
+        if (K.glow && g.globalAlpha > 0) { const A = g.globalAlpha;
+          const ej = Math.max(0, Math.min(1, (tk - 0.8) / 0.5)) * bo; if (K.glow === 'korona' && ej > 0 && K.JW.length) { g.save(); g.globalCompositeOperation = 'lighter'; const nJ = K.JW.length, ph = (Math.max(0, tk - 0.8) * 3.2) % (nJ + 2); K.JW.forEach(([jx, jy, jr], q) => { const dd = Math.abs(ph - q), b = Math.max(0, 1 - dd / 1.1); const a2 = ej * A * (0.18 + 0.82 * b * b); if (a2 < 0.02) return; const X = p0[0] + jx * u, Y = p0[1] + jy * u, R2 = jr * u * (1.8 + 1.6 * b); const gr = g.createRadialGradient(X, Y, 0, X, Y, R2); gr.addColorStop(0, 'rgba(255,252,235,' + a2 + ')'); gr.addColorStop(0.35, 'rgba(255,215,120,' + 0.6 * a2 + ')'); gr.addColorStop(1, 'rgba(255,170,60,0)'); g.fillStyle = gr; g.fillRect(X - R2, Y - R2, 2 * R2, 2 * R2); if (b > 0.6) { g.fillStyle = 'rgba(255,255,255,' + a2 + ')'; const z = R2 * 0.9; g.fillRect(X - z, Y - 0.6 * dpr, 2 * z, 1.2 * dpr); g.fillRect(X - 0.6 * dpr, Y - z, 1.2 * dpr, 2 * z); } }); g.restore(); }
+          if (K.glow === 'szem' && !(bx > 0)) { const t2 = Math.max(0, tk - 1.6), op = Math.min(1, t2 / 1.4), o2 = op * op * (3 - 2 * op), br = t2 > 2.6 ? 0.5 - 0.5 * Math.cos((t2 - 2.6) * 2 * Math.PI / 6) : 0, f = 1 + 0.4 * o2 * (t2 < 2.6 ? Math.sin(Math.min(1, t2 / 2.6) * Math.PI) : 0) + 0.14 * br, R2 = K.pr * u * f, X = p0[0], Y = p0[1];
+            if (f > 1.005) { g.save(); g.globalCompositeOperation = 'source-over'; g.globalAlpha = A; const gr = g.createRadialGradient(X, Y, R2 * 0.92, X, Y, R2 * 1.08); g.fillStyle = '#000'; g.beginPath(); g.arc(X, Y, R2, 0, 7); g.fill(); g.globalCompositeOperation = 'lighter'; gr.addColorStop(0, 'rgba(150,230,255,0)'); gr.addColorStop(0.5, 'rgba(170,235,255,' + 0.75 * A + ')'); gr.addColorStop(1, 'rgba(150,230,255,0)'); g.fillStyle = gr; g.beginPath(); g.arc(X, Y, R2 * 1.08, 0, 7); g.fill(); g.restore(); }
+            { const ef = Math.max(0, Math.min(1, (tk - 1.0) / 1.4)) * A, RI = 0.39 * K.hw * u; if (ef > 0.01) {
+                if (!K.HR) { let sd = 7; const rn = () => (sd = (sd * 16807) % 2147483647) / 2147483647, H = K.HR = { up: [], lo: [], br: [] };
+                  for (let q = 0; q < 74; q++) { const t = Math.min(0.97, Math.max(0.03, (q + rn() * 0.8) / 74)); H.up.push([t, (0.2 + 0.34 * Math.pow(1 - t, 1.3)) * (0.7 + 0.45 * rn()), (rn() - 0.5) * 0.25, rn() < 0.22]); }
+                  for (let q = 0; q < 26; q++) { const t = 0.08 + 0.84 * Math.pow(rn(), 0.8); H.lo.push([t, (0.06 + 0.1 * (1 - t)) * (0.6 + 0.6 * rn()), (rn() - 0.5) * 0.4]); }
+                  for (let q = 0; q < 460; q++) { const t = Math.pow(rn(), 0.85), w = (rn() - 0.5) * 2; H.br.push([t, w, (0.1 + 0.11 * rn()) * (1 - 0.35 * t), (rn() - 0.5) * 0.35, rn()]); } }
+                const H = K.HR, Q = (a, b, c, t) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c, P2 = (A0, C0, B0, t) => [X + RI * Q(A0[0], C0[0], B0[0], t), Y + RI * Q(A0[1], C0[1], B0[1], t)], D2 = (A0, C0, B0, t) => { const dx = 2 * (1 - t) * (C0[0] - A0[0]) + 2 * t * (B0[0] - C0[0]), dy = 2 * (1 - t) * (C0[1] - A0[1]) + 2 * t * (B0[1] - C0[1]), l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
+                const uL = [-1.36, 0.02], uR = [1.3, 0.16], uC = [-0.12, -2.08], lC = [0.02, 1.9], cA = [-1.24, -0.3], cC = [-0.12, -2.55], cB = [1.18, -0.12];
+                g.save(); g.globalCompositeOperation = 'lighter'; g.lineCap = 'round'; g.shadowColor = 'rgba(90,200,255,0.85)'; g.shadowBlur = 9 * dpr;
+                const curve = (A0, C0, B0, st, lw) => { const a = P2(A0, C0, B0, 0), c = [X + RI * C0[0], Y + RI * C0[1]], b = P2(A0, C0, B0, 1); g.strokeStyle = st; g.lineWidth = lw * dpr; g.beginPath(); g.moveTo(a[0], a[1]); g.quadraticCurveTo(c[0], c[1], b[0], b[1]); g.stroke(); };
+                curve(uL, uC, uR, 'rgba(175,235,255,' + 0.9 * ef + ')', 2.4); curve(uL, lC, uR, 'rgba(150,215,245,' + 0.5 * ef + ')', 1.3); curve(cA, cC, cB, 'rgba(150,210,240,' + 0.22 * ef + ')', 1.1);
+                g.shadowBlur = 0; const pu = [new Path2D(), new Path2D()]; g.lineWidth = 1.05 * dpr; for (const [t, L, jt, gd] of H.up) { const [px, py] = P2(uL, uC, uR, t), [tx, ty] = D2(uL, uC, uR, t), nx = ty, ny = -tx, sd = (t - 0.22) * 1.7 + jt, sx = tx * sd, sy = ty * sd, Lp = L * RI * 1.15;
+                  const pp = pu[gd ? 1 : 0]; pp.moveTo(px, py); pp.bezierCurveTo(px + nx * 0.55 * Lp, py + ny * 0.55 * Lp, px + (nx * 1.0 + sx * 0.3) * Lp, py + (ny * 1.0 + sy * 0.3) * Lp, px + (nx * 0.7 + sx * 1.05) * Lp, py + (ny * 0.7 + sy * 1.05) * Lp - Lp * (0.25 + 0.45 * t * t)); } g.strokeStyle = 'rgba(185,240,255,' + 0.85 * ef + ')'; g.stroke(pu[0]); g.strokeStyle = 'rgba(255,215,140,' + 0.85 * ef + ')'; g.stroke(pu[1]);
+                g.lineWidth = 0.8 * dpr; const pl = new Path2D(); for (const [t, L, jt] of H.lo) { const [px, py] = P2(uL, lC, uR, t), [tx, ty] = D2(uL, lC, uR, t), nx = -ty, ny = tx, out = (0.5 - t) * 0.8 + jt, dx = nx + tx * out, dy = ny + ty * out, l = Math.hypot(dx, dy), Lp = L * RI; pl.moveTo(px, py); pl.lineTo(px + dx / l * Lp, py + dy / l * Lp); } g.strokeStyle = 'rgba(160,220,250,' + 0.5 * ef + ')'; g.stroke(pl);
+                g.restore(); } }
+            const pc0 = Math.max(0, Math.min(1, (tk - 4.6) / 2.4)), pc = pc0 * pc0 * (3 - 2 * pc0) * bo; if (pc > 0.01) { const hu = 222 - 26 * pc0, Rp = K.pr * u * f * 0.98; g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = A; const pg = g.createRadialGradient(X, Y, 0, X, Y, Rp); pg.addColorStop(0, 'hsla(' + hu + ',100%,' + (62 + 22 * pc0) + '%,' + 0.95 * pc + ')'); pg.addColorStop(0.6, 'hsla(' + hu + ',95%,' + (50 + 16 * pc0) + '%,' + 0.55 * pc + ')'); pg.addColorStop(1, 'hsla(' + hu + ',100%,35%,' + 0.15 * pc + ')'); g.fillStyle = pg; g.beginPath(); g.arc(X, Y, Rp, 0, 7); g.fill(); g.restore(); } } }
+        if (ea > 0 && !K.wolf && !K.glow) { const bt = tk - 5.2, bl = bt > 0 && bt < 0.45 ? 1 - Math.abs(Math.cos(bt / 0.45 * Math.PI)) * 0 - Math.sin(bt / 0.45 * Math.PI) : 1, sy = Math.max(0.04, bl), ey = p0[1] + K.ecy * u;
           g.globalAlpha = ea * fade; g.translate(0, ey); g.scale(1, sy); g.translate(0, -ey); g.shadowColor = 'rgba(80,170,255,' + 0.9 * ea + ')'; g.shadowBlur = 22 * dpr; g.drawImage(K.eye, x0, y0, w, hh); }
         g.restore(); }
       if (this.F === 'felirat' && this._flt > 0 && this.FTS) { const S = this.FTS, p0 = prjW(S.ax, S.ay * cb, S.ay * sb), p1 = prjW(S.ax + 1, S.ay * cb, S.ay * sb), ppu = p1[0] - p0[0], al2 = this._flt * fade;
