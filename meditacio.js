@@ -14,11 +14,11 @@
   class Meditacio {
     constructor(cv, getP) {
       this.cv = cv; this.ctx = cv.getContext('2d'); this.getP = getP || (() => ({}));
-      this.img = new Image(); this.img.onload = () => { this.ready = true; };
+      this.img = new Image(); this.img.onload = () => { this.sampleSky(); this.ready = true; };
       this.img.src = (this.getP() || {})._kep || 'meditacio/to-01.jpg';
       this.t0 = performance.now(); this.glow = 0; this.next = 0; this.si = 0; this.want = true;
       this.onR = () => this.resize(); window.addEventListener('resize', this.onR);
-      this.resize();
+      this.w = 0; this.resize();
     }
     P() {
       const p = this.getP() || {};
@@ -28,13 +28,24 @@
         kod: (p['ködErősség'] ?? 60) / 100, hang: (p['hangerő'] ?? 70) / 100,
       };
     }
+    // a kép felső sávjának átlagszíne: álló képernyőn ezzel a ködszínnel folytatódik az ég
+    sampleSky() {
+      const c = document.createElement('canvas'); c.width = 8; c.height = 1; const g = c.getContext('2d');
+      g.drawImage(this.img, 0, 0, IW, 80, 0, 0, 8, 1); const a = g.getImageData(0, 0, 8, 1).data;
+      let r = 0, gg = 0, b = 0; for (let i = 0; i < 32; i += 4) { r += a[i]; gg += a[i + 1]; b += a[i + 2]; }
+      this.sky = [r / 8 | 0, gg / 8 | 0, b / 8 | 0];
+    }
+    // minden képkockán ellenőrzi a méretet (telefon-forgatás, címsor) – így nem torzul
     resize() {
-      const d = Math.min(2, window.devicePixelRatio || 1), r = this.cv.getBoundingClientRect();
-      this.d = d; this.w = Math.max(1, Math.round(r.width * d)); this.h = Math.max(1, Math.round(r.height * d));
-      this.cv.width = this.w; this.cv.height = this.h;
-      const s = Math.max(this.w / IW, this.h / IH), dw = IW * s, dh = IH * s;
+      const d = Math.min(2, window.devicePixelRatio || 1), cw = this.cv.clientWidth, ch = this.cv.clientHeight;
+      if (!cw || !ch) return;
+      const w = Math.round(cw * d), h = Math.round(ch * d);
+      if (w === this.w && h === this.h && d === this.d) return;
+      this.d = d; this.w = w; this.h = h; this.cv.width = w; this.cv.height = h;
+      const portrait = h > w * 1.15, fx = portrait ? 0.47 : FOCUS[0];
+      const s = Math.max(w / IW, h * (portrait ? 0.62 : 1) / IH), dw = IW * s, dh = IH * s;
       const cl = (v, a, b) => Math.min(b, Math.max(a, v));
-      this.R = { s, dw, dh, dx: cl(this.w / 2 - FOCUS[0] * dw, this.w - dw, 0), dy: cl(this.h / 2 - FOCUS[1] * dh, this.h - dh, 0) };
+      this.R = { s, dw, dh, fx, dx: cl(w / 2 - fx * dw, w - dw, 0), dy: dh >= h ? cl(h / 2 - FOCUS[1] * dh, h - dh, 0) : h - dh };
       this.makeMist();
     }
     makeMist() {
@@ -50,6 +61,10 @@
             g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, 6.2832); g.fill(); g.restore();
           }
         }
+        g.globalCompositeOperation = 'destination-in';   // puha felső/alsó szél, nincs vágási vonal
+        const mk = g.createLinearGradient(0, 0, 0, th);
+        mk.addColorStop(0, 'rgba(0,0,0,0)'); mk.addColorStop(0.3, 'rgba(0,0,0,1)'); mk.addColorStop(0.7, 'rgba(0,0,0,1)'); mk.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = mk; g.fillRect(0, 0, tw, th);
         return { c, tw, th, v: [5, -8, 13][i] * this.d, y: [-0.16, 0.02, 0.2][i] };
       });
     }
@@ -66,6 +81,7 @@
     sync() { this.syncDrone(); if (this.master) this.master.gain.setTargetAtTime(this.P().hang, this.ac.currentTime, 0.3); }
 
     frame() {
+      this.resize(); if (!this.R) return;
       const { ctx, w, h, d } = this, p = this.P(), t = (performance.now() - this.t0) / 1000;
       if (p.sor !== this.sorNev) { this.sorNev = p.sor; this.si = 0; }
       if (this.ac && this.ac.state === 'running' && p.tal && t >= this.next) {
@@ -78,9 +94,16 @@
       ctx.fillStyle = '#b89c72'; ctx.fillRect(0, 0, w, h);
       if (!this.ready) return;
       const R = this.R, z = 1.035 + 0.035 * Math.sin(t / 40 * 6.2832);
-      const fx = R.dx + FOCUS[0] * R.dw, fy = R.dy + FOCUS[1] * R.dh;
+      const fx = R.dx + R.fx * R.dw, fy = R.dy + FOCUS[1] * R.dh;
       const dw = R.dw * z, dh = R.dh * z, dx = fx - (fx - R.dx) * z, dy = fy - (fy - R.dy) * z;
       ctx.drawImage(this.img, dx, dy, dw, dh);
+      if (dy > 0) {   // álló képernyő: a kép felső sávja felfelé nyújtva folytatja a ködös eget (varratmentes)
+        const top = Math.ceil(dy) + 2;
+        ctx.drawImage(this.img, 0, 0, IW, 3, dx, 0, dw, top);
+        if (this.sky) { const [r, g, bb] = this.sky, lg = ctx.createLinearGradient(0, 0, 0, top);
+          lg.addColorStop(0, `rgba(${r},${g},${bb},0.35)`); lg.addColorStop(1, `rgba(${r},${g},${bb},0)`);
+          ctx.fillStyle = lg; ctx.fillRect(0, 0, w, top); }
+      }
       // víz: alig fodrozódó csíkok
       const hy = dy + HORIZON * dh + 6 * d, sh = 2 * d;
       for (let y = Math.max(0, Math.floor(hy)); y < h; y += sh) {
@@ -99,7 +122,7 @@
       gr = ctx.createRadialGradient(sx, syy, 0, sx, syy, Math.min(w, h) * 0.09);
       gr.addColorStop(0, `rgba(255,248,226,${0.18 + 0.22 * b})`); gr.addColorStop(1, 'rgba(255,248,226,0)');
       ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
-      if (p.mandala) { const mr = Math.min(w, h) * 0.24; this.drawMandala(Math.max(mr * 1.15, w * 0.24), Math.max(mr * 1.1, h * 0.2), t, p, b, mr); }
+      if (p.mandala) { const m = this.mandalaPos(dx, dy, dw, dh); this.drawMandala(m[0], m[1], t, p, b, m[2]); }
       // köd
       ctx.globalCompositeOperation = 'source-over';
       const l = 0.5 - 0.5 * Math.cos(t / p.kodMp * 6.2832);   // 0 = lent ül a köd, 1 = felszállt, a kép alja tiszta
@@ -117,6 +140,14 @@
       ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
     }
 
+    // a felajánló ember nézési iránya: a képen balra fent (x 0,22, y 0,25); ha a kivágás miatt a fára esne, a fa fölé kerül
+    mandalaPos(dx, dy, dw, dh) {
+      const { w, h } = this, cl = (v, a, b) => Math.min(b, Math.max(a, v));
+      const mr = Math.min(w, h) * 0.24, cx = cl(dx + 0.22 * dw, mr * 1.1, w - mr * 1.1);
+      let cy = dy + 0.25 * dh; const ix = (cx - dx) / dw;
+      if (ix > 0.31 && ix < 0.47) cy = Math.min(cy, dy + 0.14 * dh - mr * 1.05);
+      return [cx, cl(cy, mr * 1.05, h - mr * 1.05), mr];
+    }
     // egyetlen forma: kibomlik, lélegzik, átalakul, elhalványul
     drawMandala(cx, cy, t, p, b, R0) {
       const ph = (t % p.mandalaMp) / p.mandalaMp;
