@@ -151,12 +151,23 @@
     // egyetlen forma: kibomlik, lélegzik, átalakul, elhalványul
     drawMandala(cx, cy, t, p, b, R0) {
       const ph = (t % p.mandalaMp) / p.mandalaMp;
-      const env = ph < 0.35 ? ph / 0.35 : ph < 0.5 ? 1 : ph < 0.85 ? 1 - (ph - 0.5) / 0.35 : 0;
+      const env = ph < 0.48 ? ph / 0.48 : ph < 0.52 ? 1 : ph < 0.995 ? 1 - (ph - 0.52) / 0.475 : 0;   // a ciklus (és a tálakkal való összhang) változatlan, csak a teljes időt kitölti   // lassabb kibomlás és elhalványulás
       if (env <= 0) return;
       const { ctx, d } = this, Rm = R0 * (0.97 + 0.03 * b), N = 6;
       ctx.save(); ctx.translate(cx, cy); ctx.globalCompositeOperation = 'screen';
+      const TINT = [[255, 214, 150], [250, 196, 170], [226, 190, 214], [196, 204, 232], [190, 220, 214], [214, 222, 190]];   // ködös gyűrű-színek: borostyán, barack, mályva, ködkék, zsálya, moha
+      const ring = (Ri, n, am, rot) => { for (let k = 0; k <= 360; k++) { const th = k / 360 * 6.2832, r = Ri * (1 + am * Math.cos(n * th + rot * n)), x = r * Math.cos(th), y = r * Math.sin(th); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); };
+      let prev = null;
+      for (let i = 0; i < N; i++) {   // halvány, kifelé egyre halványuló színes sávok a gyűrűk között (a körvonal alatt)
+        const a = sm((env * (N + 1) - i) / 2) * 0.2;   // gyűrűnként, nagyon lassan egymás után   // gyűrűnként, lassan egymás után if (a <= 0.003) { prev = null; continue; }
+        const Ri = Rm * (0.16 + 0.15 * i), n = i % 2 ? 24 : 12, dir = i % 2 ? -1 : 1;
+        const am = 0.05 + 0.05 * Math.sin(t * 0.045 + i * 1.3), rot = dir * t * 0.008 + i * 0.26, [r, g, bb] = TINT[i];
+        ctx.fillStyle = `rgba(${r},${g},${bb},${a * 0.42 * (1 - i / (N + 0.5))})`;
+        ctx.beginPath(); ring(Ri, n, am, rot); if (prev) ring(...prev); ctx.fill('evenodd');
+        prev = [Ri, n, am, rot];
+      }
       for (let i = 0; i < N; i++) {
-        const a = sm(env * (N + 1) - i) * 0.2;
+        const a = sm((env * (N + 1) - i) / 2) * 0.2;   // gyűrűnként, nagyon lassan egymás után   // gyűrűnként, lassan egymás után
         if (a <= 0.003) continue;
         const Ri = Rm * (0.16 + 0.15 * i), n = i % 2 ? 24 : 12, dir = i % 2 ? -1 : 1;
         const am = 0.05 + 0.05 * Math.sin(t * 0.045 + i * 1.3), rot = dir * t * 0.008 + i * 0.26;
