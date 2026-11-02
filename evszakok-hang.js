@@ -1,5 +1,16 @@
 // ÉVSZAKOK – szintetizált hangok (licencmentes, felvétel nélkül). © Andras Banky
 (function () {
+
+  // iPhone: a némító kapcsoló a Web Audio hangot elnémítja (a <audio> fájlokat nem) – lejátszási módba váltunk
+  const iosPlayback = () => {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    if (window.__kpSilent) { window.__kpSilent.play().catch(() => {}); return; }
+    const n = 8000, b = new ArrayBuffer(44 + n), v = new DataView(b), W = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    W(0, 'RIFF'); v.setUint32(4, 36 + n, true); W(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); W(36, 'data'); v.setUint32(40, n, true);
+    for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+    const a = window.__kpSilent = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' })));
+    a.loop = true; a.setAttribute('playsinline', ''); a.volume = 0.01; a.play().catch(() => {});
+  };
   // választható motívumok (félhang a alaphanghoz, hossz mp)
   const MOTIFS = {
     A: [[0, 0.55], [5, 0.55], [7, 0.4], [9, 0.9], [7, 0.55], [5, 0.9], [4, 0.55], [2, 0.55], [0, 1.6]],          // ív: fel, majd ereszkedve haza
@@ -12,8 +23,10 @@
   class EvszakHang {
     constructor() { this.loops = {}; this.motifId = 'A'; }
     init() {
+      iosPlayback();
       if (this.ac) { if (!this.hold) this.ac.resume(); return; }   // megállítva / némítva semmi nem indíthatja újra
       const AC = window.AudioContext || window.webkitAudioContext, ac = this.ac = new AC();
+      if (window.__kpAcs) window.__kpAcs.push(ac); else { window.__kpAcs = [ac]; const wake = () => window.__kpAcs.forEach(c => { if (c.state === 'interrupted') c.resume().catch(() => {}); }); setInterval(wake, 1500); document.addEventListener('visibilitychange', wake); }   // HDMI / kivetítés bedugásakor az iPhone megszakítja – újraindítjuk
       this.out = ac.createGain(); this.out.gain.value = 0.3;   // környezeti hangok együttes szintje (szerző: „sokkal halkabbra”, nov. 1.)
       this.out.connect(ac.destination);
       const len = ac.sampleRate * 3, ir = ac.createBuffer(2, len, ac.sampleRate);

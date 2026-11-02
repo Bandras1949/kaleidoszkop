@@ -1,5 +1,16 @@
 // MEDITÁCIÓ élmény – ködös tó, lélegző fény, halvány mandala, szintetizált tibeti tálak. © Andras Banky
 (function () {
+
+  // iPhone: a némító kapcsoló a Web Audio hangot elnémítja (a <audio> fájlokat nem) – lejátszási módba váltunk
+  const iosPlayback = () => {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    if (window.__kpSilent) { window.__kpSilent.play().catch(() => {}); return; }
+    const n = 8000, b = new ArrayBuffer(44 + n), v = new DataView(b), W = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    W(0, 'RIFF'); v.setUint32(4, 36 + n, true); W(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); W(36, 'data'); v.setUint32(40, n, true);
+    for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+    const a = window.__kpSilent = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' })));
+    a.loop = true; a.setAttribute('playsinline', ''); a.volume = 0.01; a.play().catch(() => {});
+  };
   const IW = 1920, IH = 1080;
   const SUN = [770 / IW, 578 / IH];      // a nap fényfoltja a képen
   const HORIZON = 565 / IH;               // vízvonal a képen
@@ -197,9 +208,11 @@
 
     // ---------- hang ----------
     audio() {
+      iosPlayback();
       if (this.ac) { this.ac.resume(); return; }
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       const ac = this.ac = new AC();
+      if (window.__kpAcs) window.__kpAcs.push(ac); else { window.__kpAcs = [ac]; const wake = () => window.__kpAcs.forEach(c => { if (c.state === 'interrupted') c.resume().catch(() => {}); }); setInterval(wake, 1500); document.addEventListener('visibilitychange', wake); }   // HDMI / kivetítés bedugásakor az iPhone megszakítja – újraindítjuk
       this.master = ac.createGain(); this.master.gain.value = this.P().hang; this.master.connect(ac.destination);
       this.bus = ac.createGain(); this.bus.connect(this.master);
       const len = ac.sampleRate * 4, ir = ac.createBuffer(2, len, ac.sampleRate);
