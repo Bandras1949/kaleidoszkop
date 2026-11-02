@@ -9,7 +9,7 @@
     if (S >= 30 && S < 60) L.push('szél');
     if (S >= 60 && S < 122) L.push('tél csendje');
     if (S >= 121 && S < 146) L.push('csöpögés');
-    if (S >= 138 && S < 159) L.push('madárdal');   // eső alatt és után a rigó hallgat if (S >= 147 && S < 159) L.push('méhek');
+    if (S >= 138 && S < 159) L.push('madárdal'); if (S >= 147 && S < 159) L.push('méhek');   // eső alatt és után a rigó hallgat
     if (S >= 181 && S < 215) L.push('tücskök');
     if (RAIN(S) > 0.002) L.push('eső'); if (SHOW(S) > 0.002) L.push('zápor');
     return L;
