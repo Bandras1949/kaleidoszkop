@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KÖRFORGÁS – Kaleidoszkóp · © Bánky András</title>
+<meta property="og:title" content="KÖRFORGÁS – Kaleidoszkóp">
+<meta property="og:description" content="Egy fa, egy pad, egy év. Koppints a hanghoz.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#E9DDC4;overflow:hidden;-webkit-user-select:none;user-select:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+#cim{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity 1.6s ease;background:linear-gradient(rgba(36,28,20,.6),rgba(36,28,20,.25) 55%,rgba(36,28,20,.4));color:#F4ECDC}
+#cim h1{position:absolute;left:0;right:0;top:14vh;text-align:center;margin:0;font:600 clamp(40px,9vw,120px) Cinzel,Georgia,serif;letter-spacing:.12em;padding-left:.12em}
+#nev{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 5vh);text-align:center;font:clamp(18px,2.4vw,40px) 'Cormorant Garamond',Georgia,serif}
+.kep{position:fixed;left:5vw;right:5vw;top:12vh;text-align:center;pointer-events:none;opacity:0;transform:translateY(14px);transition:opacity 1.4s ease,transform 1.8s ease;font:italic clamp(28px,5vw,64px)/1.15 'Cormorant Garamond',Georgia,serif;color:#3E3329;text-shadow:0 0 18px rgba(250,246,236,.95),0 0 42px rgba(250,246,236,.8);text-wrap:balance}
+.kep.on{opacity:1;transform:none}
+#hang{position:fixed;right:calc(env(safe-area-inset-right) + 14px);top:calc(env(safe-area-inset-top) + 14px);padding:10px 18px;border-radius:24px;background:rgba(62,51,41,.55);border:1px solid rgba(244,236,220,.5);color:#F4ECDC;font:italic 18px 'Cormorant Garamond',Georgia,serif;transition:opacity .8s;pointer-events:none;white-space:nowrap}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="kep" data-a="47" data-b="80">Egy fa. Egy pad.</div>
+<div class="kep" data-a="84" data-b="125">Nem történik semmi különös.</div>
+<div class="kep" data-a="199" data-b="236">Csak eltelt egy év a ki tudja hányból.</div>
+<div id="cim"><h1>KÖRFORGÁS</h1><div id="nev">© Bánky András</div></div>
+<div id="hang">Koppints a hanghoz</div>
+<script>
+(function () {   // gyorsított év: kb. 1,5 perc alatt telik el (a jelenet ideje K-szor gyorsabban fut)
+  const K = 2.6, r = performance.now.bind(performance), z = r();
+  performance.now = () => z + (r() - z) * K;
+})();
+</script>
+<script src="./evszakok.js?v=69"></script>
+<script src="./evszakok-hang.js?v=19"></script>
+<script src="./korforgas.js?v=4"></script>
+<script>
+(function () {
+  const cim = document.getElementById('cim'), hang = document.getElementById('hang'), kepek = [...document.querySelectorAll('.kep')];
+  const kf = new window.Korforgas(document.getElementById('cv'));
+  kf.want = false; kf.start();
+  let on = false;
+  (function tick() {
+    const S = kf.ev.S;
+    if (S != null) {
+      cim.style.opacity = (S > 236 || S < 8) ? '1' : '0';   // cím a kör elején és végén
+      kepek.forEach(k => k.classList.toggle('on', S >= +k.dataset.a && S < +k.dataset.b));
+    }
+    requestAnimationFrame(tick);
+  })();
+  const tap = () => {
+    on = !on; kf.setWant(on); if (on) kf.audio();
+    hang.textContent = on ? 'Hang be · koppintás: némítás' : 'Koppints a hanghoz';
+    hang.style.opacity = '1'; clearTimeout(tap.t); tap.t = setTimeout(() => hang.style.opacity = on ? '0' : '1', 2500);
+  };
+  window.addEventListener('pointerup', tap);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) kf.mute(); else if (on) kf.audio(); });
+})();
+</script>
+</body>
+</html>
