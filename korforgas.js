@@ -2,14 +2,14 @@
 (function () {
   const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   const SEG = { 'ősz': [78, 30], 'tél': [0, 27], 'tavasz': [27, 27], 'nyár': [54, 24] };   // a zene részletei: [helye a felvételben, hossza]
-  const RAIN = S => Math.max(sm(14, 16, S) * (1 - sm(24.5, 31, S)), 0.8 * sm(160.5, 162, S) * (1 - sm(170.5, 176.5, S)));
+  const RAIN = S => Math.max(sm(14, 17, S) * (1 - sm(32, 40, S)), 0.8 * sm(160.5, 162, S) * (1 - sm(170.5, 176.5, S)));
   const SHOW = S => sm(216, 217.5, S) * (1 - sm(223.5, 229, S));
   const LOOPS = S => {
     const L = [];
     if (S >= 30 && S < 60) L.push('szél');
     if (S >= 60 && S < 122) L.push('tél csendje');
     if (S >= 121 && S < 146) L.push('csöpögés');
-    if (S >= 138 && S < 178) L.push('madárdal'); if (S >= 147 && S < 159) L.push('méhek');
+    if (S >= 138 && S < 159) L.push('madárdal');   // eső alatt és után a rigó hallgat if (S >= 147 && S < 159) L.push('méhek');
     if (S >= 181 && S < 215) L.push('tücskök');
     if (RAIN(S) > 0.002) L.push('eső'); if (SHOW(S) > 0.002) L.push('zápor');
     return L;
@@ -41,7 +41,7 @@
         const H = this.H = new window.EvszakHang(); H.init(); H.loadMusic('evszakok/reflective-piano.mp3');
         this.ev.onEvent = n => {
           if (!this.on()) return; this.lastEv = performance.now();
-          if (n === 'csepp') { if (Math.random() < 0.45) H.drip(0.6 + Math.random() * 0.4); }
+          if (RAIN(this.ev ? this.ev.S : 0) > 0.05 && (n === 'rigó' || n === 'veréb')) return; if (n === 'csepp') { if (Math.random() < 0.45) H.drip(0.6 + Math.random() * 0.4); }
           else if (n === 'veréb') H.sparrow(0.7); else if (n === 'rigó') H.blackbird(0.75); else if (n === 'dörgés') H.thunder(0.8);
         };
       }
@@ -54,7 +54,7 @@
       const want = new Set(LOOPS(S));
       for (const n of Object.keys(H.loops)) if (!want.has(n)) H.stop(n);
       for (const n of want) if (!H.loops[n]) H.start(n);
-      H.level('eső', RAIN(S)); H.level('zápor', SHOW(S));
+      H.level('eső', RAIN(S) * (S < 60 ? 0.45 : 1));   // őszi szitálás: csendesebb H.level('zápor', SHOW(S));
       const ms = NAMES[((S + 2) % 240) / 60 | 0];
       H.musicSeason(ms, SEG[ms][0], SEG[ms][1]);
       const busy = ['eső', 'zápor', 'madárdal', 'méhek', 'csöpögés'].some(n => want.has(n)) || performance.now() - (this.lastEv || 0) < 3000;

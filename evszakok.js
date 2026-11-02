@@ -377,7 +377,7 @@ g.save(); g.translate(x, y); g.scale(1, 0.42); leaf(g, 0, 0, l.s * u * k, 1, l.r
       this.cloud = cloud;
       const shower = P.eso ? sm(216, 217.5, S) * (1 - sm(223.5, 229, S)) : 0;   // nyári zápor: 3:36–3:46
       const aprR = P.eso ? sm(160.5, 162, S) * (1 - sm(170.5, 176.5, S)) : 0;   // áprilisi zápor: 2:41–2:50 (napsütéses)
-      const rain = Math.max(P.eso && S < 60 ? sm(14, 16, S) * (1 - sm(24.5, 31, S)) : 0, shower, aprR * 0.8);
+      const rain = Math.max(P.eso && S < 60 ? sm(14, 17, S) * (1 - sm(32, 40, S)) : 0, shower, aprR * 0.8);
       this.rbw = 0;   // ősz: 15. mp-től kb. 8 mp eső
       const wet = sm(217, 221, S) * (1 - sm(226, 238, S));
       const bl = spring ? sm(0.04, 0.22, qS) * (1 - sm(0.42, 0.62, qS)) : 0;
@@ -465,7 +465,7 @@ g.save(); g.translate(x, y); g.scale(1, 0.42); leaf(g, 0, 0, l.s * u * k, 1, l.r
       ctx.fillStyle = rgb(mix([70, 52, 40], [92, 104, 126], wcol), sa * 0.9);   // pad árnyéka
       if (BENCH.on) for (const [x, y] of BENCH.stones) { ctx.beginPath(); ctx.ellipse(x + 0.022, y + 0.002, 0.034, 0.007, -0.05, 0, TAU); ctx.fill(); }   // a kövek árnyéka
       // a fa (alig érezhető ringással)
-      const sk = 0.003 * Math.sin(t * 0.5) + this.gust * 0.006 * Math.sin(t * 2.3) + 0.002 * lU * Math.sin(t * 0.9); this.sk = sk;
+      const sk = 0.003 * Math.sin(t * 0.5) + this.gust * (S < 60 ? 0.011 : 0.006) * Math.sin(t * 2.3) + 0.002 * lU * Math.sin(t * 0.9); this.sk = sk;
       ctx.setTransform(1, 0, sk, 1, bx - ox - sk * oy, gy - oy); ctx.drawImage(this.tc, 0, 0);
       ctx.setTransform(u, 0, 0, u, bx, gy);
       this.drawBench(ctx, cov);
@@ -503,7 +503,7 @@ g.save(); g.translate(x, y); g.scale(1, 0.42); leaf(g, 0, 0, l.s * u * k, 1, l.r
       if (wet > 0.01) { const hz = gy - 0.07 * u, g4 = ctx.createLinearGradient(0, hz - 0.02 * u, 0, hz + 0.05 * u); g4.addColorStop(0, 'rgba(60,58,40,0)'); g4.addColorStop(1, `rgba(60,58,40,${0.2 * wet})`); ctx.fillStyle = g4; ctx.fillRect(0, hz - 0.02 * u, w, 0.07 * u); ctx.fillStyle = `rgba(60,58,40,${0.2 * wet})`; ctx.fillRect(0, hz + 0.05 * u, w, h); }   // nedves föld, puha átmenettel   // a zápor után egy darabig nedves, sötétebb a föld
       if (rain > 0.01) {
         ctx.fillStyle = `rgba(${128 - 30 * shower},${132 - 28 * shower},${138 - 22 * shower},${(0.16 + 0.12 * shower) * rain})`; ctx.fillRect(0, 0, w, h);
-        const n = Math.round((150 + 120 * shower) * rain), sl = 0.18 + wind * 0.25, hz = gy - 0.07 * u, big = 1 + 0.45 * shower;
+        const fine = S < 60 ? 1 : 0, n = Math.round((150 + 120 * shower + 90 * fine) * rain), sl = 0.18 + wind * 0.25, hz = gy - 0.07 * u, big = (1 + 0.45 * shower) * (1 - 0.45 * fine);   // ősszel apró, sűrű szitálás
         for (let i = 0; i < n; i++) {   // cseppek: kerek fej, elvékonyodó csóva
           const fx = Math.abs((Math.sin(i * 12.9898) * 43758.5453) % 1), fy = Math.abs((Math.sin(i * 78.233) * 12345.678) % 1);
           const sz = (0.6 + fx * 0.6) * big, L = 0.026 * u * sz, rr = 0.0032 * u * sz;

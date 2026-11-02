@@ -196,9 +196,9 @@
     thunder(vol = 1) {   // távoli dörgés: mély, hosszan elnyúló morajlás
       this.init(); const ac = this.ac, t = ac.currentTime + 0.05, n = ac.createBufferSource(); n.buffer = this.brown;
       const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160; lp.Q.value = 0.4; const g = ac.createGain();
-      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.65 * vol, t + 0.7); g.gain.linearRampToValueAtTime(0.32 * vol, t + 1.6); g.gain.linearRampToValueAtTime(0.58 * vol, t + 2.4); g.gain.linearRampToValueAtTime(0.36 * vol, t + 3.6); g.gain.linearRampToValueAtTime(0.45 * vol, t + 4.4); g.gain.setTargetAtTime(0, t + 4.8, 1.8);   // hosszabb, hullámzó morajlás
-      lp.frequency.setValueAtTime(230, t); lp.frequency.linearRampToValueAtTime(100, t + 7);
-      n.connect(lp); lp.connect(g); this.bus(g, 0.6); n.start(t, Math.random()); n.stop(t + 12);
+      n.loop = true; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1.0 * vol, t + 0.6); g.gain.linearRampToValueAtTime(0.5 * vol, t + 1.6); g.gain.linearRampToValueAtTime(0.9 * vol, t + 2.5); g.gain.linearRampToValueAtTime(0.55 * vol, t + 4); g.gain.linearRampToValueAtTime(0.75 * vol, t + 5.2); g.gain.linearRampToValueAtTime(0.4 * vol, t + 7.5); g.gain.linearRampToValueAtTime(0.5 * vol, t + 8.6); g.gain.setTargetAtTime(0, t + 9, 2.4);   // erősebb, hosszan görgő   // hosszabb, hullámzó morajlás
+      lp.frequency.setValueAtTime(260, t); lp.frequency.linearRampToValueAtTime(90, t + 12);
+      n.connect(lp); lp.connect(g); this.bus(g, 0.6); n.start(t, Math.random()); n.stop(t + 18);
     }
     cranes(vol = 1) {   // daru: távoli, kürtszerű „krú-krú”
       this.init(); const ac = this.ac; let t = ac.currentTime + 0.03;
