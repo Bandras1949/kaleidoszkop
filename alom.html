@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ÁLOM – Kaleidoszkóp · © Bánky András</title>
+<meta property="og:title" content="ÁLOM – Kaleidoszkóp">
+<meta property="og:description" content="Foszlányok elalvás előtt. Koppints az indításhoz.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#706C67;overflow:hidden;-webkit-user-select:none;user-select:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+#cim{position:fixed;inset:0;opacity:1;transition:opacity 2.5s ease;background:#706C67;color:#F4ECDC;cursor:pointer}
+#cim h1{position:absolute;left:0;right:0;top:22vh;text-align:center;margin:0;font:600 clamp(48px,10vw,130px) Cinzel,Georgia,serif;letter-spacing:.12em;padding-left:.12em}
+#ind{position:absolute;left:0;right:0;top:56vh;text-align:center;font:italic clamp(22px,3vw,40px) 'Cormorant Garamond',Georgia,serif}
+#fekvo{position:absolute;left:0;right:0;top:calc(56vh + clamp(40px,5vw,64px));text-align:center;font:italic clamp(16px,2vw,26px) 'Cormorant Garamond',Georgia,serif;color:#DCD0BA;display:none}
+#nev{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 5vh);text-align:center;font:clamp(18px,2.4vw,40px) 'Cormorant Garamond',Georgia,serif}
+#hang{position:fixed;right:calc(env(safe-area-inset-right) + 14px);top:calc(env(safe-area-inset-top) + 14px);padding:10px 18px;border-radius:24px;background:rgba(0,0,0,.35);border:1px solid rgba(244,236,220,.4);color:#F4ECDC;font:italic 18px 'Cormorant Garamond',Georgia,serif;transition:opacity .8s;opacity:0;pointer-events:none;white-space:nowrap}
+@media (orientation:portrait) and (max-width:820px){#fekvo{display:block}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="cim"><h1>ÁLOM</h1><div id="ind">Koppints az indításhoz</div><div id="fekvo">Fekvő helyzetben a legszebb.</div><div id="nev">© Bánky András</div></div>
+<div id="hang"></div>
+<script src="./alom.js?v=2"></script>
+<script>
+(function () {
+  const cim = document.getElementById('cim'), hang = document.getElementById('hang');
+  const al = new window.Alom(document.getElementById('cv'));
+  let started = false, on = true;
+  const msg = t => { hang.textContent = t; hang.style.opacity = '1'; clearTimeout(msg.t); msg.t = setTimeout(() => hang.style.opacity = '0', 2500); };
+  const tap = () => {
+    if (!started) { started = true; al.want = true; al.start(); cim.style.opacity = '0'; setTimeout(() => cim.style.display = 'none', 2600); return; }   // a hang a kép előtt indul
+    on = !on; al.setWant(on); if (on) al.audio();
+    msg(on ? 'Hang be' : 'Hang ki · koppintás: vissza');
+  };
+  window.addEventListener('pointerup', tap);
+  document.addEventListener('visibilitychange', () => { if (!started) return; if (document.hidden) al.stop(); else al.start(); });
+})();
+</script>
+</body>
+</html>
