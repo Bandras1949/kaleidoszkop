@@ -130,7 +130,7 @@ class Component extends DCLogic {
   mode = /[?&]beallitas/.test(location.search) ? 'phone' : 'demo';
   ov = (() => { if (this.mode !== 'phone') return {}; try { const o = JSON.parse(localStorage.getItem('kaleido-beallitas') || '{}'); if ('eljárás' in o) { o['üzemmód'] = o['eljárás']; delete o['eljárás']; } delete o['tempó']; const u = o['üzemmód']; if (u === 'Lyukfestéses') o['festésVáltozat'] = 'lyukfestés'; if (u === 'Mintafestéses') o['festésVáltozat'] = 'mintafestés'; if (u != null) o['üzemmód'] = { 'Örvény': 'ÖRVÉNYES', 'Örvényes': 'ÖRVÉNYES', 'Spirálos': 'SPIRÁLOS', 'Tükrözéses': 'TÜKRÖS', 'Holdas': 'HOLDAS', 'FESTÉSES': 'TÜKRÖS', 'Lyukfestéses': 'TÜKRÖS', 'Mintafestéses': 'TÜKRÖS', 'Automatikus festés': 'TÜKRÖS', 'Váltakozó': 'VÁLTAKOZÓ' }[u] || u; return o; } catch (e) { return {}; } })();
   ovv = 0;
-  FIX = { 'üzemmód': 'VÁLTAKOZÓ', 'dal': 'folyamatos', 'zene': true, 'nyitókép': true };
+  FIX = { 'üzemmód': 'VÁLTAKOZÓ', 'dal': 'folyamatos', 'zene': true, 'nyitókép': true, 'időzített hirdetés': true, 'hirdetés időköz (mp)': 60 };
   splashOn() { const ov = this.ov || {}, v = 'nyitókép' in ov ? ov['nyitókép'] : (this.props['nyitókép'] ?? true); return v !== false && !(this.state && this.state.splashGone); }
   mapProps(p) {
     const spl = this.splashOn();
@@ -490,7 +490,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-11-06 hirdetés';
+  VER = 'v2026-11-06 hirdetes';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
@@ -713,16 +713,17 @@ class Component extends DCLogic {
   }
   adEnded() { this.e.lastAdEnd = performance.now(); }
   adRef = React.createRef();
+  adRaw(k) { const fx = this.mode === 'demo' ? (this.FIX || {}) : {}; return k in fx ? fx[k] : this.raw0(k); }
   adTick(now) {
     const dt = Math.min(250, Math.max(0, now - (this._adLast ?? now))); this._adLast = now;
     if (this._adRun) return;
-    if (this.raw0('időzített hirdetés') !== true) { this._adClock = 0; return; }
+    if (this.adRaw('időzített hirdetés') !== true) { this._adClock = 0; return; }
     if (this.splashOn() || this.state.paused || this.state.panel || document.visibilityState !== 'visible' || this.txtT0 != null) return;
     this._adClock = (this._adClock || 0) + dt;
-    if (this._adClock >= Math.max(10, +(this.raw0('hirdetés időköz (mp)') ?? 30)) * 1000) { this._adClock = 0; this.runAd(); }
+    if (this._adClock >= Math.max(10, +(this.adRaw('hirdetés időköz (mp)') ?? 30)) * 1000) { this._adClock = 0; this.runAd(); }
   }
   runAd() {
-    let typ = String(this.raw0('hirdetés típusa') ?? 'FUTAPEST TAXI');
+    let typ = String(this.adRaw('hirdetés típusa') ?? 'FUTAPEST TAXI');
     if (typ === 'váltakozva') { this._adAlt = (this._adAlt || 0) + 1; typ = this._adAlt % 2 ? 'FUTAPEST TAXI' : 'szöveges'; }
     if (typ === 'szöveges') { if (!this.txtTexts().length) return; this.txtT0 = performance.now() + 300; this.txtIdx = (this.txtIdx ?? -1) + 1; return; }
     const host = this.adRef.current; if (!host || !window.FutapestReklam) return;
