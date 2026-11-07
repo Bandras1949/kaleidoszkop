@@ -7,7 +7,7 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
 
-  const SEQ = ['orv', 'spir', 'orv', 'hold', 'orv', 'mir'], OV = ['orv', 'spir', 'hold'];
+  const SEQ = ['orv', 'spir', 'orv', 'hold', 'orv', 'mir', 'orv', 'szov'], OV = ['orv', 'spir', 'hold'];
   const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű', 'szív', '8-as', 'lóhere'];
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
