@@ -70,6 +70,7 @@
       let dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
       if (st.paused) dt = 0;
       const want = st.want && pats.length ? 1 : 0;
+      if (!this._pre && pats.length) { this._pre = true; pats.forEach(p => this.load(p)); }   // minden minta előre betöltve
       if (want && !this.cur) { this.choose(P, pats); this.left = Math.max(0.25, num(P['mandalaVáltásPerc'], 1)) * 60; }
       if (!want) { if (this.rit) this.duck(1, 0.5); this.rit = null; this.grains = []; }
       this.op += (want - this.op) * Math.min(1, dt * 0.8 + (st.paused ? 0 : 0.002)); if (want === 0 && this.op < 0.01) this.op = 0; if (want === 1 && this.op > 0.995) this.op = 1;
@@ -97,7 +98,7 @@
       const R0 = this.rit; if (R0 && (R0.ph === 'sweep' || R0.ph === 'empty')) { this.renderSweep(dt, W, H, dpr); this.drawnOnce = true; return; }
       const tl = this.tile(dpr), c = this.cur, x = cv.getContext('2d');
       x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.fillStyle = PAIRS[c.pair][1]; x.fillRect(0, 0, W, H);
-      if (!tl) return;
+      if (!tl) { if (this.snap && this.snapA > 0) x.drawImage(this.snap, 0, 0, W, H); return; }   // amíg az új minta töltődik, a régi kép marad (nincs fekete villanás)
       const breath = P['mandalaLélegzés'] !== false ? 1 + 0.07 * Math.sin(this.t * Math.PI * 2 / 11) : 1;
       const zoom = breath, spin = num(P['mandalaForgás'], 0.6), Rr = Math.hypot(W, H) / 2;
       const need = Math.min(3600, Math.ceil(2 * (Rr / 0.9 + 40)));
