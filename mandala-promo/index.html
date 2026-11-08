@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MANDALA – Kaleidoszkóp · © Bánky András</title>
+<meta name="description" content="Lassan forgó, lélegző Art Deco mandala hangtálzenével, amely elsöpri és újjáépíti önmagát.">
+<meta property="og:title" content="MANDALA – Kaleidoszkóp">
+<meta property="og:description" content="Lassan forgó, lélegző mandala hangtálzenével. Koppints az indításhoz.">
+<meta name="theme-color" content="#0B0B0C">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#0B0B0C;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+#cim{position:fixed;inset:0;opacity:1;transition:opacity 2.5s ease;background:#0B0B0C;color:#D4AF37;cursor:pointer}
+#cim h1{position:absolute;left:0;right:0;top:24vh;text-align:center;margin:0;font:600 clamp(48px,11vw,130px) Cinzel,Georgia,serif;letter-spacing:.14em;padding-left:.14em}
+#al{position:absolute;left:0;right:0;top:calc(24vh + clamp(64px,13vw,150px));text-align:center;font:italic clamp(18px,2.6vw,30px) 'Cormorant Garamond',Georgia,serif;color:#C9B37A}
+#ind{position:absolute;left:0;right:0;top:58vh;text-align:center;font:italic clamp(22px,3vw,40px) 'Cormorant Garamond',Georgia,serif;color:#F2EAD8}
+#fekvo{position:absolute;left:8vw;right:8vw;top:calc(58vh + clamp(44px,5vw,64px));text-align:center;font:italic clamp(16px,2vw,24px)/1.35 'Cormorant Garamond',Georgia,serif;color:#C9B37A;display:none}
+@media (orientation:portrait) and (max-width:820px){#fekvo{display:block}}
+#nev{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 5vh);text-align:center;font:clamp(18px,2.4vw,40px) 'Cormorant Garamond',Georgia,serif;color:#F2EAD8}
+#hang{position:fixed;right:calc(env(safe-area-inset-right) + 14px);top:calc(env(safe-area-inset-top) + 14px);padding:10px 18px;border-radius:24px;background:rgba(0,0,0,.45);border:1px solid rgba(212,175,55,.5);color:#F2EAD8;font:italic 18px 'Cormorant Garamond',Georgia,serif;transition:opacity .8s;opacity:0;pointer-events:none;white-space:nowrap}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="cim"><h1>MANDALA</h1><div id="al">forog, lélegzik, újjáépül</div><div id="ind">Koppints az indításhoz</div><div id="fekvo">Fordítsd el a telefont – fekve a legszebb.<br>Ha nem fordul el, kapcsold ki a képernyő‑elforgatás zárolását.</div><div id="nev">© Bánky András</div></div>
+<div id="hang"></div>
+<script src="./mandala.js?v=2"></script>
+<script>
+(function () {
+  // rögzített beállítások: nincs panel, a mandala magától változik
+  const P = {
+    mandalaMinta: 'véletlen', mandalaSzín: 'váltakozó', mandalaTükör: 'váltakozó',
+    mandalaForgás: 0.6, mandalaLélegzés: true,
+    // promó-ütem: 1. minta → áttűnés → 2. minta → söprés → 3. minta születik → áttűnés → 4. minta → söprés …
+    mandalaVáltás: true, mandalaVáltásPerc: 0.5,
+    mandalaSöprés: true, mandalaSöprésPerc: 1,
+    mandalaZene: 'váltakozó', mandalaHangerő: 70,
+  };
+  const pats = [
+    ['AD-01', 480], ['AD-02', 420], ['AD-03', 420], ['AD-04', 480], ['AD-05', 520], ['AD-06', 420],
+    ['AD-01f', 480], ['AD-03f', 420], ['AD-04f', 480], ['AD-05f', 520],
+  ].map(([n, tile]) => ({ src: 'mintak/' + n + '.png', tile, name: n }));
+  const cim = document.getElementById('cim'), hang = document.getElementById('hang');
+  let started = false, on = true;
+  const mn = new window.Mandala(document.getElementById('cv'), () => ({ want: started, paused: false, P, pats }));
+  const msg = t => { hang.textContent = t; hang.style.opacity = '1'; clearTimeout(msg.t); msg.t = setTimeout(() => hang.style.opacity = '0', 2500); };
+  let lock = null;
+  const wake = async () => { try { if ('wakeLock' in navigator && !document.hidden) lock = await navigator.wakeLock.request('screen'); } catch (e) {} };   // a képernyő ne aludjon el
+  const tap = () => {
+    if (!started) { started = true; mn.want = true; mn.start(); wake(); cim.style.opacity = '0'; setTimeout(() => cim.style.display = 'none', 2600); return; }
+    on = !on; mn.setWant(on); if (on) mn.audio();
+    msg(on ? 'Hang be' : 'Hang ki · koppintás: vissza');
+  };
+  window.addEventListener('pointerup', tap);
+  document.addEventListener('visibilitychange', () => { if (!started) return; if (document.hidden) mn.stop(); else { mn.start(); wake(); } });
+})();
+</script>
+</body>
+</html>
