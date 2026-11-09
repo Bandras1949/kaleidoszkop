@@ -53,8 +53,10 @@ html,body{margin:0;height:100%;background:#0B0B0C;overflow:hidden;-webkit-user-s
     on = !on; mn.setWant(on); if (on) mn.audio();
     msg(on ? 'Hang be' : 'Hang ki · koppintás: vissza');
   };
+  let bc = null; try { bc = new BroadcastChannel('banky-hang'); bc.onmessage = () => { if (started && on) { on = false; mn.setWant(false); } }; } catch (e) {}
+  window.addEventListener('pointerup', () => { try { bc && bc.postMessage(1); } catch (e) {} }, true);
   window.addEventListener('pointerup', tap);
-  document.addEventListener('visibilitychange', () => { if (!started) return; if (document.hidden) mn.stop(); else { mn.start(); wake(); } });
+  document.addEventListener('visibilitychange', () => { if (!started) return; if (document.hidden) { mn.stop(); on = false; mn.setWant(false); } else { mn.start(); wake(); } });   // visszatérve csend, koppintásra szól
 })();
 </script>
 </body>
