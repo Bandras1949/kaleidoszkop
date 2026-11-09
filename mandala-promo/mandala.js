@@ -9,7 +9,7 @@
     'ezüst–fekete': ['#C9CED6', '#0B0B0C'],
     'elefántcsont–bordó': ['#F2EAD8', '#5A1022'],
   };
-  const TRACKS = { 'Silent Sanctuary': 'mandala/silent-sanctuary.mp3', 'Handpan': 'mandala/handpan.mp3' };
+  const TRACKS = { 'Satie': 'mandala/satie.mp3', 'Hárfa': 'mandala/harfa.mp3', 'Holdkelte': 'mandala/holdkelte.mp3' }, ORDER = Object.keys(TRACKS);   // váltakozó: ebben a sorrendben, Satie-vel kezd
   const XF = 5;   // zenei áttűnés (mp)
   const HOLD = 3.5, SWEEP = 16.5, EMPTY = 2, BUILD = 21;   // a szertartás szakaszai (mp)
   const eio = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
@@ -223,7 +223,7 @@
     mute() { if (!this.ac) return; const t = this.ac.currentTime; this.master.gain.cancelScheduledValues(t); this.master.gain.setTargetAtTime(0, t, 0.4); clearTimeout(this._sus); this._sus = setTimeout(() => { if (!this.run || !this.want) this.ac.suspend(); }, 1500); }
     music(P) {
       const ac = this.ac; if (ac.state !== 'running' || !this.want) return;
-      const z = String(P['mandalaZene'] ?? 'Silent Sanctuary'), vol = Math.max(0, Math.min(100, num(P['mandalaHangerő'], 70))) / 100;
+      let z = String(P['mandalaZene'] ?? 'váltakozó'); if (z !== 'ki' && z !== 'váltakozó' && !TRACKS[z]) z = 'váltakozó'; const vol = Math.max(0, Math.min(100, num(P['mandalaHangerő'], 70))) / 100;
       if (this._vol !== vol) { this._vol = vol; if (this.vg) this.vg.gain.setTargetAtTime(vol, ac.currentTime, 0.3); }
       if (!this.vg) { this.vg = ac.createGain(); this.vg.gain.value = vol; this.vg.connect(this.master); }
       if (!this.mg) { this.mg = ac.createGain(); this.mg.gain.value = this.duckTo ?? 1; this.mg.connect(this.vg); }   // csak a zene útja (a hangtáljelek nem ezen mennek)
@@ -232,7 +232,7 @@
       if (this.voice && want && this.voice.name !== want) { this.endVoice(this.voice, ac.currentTime, XF); this.voice = null; }
       const now = ac.currentTime;
       if (!this.voice || now >= this.voice.end - XF) {
-        let name = want || (this.voice ? (this.voice.name === 'Silent Sanctuary' ? 'Handpan' : 'Silent Sanctuary') : 'Silent Sanctuary');
+        let name = want || (this.voice ? ORDER[(ORDER.indexOf(this.voice.name) + 1) % ORDER.length] : ORDER[0]);
         const buf = this.bufs[name]; if (!buf) return;
         const t0 = this.voice ? Math.max(now, this.voice.end - XF) : now + 0.05;
         const s = ac.createBufferSource(), g = ac.createGain(); s.buffer = buf; s.connect(g); g.connect(this.mg);
