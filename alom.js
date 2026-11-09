@@ -115,7 +115,7 @@
         gr.addColorStop(0, `rgba(${C1},${(0.3 + 0.08 * b + 0.22 * hb) * life})`); gr.addColorStop(0.35, `rgba(${C2},${(0.16 + 0.06 * b) * life})`); gr.addColorStop(1, `rgba(${BG},0)`);
         g.fillStyle = gr; g.fillRect(0, 0, w, h);
       }
-      const fs0 = Math.max(20, Math.min(46, u * 0.045)), maxW = Math.min(w * 0.9, 1800);
+      const fs0 = Math.max(16, Math.min(46, u * 0.045)), maxW = Math.min(w * 0.84, 1800);   // telefonon fekve is kiférjen (kerekített sarkok, kivágás)
       if (!this.lay.all) this.layoutAll(g, fs0, maxW);
       g.textBaseline = 'middle';
       this.FR.forEach((F, i) => {
