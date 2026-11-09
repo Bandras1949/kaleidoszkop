@@ -56,12 +56,15 @@
     setInterval(() => {   // ha a környezet (pl. a fejlesztői vászon) újraépíti az oldalt, az elemek visszakerülnek
       if (!st.isConnected) document.head.appendChild(st);
       [btn, pan, spl, ban].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
+      const ad = !!document.querySelector('.fpad');   // hirdetés közben semmi nem látszik és nem kattintható
+      [btn, pan, spl, ban].forEach(n => { if (n) n.style.visibility = ad ? 'hidden' : ''; }); if (ad) pan.classList.remove('on');
       const so = splashOn(); if (spl) spl.style.display = so ? 'block' : 'none'; const gearPanel = !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]'); btn.classList.toggle('on', !so && !gearPanel); if (gearPanel) pan.classList.remove('on');   // a gombok a nyitókép után mindig látszanak
     }, 400);
     window.KAjanlat = { premium, cycle() { if (!ban || splashOn()) return; ban.classList.add('on'); clearTimeout(ban.t); ban.t = setTimeout(() => ban.classList.remove('on'), 10000); } };
     // linkek: új lapon; ha a környezet nem enged új lapot, ugyanitt; a fejlesztői vásznon a projekt saját példányai
     document.addEventListener('click', e => {
-      const a = e.target.closest('a[target="_blank"]'); if (!a) return; e.preventDefault(); let u = a.href;
+      const a = e.target.closest('a[target="_blank"]'); if (!a) return; e.preventDefault(); if (document.querySelector('.fpad')) return; let u = a.href;
+      window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: 'kulso-lap' }));   // új lap nyílik: a Kaleidoszkóp elhallgat
       let w = null; try { w = window.open(u, '_blank'); } catch (x) {} if (w) { try { w.opener = null; } catch (x) {} } else location.href = u;
     }, true);
   }
