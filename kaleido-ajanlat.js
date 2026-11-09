@@ -68,6 +68,7 @@
       let w = null; try { w = window.open(u, '_blank'); } catch (x) {} if (w) { try { w.opener = null; } catch (x) {} } else location.href = u;
     }, true);
   }
+  try { const bc = new BroadcastChannel('banky-hang'); bc.onmessage = () => window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: 'masik-lap' })); window.addEventListener('pointerup', () => { try { bc.postMessage(1); } catch (e) {} }, true); } catch (e) {}   // egyszerre csak egy lapunk szól
   window.KAjanlat = { premium, cycle() {} };
   if (document.body) build(); else document.addEventListener('DOMContentLoaded', build);
 })();
