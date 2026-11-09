@@ -20,13 +20,13 @@
   const glue = t => t.replace(/(^|[ \n])(a|az|s|e|és|egy) /g, '$1$2\u00A0');
 
   class Alom {
-    constructor(cv) {
-      this.cv = cv; this.want = true; this.T = 0; this.DUR = 330; this.BEAT = 4.2; this.lay = {}; this.sched();
-      if (document.fonts) { const clear = () => { this.lay = {}; }; document.fonts.load('italic 40px "Cormorant Garamond"', 'ÁÉÍÓÖŐÚÜŰáéíóöőúüű…„” Holnap').then(clear, clear); document.fonts.addEventListener('loadingdone', clear); this.offFonts = () => document.fonts.removeEventListener('loadingdone', clear); }
+    constructor(cv, tx) {
+      this.TX = tx || TX; this.cv = cv; this.want = true; this.T = 0; this.DUR = 330; this.BEAT = 4.2; this.lay = {}; this.sched();
+      if (document.fonts) { const clear = () => { this.lay = {}; }; document.fonts.load('italic 40px "Cormorant Garamond"', 'ÁÉÍÓÖŐÚÜŰáéíóöőúüű…„”“ Holnap Tomorrow').then(clear, clear); document.fonts.addEventListener('loadingdone', clear); this.offFonts = () => document.fonts.removeEventListener('loadingdone', clear); }
     }
     sched() {
-      const N = TX.length; let s = 4; this.FR = [];
-      TX.forEach((t0, i) => {
+      const N = this.TX.length; let s = 4; this.FR = [];
+      this.TX.forEach((t0, i) => {
         const txt = glue(t0), nW = txt.split(/[ \n]/).length, k = i / (N - 1), slow = 1 + 0.9 * k, gap = 0.55 * slow, hold = 3 + nW * 0.5 * slow, out = s + nW * gap + hold;
         const smoke = i === N - 1 ? 0 : sm((i - N / 2 + 1) / 3), dis = 2 + 2.5 * smoke;
         const dg = ({ 3: [0, 7, 3, 4, 1, 5], 7: [7, 3, 4], 11: [4] })[i];
