@@ -477,7 +477,8 @@ class Component extends DCLogic {
     this.txtRaf = requestAnimationFrame(() => this.txtLoop());
   }
   onVis = () => {
-    if (document.visibilityState !== 'visible') return;
+    if (document.visibilityState !== 'visible') { if (this.state.sound) { this._visOff = true; this.setSound(false); } return; }   // háttérbe került (lapváltás, képernyőzár, kilépés): elhallgat
+    if (this._visOff) { this._visOff = false; this.setSound(true); return; }   // visszatérve újra szól
     const a = this.audio;
     if (this.state.sound && a && a.paused) { const p = a.play(); if (p && p.catch) p.catch(() => { this._resume = true; this.setState({ hint: true }); }); }
   };
