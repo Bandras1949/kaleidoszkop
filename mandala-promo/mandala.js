@@ -96,7 +96,8 @@
       const W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr); if (!W || !H) return;
       if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; this.key = null; }
       const R0 = this.rit; if (R0 && (R0.ph === 'sweep' || R0.ph === 'empty')) { this.renderSweep(dt, W, H, dpr); this.drawnOnce = true; return; }
-      const tl = this.tile(dpr), c = this.cur, x = cv.getContext('2d');
+      const sc = Math.max(0.45, Math.min(1, Math.min(cv.clientWidth, cv.clientHeight) / 720));   // telefonon kisebb csempe: távolabbról látszik a minta, mint nagy képernyőn
+      const tl = this.tile(dpr * sc), c = this.cur, x = cv.getContext('2d');
       x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.fillStyle = PAIRS[c.pair][1]; x.fillRect(0, 0, W, H);
       if (!tl) { if (this.snap && this.snapA > 0) x.drawImage(this.snap, 0, 0, W, H); return; }   // amíg az új minta töltődik, a régi kép marad (nincs fekete villanás)
       const breath = P['mandalaLélegzés'] !== false ? 1 + 0.07 * Math.sin(this.t * Math.PI * 2 / 11) : 1;
