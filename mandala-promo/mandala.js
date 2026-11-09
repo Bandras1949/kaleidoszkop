@@ -9,7 +9,7 @@
     'ezüst–fekete': ['#C9CED6', '#0B0B0C'],
     'elefántcsont–bordó': ['#F2EAD8', '#5A1022'],
   };
-  const TRACKS = { 'Satie': 'mandala/satie.mp3', 'Hárfa': 'mandala/harfa.mp3', 'Holdkelte': 'mandala/holdkelte.mp3' }, ORDER = Object.keys(TRACKS);   // váltakozó: ebben a sorrendben, Satie-vel kezd
+  const TRACKS = { 'Rising Sun': 'mandala/rising-sun.mp3' }, ORDER = Object.keys(TRACKS);   // egy zene, hézagmentes áttűnéssel ismételve
   const XF = 5;   // zenei áttűnés (mp)
   const HOLD = 3.5, SWEEP = 16.5, EMPTY = 2, BUILD = 21;   // a szertartás szakaszai (mp)
   const eio = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
