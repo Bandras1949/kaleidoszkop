@@ -1,4 +1,4 @@
-// FUTAPEST TAXI – 20 mp-es kinetikus tipográfiai hirdetés a Kaleidoszkóp ingyenes részéhez.
+// MAX-TAXI – 20 mp-es kinetikus tipográfiai hirdetés a Kaleidoszkóp ingyenes részéhez.
 // Használat: window.FutapestReklam.play(hostElem, { sound: true|false, onEnd: fn })
 // A hirdetés nem szakítható meg: a teljes felületet lefedi, minden érintést és kattintást elnyel.
 (function () {
@@ -17,6 +17,7 @@
 .fpad .checker{background:repeating-conic-gradient(var(--ink) 0 25%,var(--cab) 0 50%) 0 0/48px 48px}
 .fpad .checker.inv{background:repeating-conic-gradient(var(--ink) 0 25%,var(--paper) 0 50%) 0 0/40px 40px}
 .fpad .lt{display:inline-block;opacity:0}
+.fpad .l6 .lt,.fpad .l13 .lt{background:repeating-conic-gradient(var(--ink) 0 25%,var(--cab) 0 50%) 0 0/36px 36px;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:5px var(--ink)}   /* taxi-kockás betűk */
 .fpad .route{display:flex;align-items:center;gap:40px}
 .fpad .stop{display:flex;align-items:baseline;gap:6px;opacity:0;white-space:nowrap;flex:none}
 .fpad .dot{width:190px;height:190px;border-radius:50%;background:var(--cab);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:150px;line-height:1}
@@ -30,7 +31,7 @@
 .fpad .icon{width:230px;height:230px;border-radius:52px;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;margin-bottom:46px;box-shadow:0 24px 0 -8px rgba(0,0,0,.25)}
 .fpad .icon b{font-weight:900;font-size:92px;color:var(--cab);letter-spacing:6px;line-height:.8}
 .fpad .icon i{display:block;width:150px;height:28px}
-.fpad .pill{margin-top:40px;padding:14px 46px 18px;border-radius:999px;background:var(--ink);color:var(--cab);font-weight:700;font-size:64px;white-space:nowrap;opacity:0}
+.fpad .pill{margin-top:40px;padding:18px 54px 24px;border-radius:999px;background:var(--ink);color:var(--cab);font-weight:700;font-size:96px;white-space:nowrap;opacity:0}
 .fpad .badge{position:absolute;left:calc(env(safe-area-inset-left,0px) + 12px);top:calc(env(safe-area-inset-top,0px) + 12px);padding:5px 10px;border-radius:6px;background:rgba(0,0,0,.55);color:#F7F5EF;font:600 12px/1 system-ui,sans-serif;letter-spacing:.06em;font-variant-numeric:tabular-nums;z-index:2}
 `;
   const HTML = `
@@ -55,9 +56,9 @@
     <div class="stop sb"><div class="dot">B</div><span class="suf">-be?</span></div>
   </div></div></div>
   <div class="group g4"><div class="fit">
-    <span class="ln l6" style="font-weight:900;font-size:170px;color:var(--ink);letter-spacing:30px;margin-right:-30px;opacity:1"></span>
-    <span class="ln l7" style="font-weight:900;font-style:italic;font-size:400px;color:var(--ink);margin-top:-10px">Taxi</span>
-    <div class="tag" style="margin-top:18px"><span class="tagt"></span><span class="ul"></span></div>
+    <span class="ln l6" style="font-weight:900;font-size:300px;color:var(--ink);letter-spacing:8px;opacity:1"></span>
+    <span class="ln l7" style="display:none"></span>
+    <div class="tag" style="margin-top:40px;padding:18px 54px 24px;border-radius:999px;background:var(--ink)"><span class="tagt" style="color:var(--cab)"></span><span class="ul" style="display:none"></span></div>
   </div></div>
   <div class="group g5"><div class="fit">
     <span class="ln l9" style="font-weight:700;font-size:160px;color:var(--paper);letter-spacing:16px">a legjobb</span>
@@ -69,9 +70,9 @@
     <span class="ln l12" style="font-weight:700;font-size:170px;color:var(--cab);letter-spacing:14px;margin-top:10px">az appot:</span>
   </div></div>
   <div class="group g7"><div class="fit">
-    <div class="icon"><b>TAXI</b><i class="checker"></i></div>
-    <span class="ln l13" style="font-weight:900;font-size:190px;color:var(--ink);letter-spacing:6px;opacity:1"></span>
-    <span class="pill">gyors és kényelmes</span>
+    <div class="icon" style="display:none"><b>TAXI</b><i class="checker"></i></div>
+    <span class="ln l13" style="font-weight:900;font-size:300px;color:var(--ink);letter-spacing:8px;opacity:1"></span>
+    <span class="pill">Biztos pont a városi rohanásban</span>
   </div></div>
   <div class="wipe fo" style="background:#000;opacity:0"></div>
 </div>
@@ -101,7 +102,7 @@
     window.addEventListener('keydown', keyBlock, true);
 
     const letters = (el, text) => [...text].map(ch => { const s = document.createElement('span'); s.className = 'lt'; s.textContent = ch === ' ' ? ' ' : ch; el.appendChild(s); return s; });
-    const L6 = letters(q('.l6'), 'Futapest'), L13 = letters(q('.l13'), 'Futapest Taxi'), TAG = 'gyors és kényelmes';
+    const L6 = letters(q('.l6'), 'MAX-TAXI'), L13 = letters(q('.l13'), 'MAX-TAXI'), TAG = 'Amikor a percek is számítanak';
 
     // méret: a színpad mindig kitölti a felületet (a rövidebb oldal 1080 egység); a túl széles sorok kicsinyítve férnek el
     let SW = 1920, SH = 1080, scale = 1, offX = 0, offY = 0, fitDirty = true;
