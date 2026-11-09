@@ -7,7 +7,7 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
 
-  const SEQ = ['orv', 'spir', 'orv', 'hold', 'orv', 'mir', 'orv', 'szov'], OV = ['orv', 'spir', 'hold'];
+  const SEQ = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], OV = ['orv', 'spir', 'hold'];   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
   const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű', 'szív', '8-as', 'lóhere'];
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
@@ -202,7 +202,9 @@
       if (st.mode === 'alt') {
         if (this.ai == null) { this.ai = 0; this.segLeft = this.segDur(SEQ[0], pairSec); }
         this.segLeft -= dt;
-        if (this.segLeft <= 0 || this.jump) { this.jump = false; this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai]; this.segLeft = this.segDur(s, pairSec); st.setSeg && st.setSeg(s); }
+        if (this.segLeft <= 0 || this.jump) { this.jump = false; const s0 = SEQ[this.ai]; this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai]; this.segLeft = this.segDur(s, pairSec); st.setSeg && st.setSeg(s);
+          if (s === s0 && OV.includes(s) && this.op > 0.5) { this.snapshot(); if (s === 'spir') this.spir.shuffle(P); else this.hold.shuffle(P); }   // ugyanaz az üzemmód: második változat
+          if (this.ai === 0 && st.onCycle) st.onCycle(); }   // egy teljes kör lement
         const s = SEQ[this.ai]; kind = OV.includes(s) ? s : null;
       } else { this.ai = null; kind = OV.includes(st.mode) ? st.mode : null; }
       if (kind && this.kind && kind !== this.kind && this.op > 0.02) this.snapshot();
@@ -217,7 +219,7 @@
       if (this.op <= 0 || (st.paused && this.drawnOnce)) return;
       this.render(dt);
     }
-    segDur(s, pairSec) { const F = this.fast; return s === 'orv' ? pairSec * (3 + Math.floor(Math.random() * 2)) : s === 'spir' || s === 'hold' ? (F ? 15 : 30) : (F ? 10 : 30); }
+    segDur(s, pairSec) { const F = this.fast; return s === 'orv' ? pairSec * 2 : s === 'spir' || s === 'hold' ? (F ? 15 : 30) : (F ? 10 : 30); }
     variant() {
       const k = this.kind; if (!k || this.op < 0.5) return false;
       if (k === 'orv') { this.snapshot(); this.newPair(this.P || {}); this.pairLeft = this.fast ? 3.5 : +((this.P || {})['párosításMp'] ?? 10); }
