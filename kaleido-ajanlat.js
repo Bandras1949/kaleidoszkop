@@ -1,25 +1,3 @@
-// Saját oldalaink között: kezdőképernyős appban ugyanabban az ablakban lépünk tovább (teljes képernyő marad), a ‹ gomb visszavisz; böngészőben új lapon nyílik.
-window.BankyUt = window.BankyUt || (function () {
-  const SA = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches;
-  const K = 'banky-ut', get = () => { try { return JSON.parse(sessionStorage.getItem(K) || '[]'); } catch (e) { return []; } }, put = s => { try { sessionStorage.setItem(K, JSON.stringify(s.slice(-12))); } catch (e) {} };
-  if (!document.referrer) put([]);   // frissen indítva nincs visszaút
-  const open = u => {
-    if (SA) { const s = get(); s.push(location.href); put(s); location.href = u; return; }
-    let w = null; try { w = window.open(u, '_blank'); } catch (x) {} if (w) { try { w.opener = null; } catch (x) {} } else location.href = u;
-  };
-  const back = () => {
-    if (!SA || !get().length) return null;
-    const ex = document.getElementById('banky-vissza'); if (ex) return ex;
-    const b = document.createElement('button'); b.id = 'banky-vissza'; b.textContent = '‹'; b.setAttribute('aria-label', 'Vissza');
-    b.style.cssText = 'position:fixed;left:calc(env(safe-area-inset-left) + 12px);top:calc(env(safe-area-inset-top) + 12px);z-index:9999;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);color:#fff;font:32px/38px Georgia,serif;padding:0 0 6px;cursor:pointer;opacity:.8';
-    ['pointerdown', 'pointerup'].forEach(ev => b.addEventListener(ev, e => e.stopPropagation()));
-    b.addEventListener('click', e => { e.stopPropagation(); const s = get(), u = s.pop(); put(s); if (u) location.href = u; });
-    document.body.appendChild(b); return b;
-  };
-  return { SA, open, back };
-})();
-(function () { let kb = null; const fix = () => { if (!kb || !document.body.contains(kb)) kb = window.BankyUt.back(); }; setInterval(fix, 400); })();   // ‹ vissza, ha másik lapunkról érkeztünk (a vászon újraépíti a DOM-ot)
-
 // Kaleidoszkóp – licenckulcs, ajánlat és MANDALA-ízelítő (a React-felülettől független réteg). © Bánky András
 (function () {
   if (window.KAjanlat) return;
@@ -87,7 +65,7 @@ window.BankyUt = window.BankyUt || (function () {
     document.addEventListener('click', e => {
       const a = e.target.closest('a[target="_blank"]'); if (!a) return; e.preventDefault(); if (document.querySelector('.fpad')) return; let u = a.href;
       window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: 'kulso-lap' }));   // új lap nyílik: a Kaleidoszkóp elhallgat
-      window.BankyUt.open(u);
+      let w = null; try { w = window.open(u, '_blank'); } catch (x) {} if (w) { try { w.opener = null; } catch (x) {} } else location.href = u;
     }, true);
   }
   try { const bc = new BroadcastChannel('banky-hang'); bc.onmessage = () => window.dispatchEvent(new CustomEvent('kaleido-solo', { detail: 'masik-lap' })); window.addEventListener('pointerup', () => { try { bc.postMessage(1); } catch (e) {} }, true); } catch (e) {}   // egyszerre csak egy lapunk szól
