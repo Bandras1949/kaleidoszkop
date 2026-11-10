@@ -102,7 +102,7 @@
           <div style="font:400 12px/1.45 'DM Sans',system-ui,sans-serif;color:rgba(251,250,247,.75);white-space:pre-wrap;overflow-wrap:anywhere">{{ naploText }}</div>
           <div onClick="{{ naploTorles }}" style="align-self:flex-start;padding:8px 14px;border-radius:17px;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;background:rgba(251,250,247,.12);color:#FBFAF7">Napló törlése</div>
         </div>
-        <sc-if value="{{ premiumOn }}" hint-placeholder-val="{{ false }}"><div onClick="{{ otherKey }}" style="height:44px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;margin-top:14px;background:rgba(224,194,90,.14);color:#E0C25A">Teljes változat ✓ · Másik kulcs megadása</div></sc-if>
+        <sc-if value="{{ premiumOn }}" hint-placeholder-val="{{ false }}"><div onClick="{{ otherKey }}" style="height:44px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;margin-top:14px;background:rgba(224,194,90,.14);color:#E0C25A">Teljes változat ✓ · Kulcs törlése</div></sc-if>
         <div onClick="{{ resetAll }}" style="min-width:64px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;font:500 13px 'DM Sans',system-ui,sans-serif;margin-top:14px;height:44px;background:rgba(251,250,247,.12);color:#FBFAF7">Alapértékek visszaállítása</div>
         <div style="margin-top:10px;text-align:center;font:400 12px 'DM Sans',system-ui,sans-serif;color:rgba(251,250,247,.55)">{{ verzio }}</div>
       </div>
@@ -509,7 +509,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-11-10 kaleidoszkop';
+  VER = 'v2026-11-10-2 kaleidoszkop';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
@@ -680,7 +680,7 @@ class Component extends DCLogic {
     if (L && L.cov == null) { const sc = document.createElement('canvas'); sc.width = sc.height = 48; const sx = sc.getContext('2d'); sx.drawImage(L, 0, 0, 48, 48); const dd = sx.getImageData(0, 0, 48, 48).data; let c = 0; for (let i = 3; i < dd.length; i += 4) if (dd[i] > 128) c++; L.cov = c / (48 * 48); }
     return (this.laces[k] = L);
   }
-  tileFor(def) { const own = (this.props['mintánkéntiMéret'] ?? true) !== false; return own && def && def.tile ? def.tile : (this.P.lace4Tile ?? 360); }
+  tileFor(def) { const own = (this.props['mintánkéntiMéret'] ?? true) !== false, sc = Math.max(0.85, Math.min(1, Math.min(window.innerWidth, window.innerHeight) / 720)); return Math.round((own && def && def.tile ? def.tile : (this.P.lace4Tile ?? 360)) * sc); }
   toneLace(im, def) {
     const { W, H, dpr } = this;
     const T = Math.round(this.tileFor(def) * dpr);
