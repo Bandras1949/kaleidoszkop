@@ -227,7 +227,7 @@
       let z = String(P['mandalaZene'] ?? 'váltakozó'); if (z !== 'ki' && z !== 'váltakozó' && !TRACKS[z]) z = 'váltakozó'; const vol = Math.max(0, Math.min(100, num(P['mandalaHangerő'], 70))) / 100;
       if (this._vol !== vol) { this._vol = vol; if (this.vg) this.vg.gain.setTargetAtTime(vol, ac.currentTime, 0.3); }
       if (!this.vg) { this.vg = ac.createGain(); this.vg.gain.value = vol; this.vg.connect(this.master); }
-      if (!this.mg) { this.mg = ac.createGain(); this.mg.gain.value = this.duckTo ?? 1; this.mg.connect(this.vg); }   // csak a zene útja (a hangtáljelek nem ezen mennek)
+      if (!this.mg) { this.mg = ac.createGain(); this.mg.gain.value = this.duckTo ?? 1; const mz = ac.createGain(); mz.gain.value = 0.5; this.mg.connect(mz); mz.connect(this.vg); }   // a zene fele hangerővel (−6 dB); a söprés ütései változatlanok   // csak a zene útja (a hangtáljelek nem ezen mennek)
       if (z === 'ki') { if (this.voice) { this.endVoice(this.voice, ac.currentTime, 2); this.voice = null; } return; }
       const want = z === 'váltakozó' ? null : z;
       if (this.voice && want && this.voice.name !== want) { this.endVoice(this.voice, ac.currentTime, XF); this.voice = null; }
