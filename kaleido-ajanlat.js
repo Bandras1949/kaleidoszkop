@@ -11,7 +11,7 @@
     free: 'This is the free version. The full version unlocks every setting, ad-free, with new patterns every month.',
     key: 'Licence key', open: 'Unlock', buy: 'Subscribe', bad: 'This key is not valid.', full: 'Full version', other: 'Enter another key',
     mandala: 'A taste of MANDALA →', close: 'Close' };
-  const G = 'https://bandras1949.github.io/', BUY = G + 'appok/', MANDALA = G + 'kaleidoszkop/mandala-promo/';
+  const G = 'https://bandras1949.github.io/', BUY = G + 'appok/', MANDALA = G + 'mandala/';   // közvetlenül a Mandala próbaváltozatába
   const ok = k => /^BANKY-TESZT(-\w+)?$/i.test((k || '').trim());   // próbaüzem: a fizetési szolgáltató bekötéséig
   const get = () => { try { return localStorage.getItem('kaleido-kulcs'); } catch (e) { return null; } };
   const premium = ok(get());
