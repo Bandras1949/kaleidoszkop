@@ -7,7 +7,7 @@
 </head>
 <body>
 <x-dc>
-<helmet><link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"><script src="./futapest-reklam.js?v=8"></script><script src="./szovet.js?v=5"></script><script src="./orveny.js?v=3"></script><script src="./kaleido-ajanlat.js?v=8"></script><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet"><title>Kaleidoscope – Brillidea</title><style>html,body{margin:0;height:100%;background:#0f0f0f;overflow:hidden;-webkit-tap-highlight-color:transparent}a{color:#FBFAF7}a:hover{color:#E0C25A}</style><style>@keyframes kGearPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}}@keyframes kGearFade{0%,8%{opacity:0}18%,82%{opacity:1}100%{opacity:0}}</style></helmet>
+<helmet><link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"><script src="./futapest-reklam.js?v=8"></script><script src="./szovet.js?v=5"></script><script src="./orveny.js?v=3"></script><script src="./kaleido-ajanlat.js?v=9"></script><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet"><title>Kaleidoscope – Brillidea</title><style>html,body{margin:0;height:100%;background:#0f0f0f;overflow:hidden;-webkit-tap-highlight-color:transparent}a{color:#FBFAF7}a:hover{color:#E0C25A}</style><style>@keyframes kGearPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}}@keyframes kGearFade{0%,8%{opacity:0}18%,82%{opacity:1}100%{opacity:0}}</style></helmet>
 <div style="position:fixed;inset:0;background:#0f0f0f">
   <div style="position:relative;width:100%;height:100%;overflow:hidden;background:#0f0f0f">
     <canvas ref="{{ cvRef }}" onClick="{{ tapCanvas }}" onPointerDown="{{ swDown }}" onPointerUp="{{ swUp }}" style="touch-action:none;position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer"></canvas>
@@ -509,7 +509,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-11-10-2 kaleidoszkop';
+  VER = 'v2026-11-10-3 kaleidoszkop';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
