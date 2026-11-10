@@ -491,7 +491,7 @@ class Component extends DCLogic {
     this._segN = s === this._segPrev ? (this._segN || 0) + 1 : 0; this._segPrev = s;
     const defs = this.imgDefs(), idx = f => defs.map((d, i) => f(d) && !d.off && !d.ad ? i + 3 : -1).filter(k => k >= 0), pick = a => a[Math.floor(Math.random() * a.length)];
     if (s === 'mir') {
-      if (this._segN === 0) { const ad = pick(idx(d => d.cat === 'artdeco')); this._nextAD = ad; if (ad) this.reqImg(ad - 3); this._force = pick(idx(d => /^Cs-/.test(d.name || '') || /\/Cs-/.test(d.src))); }
+      if (this._segN === 0) { const cs = idx(d => /^Cs-/.test(d.name || '') || /\/Cs-/.test(d.src)); this._force = pick(cs); const ad = pick(idx(d => d.cat === 'artdeco')) || pick(cs.filter(k => k !== this._force)); this._nextAD = ad; if (ad) this.reqImg(ad - 3); }   // AD-k a MANDALÁÉI: a TÜKRÖS két mintája két különböző Cs
       else this._force = this._nextAD;
       if (this._force) { this.reqImg(this._force - 3); setTimeout(() => { if (this.e && this.e.lace !== this._force) this.swipe(1); }, 50); }
     } else { this._force = null; if (s === 'szov' && this._segN > 0 && this.sz && this.sz.next) this.sz.next(); }
@@ -509,7 +509,7 @@ class Component extends DCLogic {
       setMir: b => { this.altMir = b; this._p0 = null; },
     };
   }
-  VER = 'v2026-11-10-2 kaleidoszkop';
+  VER = 'v2026-11-10-4 kaleidoszkop';
   naplo(msg) {
     try { const L = JSON.parse(localStorage.getItem('kaleido-naplo') || '[]'); const d = new Date(); L.push({ t: d.toLocaleString('hu-HU'), v: this.VER, m: (this.rawE && this.rawE()) || '', msg: String(msg).slice(0, 160) }); while (L.length > 40) L.shift(); localStorage.setItem('kaleido-naplo', JSON.stringify(L)); } catch (e) {}
     if (this._test) this._test.err.push(String(msg).slice(0, 120));
@@ -641,16 +641,16 @@ class Component extends DCLogic {
       { src: 'mintak/Cs-10.jpg', mode:'tone',cat:'geo',own:true,name:'Cs-10',tile:480,off:true },
       { src: 'mintak/Cs-11.png', mode:'cut',cat:'geo',key:'lin',own:true,name:'Cs-11',tile:600,off:true },
       { src: 'mintak/Cs-12.png', mode:'cut',cat:'organikus',key:'lin',own:true,name:'Cs-12',tile:600,off:true },
-      { src: 'mintak/AD-01.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-01 legyező',tile:250 },
-      { src: 'mintak/AD-02.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-02 legyezősor',tile:200 },
-      { src: 'mintak/AD-03.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-03 körlevél',tile:570 },
-      { src: 'mintak/AD-04.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-04 hatszög',tile:300 },
-      { src: 'mintak/AD-05.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-05 körök',tile:400 },
-      { src: 'mintak/AD-06.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-06 darvak',tile:400 },
-      { src: 'mintak/AD-01f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-01f legyező fekete',tile:200 },
-      { src: 'mintak/AD-03f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-03f körlevél fekete',tile:320 },
-      { src: 'mintak/AD-04f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-04f hatszög fekete',tile:160 },
-      { src: 'mintak/AD-05f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-05f körök fekete',tile:120 }];
+      { src: 'mintak/AD-01.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-01 legyező',tile:250,off:true },
+      { src: 'mintak/AD-02.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-02 legyezősor',tile:200,off:true },
+      { src: 'mintak/AD-03.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-03 körlevél',tile:570,off:true },
+      { src: 'mintak/AD-04.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-04 hatszög',tile:300,off:true },
+      { src: 'mintak/AD-05.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-05 körök',tile:400,off:true },
+      { src: 'mintak/AD-06.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-06 darvak',tile:400,off:true },
+      { src: 'mintak/AD-01f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-01f legyező fekete',tile:200,off:true },
+      { src: 'mintak/AD-03f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-03f körlevél fekete',tile:320,off:true },
+      { src: 'mintak/AD-04f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-04f hatszög fekete',tile:160,off:true },
+      { src: 'mintak/AD-05f.png', mode:'cut',cat:'artdeco',key:'lin',own:true,name:'AD-05f körök fekete',tile:120,off:true }];
   }
   loadImg() {
     if (this.imgs) return;
