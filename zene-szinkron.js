@@ -8,7 +8,8 @@
   window.__altGyors = true;   // KÍSÉRLET: a VÁLTAKOZÓ gyors köre (üzemmódonként egy minta, 10 mp; ÖRVÉNYES 2 × 10 mp)
   const KEY = 'zene-szinkron-2';
   const DEF = { be: true, seb: 90, lukt: 25, feny: 36 };
-  let S = { ...DEF }; try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  const PANEL = window.__zenePanel !== false;   // az élő appban (window.__zenePanel = false) nincs ♫ panel, a beállítások fixek
+  let S = { ...DEF }; if (PANEL) try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 
   // ---------- előre elkészített hangelemzés ----------
@@ -89,7 +90,7 @@
   (function loop(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     analyse(); apply(dt);
-    if (!document.getElementById('zsz') && document.body) build();   // a vászon újraépítheti a DOM-ot
+    if (PANEL && !document.getElementById('zsz') && document.body) build();   // a vászon újraépítheti a DOM-ot
     const d = document.getElementById('zsz');
     if (d) { const sh = Z.zene ? '' : 'none'; if (d.style.display !== sh) d.style.display = sh; }   // a ♫ gomb csak akkor látszik, ha a Kaleidoszkóp saját zenéje szól
     if (d && d.classList.contains('on')) {
