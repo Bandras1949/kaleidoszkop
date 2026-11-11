@@ -32,7 +32,7 @@
     newCloth(P) {
       const fajta = P['szövetFajta'] === 'kétszínű' || P['szövetFajta'] === 'csíkos-kockás' ? P['szövetFajta'] : pick(['kétszínű', 'csíkos-kockás']);
       const kotes = WEAVES[P['szövetKötés']] ? P['szövetKötés'] : pick(['vászon', 'sávoly', 'sávoly', 'panama']);
-      const tm = String(P['szövetTükör'] ?? 'váltakozó'), mir = ['6', '8', '12'].includes(tm) ? +tm : pick([6, 8, 8, 12]);
+      const tm = String(P['szövetTükör'] ?? 'váltakozó'), mir = tm === 'nincs' ? 0 : ['6', '8', '12'].includes(tm) ? +tm : pick([6, 8, 8, 12]);
       let W, F;
       if (fajta === 'kétszínű') {
         const fa = NAMES.indexOf(P['szövetLánc']), fb = NAMES.indexOf(P['szövetVetülék']);
@@ -68,7 +68,7 @@
       if (!this.snap) this.snap = document.createElement('canvas');
       this.snap.width = cv.width; this.snap.height = cv.height; this.snap.getContext('2d').drawImage(cv, 0, 0); this.snapA = 1;
     }
-    next() { if (this.op < 0.5) return false; this.snapshot(); this.newCloth(this.P || {}); this._cid = (this._cid || 0) + 1; this.left = Math.max(5, num((this.P || {})['szövetVáltásMp'], 15)); return true; }
+    next() { if (this.op < 0.5) return false; this.snapshot(); this.newCloth(this.P || {}); this.t += 30 + Math.random() * 90; this._cid = (this._cid || 0) + 1; this.left = Math.max(5, num((this.P || {})['szövetVáltásMp'], 15)); return true; }
     frame(now) {
       const st = this.host() || {}, P = st.P || {}; this.P = P;
       let dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
@@ -82,9 +82,9 @@
       // beállítás-változás → új szövet
       const pk = ['szövetFajta', 'szövetLánc', 'szövetVetülék', 'csík: lánc = vetülék', 'csík: változó szélesség', 'szövetKötés', 'szövetTükör'].map(q => P[q]).join('|');
       if (this.pk != null && pk !== this.pk) this.next(); this.pk = pk;
-      if (want) { this.left -= dt; if (this.left <= 0) this.next(); }
+      if (want && P['szövetVáltás'] !== false) { this.left -= dt; if (this.left <= 0) this.next(); }
       if (st.paused && this.drawnOnce) return;
-      this.t += dt; this.render(dt, P);
+      const zs = window.__zeneSeb || 1; this.t += dt * zs; this.render(dt * zs, P);   // zenére reagálás
     }
     render(dt, P) {
       const cv = this.cv, dpr = this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -94,10 +94,11 @@
       const Rr = Math.hypot(W, H) / 2, drift = 200 * dpr;
       const need = Math.min(3600, Math.ceil(2 * (Rr / zoom + drift + 20)));
       this.paintSrc(P, need);
-      const x = cv.getContext('2d'), c = this.cloth, S = this.src, n = c.mir, a = Math.PI * 2 / n, cx = W / 2, cy = H / 2;
+      const x = cv.getContext('2d'), c = this.cloth, S = this.src, n = c.mir, a = Math.PI * 2 / (n || 1), cx = W / 2, cy = H / 2;
       const ang = this.t * spin * 0.025 * c.dir, dd = (this.t * spin * 6 * dpr);
       x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
-      for (let i = 0; i < n; i++) {
+      if (!n) { x.save(); x.translate(cx, cy); x.scale(zoom, zoom); x.rotate(ang * 0.5); x.drawImage(S, -S.width / 2, -S.height / 2); x.restore(); }
+      for (let i = 0; n && i < n; i++) {
         x.save(); x.translate(cx, cy);
         if (i % 2) { x.rotate((i + 1) * a); x.scale(1, -1); } else x.rotate(i * a);
         x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, Rr + 4, -0.002, a + 0.002); x.closePath(); x.clip();

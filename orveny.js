@@ -7,7 +7,7 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
 
-  const SEQ = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], OV = ['orv', 'spir', 'hold'];   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
+  const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'hold', 'spir'], OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
   const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű', 'szív', '8-as', 'lóhere'];
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
@@ -138,7 +138,7 @@
   }
   class Orveny {
     constructor(canvas, host) {
-      this.cv = canvas; this.host = host;
+      this.cv = canvas; this.host = host; window.__orv = this;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
       TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=35'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
@@ -199,10 +199,11 @@
       this.pk = pk;
       this.pairLeft -= dt;
       let kind = null;
+      const GY = !!window.__altGyors, SEQ = GY ? SEQ_GY : SEQ0;
       if (st.mode === 'alt') {
         if (this.ai == null) { this.ai = 0; this.segLeft = this.segDur(SEQ[0], pairSec); }
         this.segLeft -= dt;
-        if (this.segLeft <= 0 || this.jump) { this.jump = false; const s0 = SEQ[this.ai]; this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai]; this.segLeft = this.segDur(s, pairSec); st.setSeg && st.setSeg(s);
+        if (this.segLeft <= 0 || this.jump) { this.jump = false; const s0 = SEQ[this.ai]; this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai]; this.segLeft = this.segDur(s, pairSec); if (GY) { if (s === 'spir' && this.spir) this.spir.fT = 0; if (s === 'orv') { this.newPair(P); this.pairLeft = 10; } } st.setSeg && st.setSeg(s);
           if (s === s0 && OV.includes(s) && this.op > 0.5) { this.snapshot(); if (s === 'spir') this.spir.shuffle(P); else this.hold.shuffle(P); }   // ugyanaz az üzemmód: második változat
           if (this.ai === 0 && st.onCycle) st.onCycle(); }   // egy teljes kör lement
         const s = SEQ[this.ai]; kind = OV.includes(s) ? s : null;
@@ -217,9 +218,9 @@
       st.setSkip && st.setSkip(this.op >= 1);
       if (this.pairLeft <= 0) { this.pairLeft = pairSec; if (this.kind === 'orv' && this.op > 0 && !this.fast) this.snapshot(); this.newPair(P); }
       if (this.op <= 0 || (st.paused && this.drawnOnce)) return;
-      this.render(dt);
+      this.render(dt * (window.__zeneSeb || 1));   // zenére reagálás (ha be van töltve): a forgás a zene energiájával gyorsul-lassul
     }
-    segDur(s, pairSec) { const F = this.fast; return s === 'orv' ? pairSec * 2 : s === 'spir' || s === 'hold' ? (F ? 15 : 30) : (F ? 10 : 30); }
+    segDur(s, pairSec) { if (window.__altGyors) return s === 'orv' ? 20 : 10; const F = this.fast; return s === 'orv' ? pairSec * 2 : s === 'spir' || s === 'hold' ? (F ? 15 : 30) : (F ? 10 : 30); }
     variant() {
       const k = this.kind; if (!k || this.op < 0.5) return false;
       if (k === 'orv') { this.snapshot(); this.newPair(this.P || {}); this.pairLeft = this.fast ? 3.5 : +((this.P || {})['párosításMp'] ?? 10); }
