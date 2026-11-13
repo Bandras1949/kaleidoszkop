@@ -8,11 +8,11 @@
     splash: 'Teljes változat · Mindkettő együtt kedvezménnyel', banner: 'Tetszik? A teljes változat havonta új mintákat hoz →',
     free: 'Ez az ingyenes változat. A teljes változat minden beállítást megnyit, hirdetés nélkül, havonta új mintákkal.',
     key: 'Licenckulcs', open: 'Megnyitás', buy: 'Előfizetés', bad: 'Ez a kulcs nem érvényes.', full: 'Teljes változat', other: 'Másik kulcs megadása',
-    mandala: 'Ízelítő: MANDALA →', close: 'Bezár' } : {
+    mandala: 'Ízelítő: MANDALA →', close: 'Bezár', zene: 'Koppints: zene be ♪' } : {
     splash: 'Full version · Both apps together, discounted', banner: 'Like it? The full version brings new patterns every month →',
     free: 'This is the free version. The full version unlocks every setting, ad-free, with new patterns every month.',
     key: 'License key', open: 'Unlock', buy: 'Subscribe', bad: 'This key is not valid.', full: 'Full version', other: 'Enter another key',
-    mandala: 'A taste of MANDALA →', close: 'Close' };
+    mandala: 'A taste of MANDALA →', close: 'Close', zene: 'Tap for music ♪' };
   const G = 'https://bandras1949.github.io/', BUY = G + 'appok/', MANDALA = G + 'mandala/';   // közvetlenül a Mandala próbaváltozatába
   const ok = k => /^BANKY-TESZT(-\w+)?$/i.test((k || '').trim());   // próbaüzem: a fizetési szolgáltató bekötéséig
   const get = () => { try { return localStorage.getItem('kaleido-kulcs'); } catch (e) { return null; } };
@@ -35,6 +35,8 @@
   .ka-spl{position:fixed;left:8vw;right:8vw;bottom:calc(env(safe-area-inset-bottom) + 14px);text-align:center;font:italic 500 clamp(15px,2vw,20px) 'Cormorant Garamond',Georgia,serif;color:#E0C25A;text-decoration:underline;text-underline-offset:4px;z-index:2147483000;display:none}
   .ka-ban{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 70px);transform:translateX(-50%);max-width:calc(100vw - 220px);min-width:min(260px,calc(100vw - 40px));padding:10px 18px;border-radius:24px;background:rgba(15,15,15,.72);border:1px solid #E0C25A;color:#FBFAF7;font:italic 500 clamp(16px,2vw,20px)/1.3 'Cormorant Garamond',Georgia,serif;text-align:center;text-decoration:none;opacity:0;pointer-events:none;transition:opacity 1.6s ease;z-index:2147483000}
   .ka-ban.on{opacity:1;pointer-events:auto}
+  .ka-zn{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 16px);transform:translateX(-50%);padding:6px 14px;border-radius:16px;background:rgba(15,15,15,.6);color:#FBFAF7;font:italic 500 15px 'Cormorant Garamond',Georgia,serif;white-space:nowrap;pointer-events:none;z-index:2147483000;opacity:0;transition:opacity .8s}
+  .ka-zn.on{opacity:.85}
   .ka-ny{position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:2147483000;display:none;gap:6px}
   .ka-ny button{background:transparent;border:1px solid rgba(224,194,90,.4);color:#E0C25A;border-radius:8px;padding:6px 12px;font:600 13px Cinzel,Georgia,serif;cursor:pointer;opacity:.8}
   .ka-ny button.on{background:#E0C25A;color:#0f0f0f;opacity:1}`;
@@ -60,6 +62,9 @@
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
     const ny = el(`<div class="ka-ny"><button type="button" data-l="hu" class="${HU ? 'on' : ''}">HU</button><button type="button" data-l="en" class="${HU ? '' : 'on'}">EN</button></div>`);
     ny.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === LANG) return; try { localStorage.setItem('appok-nyelv', b.dataset.l); } catch (e) {} location.replace(location.pathname + '?r=' + Date.now()); }));
+    const zn = el(`<div class="ka-zn">${T.zene}</div>`);   // visszatéréskor (és ha elhallgat) apró felirat: koppintásra szól
+    let znS = null, znT = 0; const znShow = () => { znT = performance.now() + 6000; };
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') znShow(); });
     const spl = premium ? null : el(`<a class="ka-spl" href="${BUY}" target="_blank" rel="noopener">${T.splash}</a>`);
     const ban = premium ? null : el(`<a class="ka-ban" href="${BUY}" target="_blank" rel="noopener">${T.banner}</a>`);
     const show = () => { btn.classList.add('hot'); clearTimeout(show.t); show.t = setTimeout(() => btn.classList.remove('hot'), 3000); };
@@ -77,6 +82,9 @@
       if (!st.isConnected) document.head.appendChild(st);
       [btn, pan, spl, ban, ny].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
       ny.style.display = splashOn() ? 'flex' : 'none';
+      if (!zn.isConnected) document.body.appendChild(zn);
+      const ks = window.__kSound; if (ks === false && znS !== false) znShow(); znS = ks;
+      zn.classList.toggle('on', ks === false && performance.now() < znT && !splashOn() && !document.querySelector('.fpad'));
       const ad = !!document.querySelector('.fpad');   // hirdetés közben semmi nem látszik és nem kattintható
       [btn, pan, spl, ban].forEach(n => { if (n) n.style.visibility = ad ? 'hidden' : ''; }); if (ad) pan.classList.remove('on');
       const so = splashOn(); if (spl) spl.style.display = so ? 'block' : 'none'; const gearPanel = !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]'); btn.classList.toggle('on', !so && !gearPanel); if (gearPanel) pan.classList.remove('on');   // a gombok a nyitókép után mindig látszanak

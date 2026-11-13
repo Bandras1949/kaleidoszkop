@@ -4,6 +4,10 @@
 (function () {
   if (window.FutapestReklam) return;
   const DUR = 20.3, AUDIO = 'reklam/futapest-zene.mp3';
+  // iPhone: hang csak érintésre indulhat – az első koppintáskor „feloldunk” egy lejátszót, a hirdetés később ezt használja
+  let AUD = null;
+  const unlock = () => { if (AUD) return; try { const a = new Audio(AUDIO); a.muted = true; a.setAttribute('playsinline', ''); AUD = a; const p = a.play(); const done = () => { try { a.pause(); a.currentTime = 0; } catch (e) {} a.muted = false; }; if (p && p.then) p.then(done).catch(() => { AUD = null; }); else done(); } catch (e) { AUD = null; } };
+  window.addEventListener('pointerup', unlock, true);
   const CSS = `
 .fpad{position:absolute;inset:0;background:#0E0E10;overflow:hidden;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;opacity:0;transition:opacity .35s ease;cursor:default;
   --ink:#0E0E10;--cab:#FFC72C;--paper:#F7F5EF;--display:"Barlow Condensed","Arial Narrow",Arial,sans-serif}
@@ -175,7 +179,7 @@
     // óra: ha szól a hang, a zene vezeti; különben saját óra
     let aud = null, useAud = false, t0 = performance.now(), done = false, raf = 0;
     if (opt.sound) {
-      try { aud = new Audio(AUDIO); aud.volume = 0.9; const p = aud.play(); useAud = true; if (p && p.catch) p.catch(() => { useAud = false; t0 = performance.now(); }); } catch (e) { aud = null; }
+      try { aud = AUD || new Audio(AUDIO); aud.muted = false; try { aud.currentTime = 0; } catch (e) {} aud.volume = 0.9; const p = aud.play(); useAud = true; if (p && p.catch) p.catch(() => { useAud = false; t0 = performance.now(); }); } catch (e) { aud = null; }
     }
     const now = () => (useAud && aud && !aud.paused && aud.currentTime > 0) ? aud.currentTime : (performance.now() - t0) / 1000;
     let last = 0;
@@ -183,7 +187,7 @@
       if (done) return; done = true; cancelAnimationFrame(raf);
       root.style.opacity = '0';
       setTimeout(() => {
-        try { if (aud) { aud.pause(); aud.src = ''; } } catch (e) {}
+        try { if (aud) { aud.pause(); if (aud === AUD) aud.currentTime = 0; else aud.src = ''; } } catch (e) {}   // a feloldott lejátszó a következő hirdetésre megmarad
         window.removeEventListener('keydown', keyBlock, true);
         root.remove();
         try { opt.onEnd && opt.onEnd(); } catch (e) {}
