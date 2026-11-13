@@ -1,7 +1,7 @@
 (function () {
   const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f', arany: '#e8b923', bronz: '#c27a3a', ezüst: '#dfe3e8' };
   const PAL = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d'];
-  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-12', 'X-13', 'X-14-b', 'X-15', 'X-22', 'X-24', 'X-25', 'X-26', 'X-27', 'X-29', 'X-30', 'X-31', 'X-33', 'X-35', 'X-36', 'X-40', 'X-41', 'X-42'];
+  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-12', 'X-13', 'X-14-b', 'X-15', 'X-22', 'X-24', 'X-25', 'X-26', 'X-27', 'X-29', 'X-30', 'X-31', 'X-33', 'X-35', 'X-36', 'X-40', 'X-41', 'X-42', 'X-43', 'X-44', 'X-45', 'X-46', 'X-48', 'X-49', 'X-50'];
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
   const FEM = ['ezüst', 'arany', 'bronz'], is3D = n => /3D$/.test(n) || n === 'X-18' || n === 'X-19';
   const pick = a => a[Math.floor(Math.random() * a.length)];
@@ -136,11 +136,32 @@
       x.drawImage(this.shade, 0, 0); x.drawImage(this.plate, 0, 0);
     }
   }
+  // MOZGÓ TÁRGYAK: több kis örvénykorong, amelyek a tárgyon belül is forognak – a szomszédok ellentétes irányba (mint a fogaskerekek),
+  // a középső korong (ha van) a képernyőhöz képest áll. Képfájl nem kell, a korongot a program rajzolja.
+  const DYN = { 'X-49': { n: 4, cr: 0.42, dr: 0.53, mid: 0 }, 'X-50': { n: 6, cr: 0.565, dr: 0.405, mid: 0.40 }, 'X-51': { n: 6, cr: 0.6, dr: 0.38, mid: 0.36, img: 'X-02' } };   // img: egy meglévő tárgy képéből (pl. X-02) készül a sokkorongos rendszer
+  let KORONG = null;
+  const korong = () => {   // egy csíkos örvénykorong vektoros rajzzal (élsimított, nem szemcsés), sötét peremmel
+    if (KORONG) return KORONG; const N = 640, h = N / 2, c = document.createElement('canvas'); c.width = c.height = N;
+    const x = c.getContext('2d'), R = h * 0.995, ARMS = 10, TW = 1.1 * 2 * Math.PI;
+    x.beginPath(); x.arc(h, h, R, 0, Math.PI * 2); x.fillStyle = '#0f0f0f'; x.fill();   // sötét alap
+    const g = x.createRadialGradient(h, h, 0, h, h, R); g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, '#e0e0e0'); g.addColorStop(1, '#999999');
+    const pt = (k, r) => { const t = (k * Math.PI - TW * r) / ARMS; return [h + Math.cos(t) * r * R, h + Math.sin(t) * r * R]; };
+    x.fillStyle = g;
+    for (let k = 0; k < 2 * ARMS; k += 2) {   // minden második sáv világos: két spirálív és a külső körív közti terület
+      x.beginPath(); x.moveTo(h, h);
+      for (let i = 1; i <= 60; i++) x.lineTo(...pt(k, i / 60));
+      const t0 = (k * Math.PI - TW) / ARMS, t1 = ((k + 1) * Math.PI - TW) / ARMS; x.arc(h, h, R, t0, t1);
+      for (let i = 60; i >= 1; i--) x.lineTo(...pt(k + 1, i / 60));
+      x.closePath(); x.fill();
+    }
+    x.beginPath(); x.arc(h, h, R * 0.983, 0, Math.PI * 2); x.lineWidth = R * 0.034; x.strokeStyle = '#0f0f0f'; x.stroke();   // perem
+    return KORONG = c;
+  };
   class Orveny {
     constructor(canvas, host) {
       this.cv = canvas; this.host = host; window.__orv = this;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
-      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=36'; });
+      TARGYAK.forEach(n => { if (DYN[n]) { this.grays[n] = document.createElement('canvas'); this.grays[n].width = this.grays[n].height = 1024; this.dyn(n, 0, 0); return; } const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=37'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
       this.bg = this.newWave(0); this.ob = this.newWave(3); this.ob.el = 2;
       this.pairLeft = 0; this.bgToggle = false; this.ai = null; this.kind = null; this.spir = new Spir(); this.hold = new Hold();
@@ -171,6 +192,7 @@
     }
     newPair(P) {
       const t1 = P['tárgy1'] ?? 'véletlen', t2 = P['tárgy2'] ?? 'véletlen';
+      this.pairOne = Math.random() < 0.5;   // „véletlen” tárgyszám: páronként sorsolt, egy vagy két tárgy
       const ready = TARGYAK.filter(n => this.grays[n]), POOL = ready.length ? ready : TARGYAK;
       const n1 = t1 === 'véletlen' ? pick(POOL) : t1;
       const n2 = t2 === 'véletlen' ? (Math.random() < 0.5 ? n1 : pick(POOL)) : t2;
@@ -264,11 +286,21 @@
         const br = ph => 1 - amp * (0.5 - 0.5 * Math.cos(this.lt * Math.PI * 2 / (F ? Math.min(5, per) : per) + ph));
         const M = PQ['örvényKitöltés'] === 'kitöltés' ? Math.max(W, H) : Math.min(W, H);
         this.obj(x, 'oc', Math.round(M * c.s1 / 100 * br(c.ph)), this.th, col1, g1, cx, cy, RR, soft);
-        if (String(PQ['örvényTárgyakSzáma'] ?? '2') !== '1') this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
+        const tsz = String(PQ['örvényTárgyakSzáma'] ?? '2'); if (tsz === '2' || (tsz === 'véletlen' && !this.pairOne)) this.obj(x, 'oc2', Math.round(M * c.s2 / 100 * br(c.ph + Math.PI)), this.th2 + c.off, col2, g2, cx, cy, RR, soft);
       }
+    }
+    dyn(n, ang, t) {   // a mozgó tárgy pillanatnyi képe: a külső korongok felváltva jobbra-balra forognak, a közép áll
+      const s = DYN[n], c = this.grays[n], S = c.width, h = S / 2, x = c.getContext('2d'), K = s.img ? this.grays[s.img] : korong(), sp = t * Math.PI * 2 / 6;
+      x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, S, S); if (!K) return;   // a képből készülő korong: megvárjuk, míg betöltődik
+      for (let i = 0; i < s.n; i++) {
+        const a = Math.PI / 2 + i * Math.PI * 2 / s.n, R = s.dr * h;
+        x.save(); x.translate(h + Math.cos(a) * s.cr * h, h + Math.sin(a) * s.cr * h); x.rotate((i % 2 ? -1 : 1) * sp); if (s.img) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(K, -R, -R, 2 * R, 2 * R); x.restore();
+      }
+      if (s.mid) { const R = s.mid * h; x.save(); x.translate(h, h); x.rotate(-ang); if (s.img) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(K, -R, -R, 2 * R, 2 * R); x.restore(); }
     }
     obj(x, key, D, ang, col, gray, cx, cy, RR, soft) {
       if (D < 2) return;
+      for (const n in DYN) if (gray === this.grays[n]) this.dyn(n, ang, this.lt);
       if (!this[key] || this[key].width !== D) { this[key] = document.createElement('canvas'); this[key].width = this[key].height = D; }
       const cvs = this[key], o = cvs.getContext('2d'), r = D / 2;
       o.globalCompositeOperation = 'source-over'; o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, D, D);
