@@ -1,7 +1,9 @@
 // Kaleidoszkóp – licenckulcs, ajánlat és MANDALA-ízelítő (a React-felülettől független réteg). © Bánky András
 (function () {
   if (window.KAjanlat) return;
-  const HU = (navigator.language || 'hu').toLowerCase().startsWith('hu');
+  // nyelv: közös a Mandalával, a Látomásokkal és az ajánlóoldallal (appok-nyelv); a K oldala már a fejlécben kiszámolja (window.__kLang)
+  const LANG = window.__kLang || (() => { try { const l = localStorage.getItem('appok-nyelv'); if (l === 'hu' || l === 'en') return l; } catch (e) {} return (navigator.language || 'hu').toLowerCase().startsWith('hu') ? 'hu' : 'en'; })();
+  const HU = LANG === 'hu';
   const T = HU ? {
     splash: 'Teljes változat · Mindkettő együtt kedvezménnyel', banner: 'Tetszik? A teljes változat havonta új mintákat hoz →',
     free: 'Ez az ingyenes változat. A teljes változat minden beállítást megnyit, hirdetés nélkül, havonta új mintákkal.',
@@ -9,7 +11,7 @@
     mandala: 'Ízelítő: MANDALA →', close: 'Bezár' } : {
     splash: 'Full version · Both apps together, discounted', banner: 'Like it? The full version brings new patterns every month →',
     free: 'This is the free version. The full version unlocks every setting, ad-free, with new patterns every month.',
-    key: 'Licence key', open: 'Unlock', buy: 'Subscribe', bad: 'This key is not valid.', full: 'Full version', other: 'Enter another key',
+    key: 'License key', open: 'Unlock', buy: 'Subscribe', bad: 'This key is not valid.', full: 'Full version', other: 'Enter another key',
     mandala: 'A taste of MANDALA →', close: 'Close' };
   const G = 'https://bandras1949.github.io/', BUY = G + 'appok/', MANDALA = G + 'mandala/';   // közvetlenül a Mandala próbaváltozatába
   const ok = k => /^BANKY-TESZT(-\w+)?$/i.test((k || '').trim());   // próbaüzem: a fizetési szolgáltató bekötéséig
@@ -32,7 +34,22 @@
   .ka-pan .al a{color:#E0C25A}
   .ka-spl{position:fixed;left:8vw;right:8vw;bottom:calc(env(safe-area-inset-bottom) + 14px);text-align:center;font:italic 500 clamp(15px,2vw,20px) 'Cormorant Garamond',Georgia,serif;color:#E0C25A;text-decoration:underline;text-underline-offset:4px;z-index:2147483000;display:none}
   .ka-ban{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 70px);transform:translateX(-50%);max-width:calc(100vw - 220px);min-width:min(260px,calc(100vw - 40px));padding:10px 18px;border-radius:24px;background:rgba(15,15,15,.72);border:1px solid #E0C25A;color:#FBFAF7;font:italic 500 clamp(16px,2vw,20px)/1.3 'Cormorant Garamond',Georgia,serif;text-align:center;text-decoration:none;opacity:0;pointer-events:none;transition:opacity 1.6s ease;z-index:2147483000}
-  .ka-ban.on{opacity:1;pointer-events:auto}`;
+  .ka-ban.on{opacity:1;pointer-events:auto}
+  .ka-ny{position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:2147483000;display:none;gap:6px}
+  .ka-ny button{background:transparent;border:1px solid rgba(224,194,90,.4);color:#E0C25A;border-radius:8px;padding:6px 12px;font:600 13px Cinzel,Georgia,serif;cursor:pointer;opacity:.8}
+  .ka-ny button.on{background:#E0C25A;color:#0f0f0f;opacity:1}`;
+  // a felület állandó feliratai [angol, magyar] – a sablon angolul van, magyar nyelven ezeket cseréljük
+  const UI = [['KALEIDOSCOPE', 'KALEIDOSZKÓP'], ['Tap to begin ♪', 'Koppints az indításhoz ♪'], ['© 2026 Andras Banky', '© 2026 Bánky András'], ['Try me!', 'Próbálj ki!'], ['Beállítások', 'Beállítások'], ['Kész', 'Kész']];
+  const EN = { 'Beállítások': 'Settings', 'Kész': 'Done', '© 2026 Andras Banky': '© 2026 András Bánky' };
+  function relabel() {
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) {
+      const v = n.nodeValue; if (!v || v.length > 40) continue;
+      for (const [en, hu] of UI) { const want = HU ? hu : (EN[en] || en); if ((v === en || v === hu || v === EN[en]) && v !== want) { n.nodeValue = want; break; } }
+    }
+    const tt = HU ? 'Kaleidoszkóp – Brillidea' : 'Kaleidoscope – Brillidea'; if (document.title !== tt && /Brillidea/.test(document.title)) document.title = tt;
+    document.documentElement.lang = LANG;
+  }
   function build() {
     const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
     const el = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); const n = d.firstChild; document.body.appendChild(n); return n; };
@@ -41,11 +58,13 @@
       ? `<div>${T.full} · <a href="#" class="ka-del" style="color:#E0C25A">${T.other}</a></div>`
       : `<div>${T.free}</div><input class="ka-in" placeholder="${T.key}" autocomplete="off" spellcheck="false"><div class="hb"></div><div class="gs"><button type="button" class="fo ka-ok">${T.open}</button><a href="${BUY}" target="_blank" rel="noopener">${T.buy}</a></div>`)
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
+    const ny = el(`<div class="ka-ny"><button type="button" data-l="hu" class="${HU ? 'on' : ''}">HU</button><button type="button" data-l="en" class="${HU ? '' : 'on'}">EN</button></div>`);
+    ny.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === LANG) return; try { localStorage.setItem('appok-nyelv', b.dataset.l); } catch (e) {} location.replace(location.pathname + '?r=' + Date.now()); }));
     const spl = premium ? null : el(`<a class="ka-spl" href="${BUY}" target="_blank" rel="noopener">${T.splash}</a>`);
     const ban = premium ? null : el(`<a class="ka-ban" href="${BUY}" target="_blank" rel="noopener">${T.banner}</a>`);
     const show = () => { btn.classList.add('hot'); clearTimeout(show.t); show.t = setTimeout(() => btn.classList.remove('hot'), 3000); };
     const stop = e => e.stopPropagation();
-    [btn, pan, spl, ban].forEach(n => n && ['pointerdown', 'pointerup', 'click'].forEach(ev => n.addEventListener(ev, stop)));
+    [btn, pan, spl, ban, ny].forEach(n => n && ['pointerdown', 'pointerup', 'click'].forEach(ev => n.addEventListener(ev, stop)));
     const kb = btn.querySelector('.ka-k'); if (kb) kb.addEventListener('click', () => { pan.classList.toggle('on'); show(); });
     const okB = pan.querySelector('.ka-ok');
     if (okB) okB.addEventListener('click', () => { const v = pan.querySelector('.ka-in').value; if (ok(v)) { try { localStorage.setItem('kaleido-kulcs', v.trim()); } catch (e) {} location.replace(location.pathname + '?r=' + Date.now()); } else pan.querySelector('.hb').textContent = T.bad; });
@@ -53,9 +72,11 @@
     if (del) del.addEventListener('click', e => { e.preventDefault(); try { localStorage.removeItem('kaleido-kulcs'); } catch (x) {} location.replace(location.pathname + '?r=' + Date.now()); });
     window.addEventListener('pointerup', () => { if (splashOn()) return; if (pan.classList.contains('on')) { pan.classList.remove('on'); } show(); });
     const splashOn = () => { const im = document.querySelector('img[src*="logo-nyitokep"]'); if (!im) return false; let n = im; while (n && n !== document.body) { if (n.style && n.style.opacity === '0') return false; n = n.parentElement; } return true; };
+    relabel(); let rq = 0; new MutationObserver(() => { if (!rq) rq = requestAnimationFrame(() => { rq = 0; relabel(); }); }).observe(document.body, { childList: true, subtree: true, characterData: true });   // a felület újrarajzolásakor azonnal
     setInterval(() => {   // ha a környezet (pl. a fejlesztői vászon) újraépíti az oldalt, az elemek visszakerülnek
       if (!st.isConnected) document.head.appendChild(st);
-      [btn, pan, spl, ban].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
+      [btn, pan, spl, ban, ny].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
+      ny.style.display = splashOn() ? 'flex' : 'none';
       const ad = !!document.querySelector('.fpad');   // hirdetés közben semmi nem látszik és nem kattintható
       [btn, pan, spl, ban].forEach(n => { if (n) n.style.visibility = ad ? 'hidden' : ''; }); if (ad) pan.classList.remove('on');
       const so = splashOn(); if (spl) spl.style.display = so ? 'block' : 'none'; const gearPanel = !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]'); btn.classList.toggle('on', !so && !gearPanel); if (gearPanel) pan.classList.remove('on');   // a gombok a nyitókép után mindig látszanak
