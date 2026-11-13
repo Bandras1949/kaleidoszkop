@@ -1,7 +1,7 @@
 (function () {
   const COL = { piros: '#e8202a', narancs: '#ff7a00', sárga: '#ffd400', zöld: '#1fa84a', kék: '#1f5fe0', lila: '#8a2be2', fehér: '#f5efe4', fekete: '#0f0f0f', arany: '#e8b923', bronz: '#c27a3a', ezüst: '#dfe3e8' };
   const PAL = ['#6b69f2', '#3ea805', '#dc0efb', '#ffb300', '#00c2c7', '#ff4d6d'];
-  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-12', 'X-13', 'X-14-b', 'X-15', 'X-22'];
+  const TARGYAK = ['X-02', 'X-03', 'X-04', 'X-12', 'X-13', 'X-14-b', 'X-15', 'X-22', 'X-24', 'X-25', 'X-26', 'X-27', 'X-29', 'X-30', 'X-31', 'X-33', 'X-35', 'X-36', 'X-40', 'X-41', 'X-42'];
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
   const FEM = ['ezüst', 'arany', 'bronz'], is3D = n => /3D$/.test(n) || n === 'X-18' || n === 'X-19';
   const pick = a => a[Math.floor(Math.random() * a.length)];
@@ -140,7 +140,7 @@
     constructor(canvas, host) {
       this.cv = canvas; this.host = host; window.__orv = this;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
-      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=35'; });
+      TARGYAK.forEach(n => { const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=36'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
       this.bg = this.newWave(0); this.ob = this.newWave(3); this.ob.el = 2;
       this.pairLeft = 0; this.bgToggle = false; this.ai = null; this.kind = null; this.spir = new Spir(); this.hold = new Hold();
