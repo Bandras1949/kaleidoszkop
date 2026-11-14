@@ -161,7 +161,7 @@
     constructor(canvas, host) {
       this.cv = canvas; this.host = host; window.__orv = this;
       this.grays = {}; this.t = 0; this.last = performance.now(); this.op = 0;
-      TARGYAK.forEach(n => { if (DYN[n]) { this.grays[n] = document.createElement('canvas'); this.grays[n].width = this.grays[n].height = 1024; this.dyn(n, 0, 0); return; } const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=38'; });
+      TARGYAK.forEach(n => { if (DYN[n]) { this.grays[n] = document.createElement('canvas'); this.grays[n].width = this.grays[n].height = 1024; this.dyn(n, 0, 0); return; } const im = new Image(); im.onload = () => { this.grays[n] = this.prep(im); }; im.src = 'mintak/' + n + '.png?v=40'; });
       this.th = 0; this.th2 = 0; this.lt = 0;
       this.bg = this.newWave(0); this.ob = this.newWave(3); this.ob.el = 2;
       this.pairLeft = 0; this.bgToggle = false; this.ai = null; this.kind = null; this.spir = new Spir(); this.hold = new Hold();
@@ -198,9 +198,14 @@
       const n2 = t2 === 'véletlen' ? (Math.random() < 0.5 ? n1 : pick(POOL)) : t2;
       const z1 = P['tárgy1Szín'] ?? 'véletlen', z2 = P['tárgy2Szín'] ?? 'másikkal azonos', hb = P['örvényHáttér'] ?? 'váltakozó';
       this.bgToggle = !this.bgToggle;
+      // MOZGÓ (sokkorongos) TÁRGY a párban: alapból fekete háttér és véletlen, egymástól független tárgyszínek – így a legszebbek.
+      // A háttér ilyenkor mindig fekete; a színeknél a kézi választást (fix szín) nem írjuk felül.
+      const dynIn = !!(DYN[n1] || DYN[n2]);
+      const zAuto = z => z === 'véletlen' || z === 'másikkal azonos';
+      const dynSzin = dynIn && zAuto(z1) && zAuto(z2), dynHatter = dynIn;   // sokkorongos tárgy mögött mindig fekete a háttér
       this.cfg = {
-        n1, n2, ...(() => { const one = (z, n) => z === 'véletlen' || z === 'másikkal azonos' ? (is3D(n) && Math.random() < 0.75 ? pick(FEM) : pick(SZINEK)) : z; let a = one(z1, n1), b = one(z2, n2); if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; return { szin1: a, szin2: b }; })(),
-        wave: hb === 'színhullám' || (hb === 'váltakozó' && this.bgToggle),
+        n1, n2, ...(() => { const one = (z, n) => z === 'véletlen' || z === 'másikkal azonos' ? (is3D(n) && Math.random() < 0.75 ? pick(FEM) : pick(SZINEK)) : z; let a = one(z1, n1), b = one(z2, n2); if (!dynSzin) { if (z2 === 'másikkal azonos') b = a; else if (z1 === 'másikkal azonos') a = b; } return { szin1: a, szin2: b }; })(),
+        wave: !dynHatter && (hb === 'színhullám' || (hb === 'váltakozó' && this.bgToggle)),
         s1: P['méretVéletlen'] === false ? num(P['méret1'], 110) : rnd(100, 118), s2: P['méretVéletlen'] === false ? num(P['méret2'], 90) : rnd(60, 115), off: rnd(15, 45) * Math.PI / 180, ph: Math.random() * Math.PI * 2
       };
     }
@@ -291,24 +296,31 @@
     }
     dyn(n, ang, t) {   // a mozgó tárgy pillanatnyi képe: a külső korongok felváltva jobbra-balra forognak, a közép áll
       const s = DYN[n], c = this.grays[n], S = c.width, h = S / 2, x = c.getContext('2d'), K = s.img ? this.grays[s.img] : korong(), sp = t * Math.PI * 2 / 6;
-      x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, S, S); if (!K) return;   // a képből készülő korong: megvárjuk, míg betöltődik
+      x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, S, S); if (!K) return; x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';   // a képből készülő korong: megvárjuk, míg betöltődik
       for (let i = 0; i < s.n; i++) {
         const a = Math.PI / 2 + i * Math.PI * 2 / s.n, R = s.dr * h;
-        x.save(); x.translate(h + Math.cos(a) * s.cr * h, h + Math.sin(a) * s.cr * h); x.rotate((i % 2 ? -1 : 1) * sp); if (s.img && !s.nobg) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(K, -R, -R, 2 * R, 2 * R); x.restore();
+        x.save(); x.translate(h + Math.cos(a) * s.cr * h, h + Math.sin(a) * s.cr * h); x.rotate((i % 2 ? -1 : 1) * sp); if (s.img && !s.nobg) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(this.mip(K, 2 * R), -R, -R, 2 * R, 2 * R); x.restore();
       }
-      if (s.mid) { const R = s.mid * h; x.save(); x.translate(h, h); x.rotate(-ang); if (s.img && !s.nobg) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(K, -R, -R, 2 * R, 2 * R); x.restore(); }
+      if (s.mid) { const R = s.mid * h; x.save(); x.translate(h, h); x.rotate(-ang); if (s.img && !s.nobg) { x.beginPath(); x.arc(0, 0, R * 0.97, 0, Math.PI * 2); x.fillStyle = 'rgba(16,16,16,.92)'; x.fill(); } x.drawImage(this.mip(K, 2 * R), -R, -R, 2 * R, 2 * R); x.restore(); }
+    }
+    mip(g, D) {   // a legkisebb olyan felezett változat, amely még legalább kétszer akkora, mint a rajzolt méret
+      if (g._dyn) return g;
+      if (!g._mip) { g._mip = [g]; let c = g; while (c.width > 96) { const n = document.createElement('canvas'); n.width = n.height = Math.round(c.width / 2); const q = n.getContext('2d'); q.imageSmoothingEnabled = true; q.imageSmoothingQuality = 'high'; q.drawImage(c, 0, 0, n.width, n.height); g._mip.push(n); c = n; } }
+      let i = 0; while (i + 1 < g._mip.length && g._mip[i + 1].width >= D * 1.5) i++; return g._mip[i];
     }
     obj(x, key, D, ang, col, gray, cx, cy, RR, soft) {
       if (D < 2) return;
-      for (const n in DYN) if (gray === this.grays[n]) this.dyn(n, ang, this.lt);
+      for (const n in DYN) if (gray === this.grays[n]) { gray._dyn = true; this.dyn(n, ang, this.lt); }
       if (!this[key] || this[key].width !== D) { this[key] = document.createElement('canvas'); this[key].width = this[key].height = D; }
       const cvs = this[key], o = cvs.getContext('2d'), r = D / 2;
       o.globalCompositeOperation = 'source-over'; o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, D, D);
       if (col.flat) { o.fillStyle = col.flat; o.fillRect(0, 0, D, D); }
       else { o.save(); o.translate(r - cx, r - cy); this.paint(o, col.w, cx, cy, RR, col.k, soft); o.restore(); }
+      // Kicsinyítéskor a sűrű középső csíkok „szőrszálasra” recésednek: lépcsőzetesen felezett (előre simított) változatból rajzolunk.
+      const src = this.mip(gray, D); o.imageSmoothingEnabled = true; o.imageSmoothingQuality = 'high';
       o.save(); o.translate(r, r); o.rotate(ang);
-      o.globalCompositeOperation = 'multiply'; o.drawImage(gray, -r, -r, D, D);
-      o.globalCompositeOperation = 'destination-in'; o.drawImage(gray, -r, -r, D, D);
+      o.globalCompositeOperation = 'multiply'; o.drawImage(src, -r, -r, D, D);
+      o.globalCompositeOperation = 'destination-in'; o.drawImage(src, -r, -r, D, D);
       o.restore(); o.globalCompositeOperation = 'source-over';
       x.save(); x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = D * 0.03; x.shadowOffsetY = D * 0.012;
       x.drawImage(cvs, cx - r, cy - r); x.restore();
