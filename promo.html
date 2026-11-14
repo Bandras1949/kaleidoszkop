@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kaleidoscope – music, as you’ve never seen it</title>
+<meta name="description" content="Have you ever seen music? A 3-minute journey through the Kaleidoscope app.">
+<meta property="og:title" content="Kaleidoscope – music, as you’ve never seen it">
+<meta property="og:description" content="Have you ever seen music? Tap and listen – 3 minutes.">
+<meta property="og:image" content="https://bandras1949.github.io/kaleidoszkop/brand/logo-kaleidoscope.png">
+<meta property="og:url" content="https://bandras1949.github.io/kaleidoszkop/promo.html">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#szin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#keret{position:relative;height:100%;aspect-ratio:9/16;max-width:100%;overflow:hidden;background:#000}
+#cv{position:absolute;inset:0;width:100%;height:100%}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:opacity 1.2s ease}
+#nyit{background:#000;cursor:pointer;justify-content:flex-start;padding-top:22%;box-sizing:border-box}
+#nyit .kerd{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);margin:0}   /* a kérdés pontosan középen */
+#nyit img{width:29%;max-width:165px;aspect-ratio:1}
+#nyit .cim{margin-top:24px}   /* a felirat kb. fél centivel lejjebb a logótól */
+.cim{font:600 min(6.3vh,34px) Cinzel,serif;letter-spacing:.16em;color:#E3C68A;margin-top:4px}
+.kerd{font:500 italic min(7.4vh,40px) 'Cormorant Garamond',serif;color:#FBFAF7;margin-top:30px;text-shadow:0 2px 12px #000}
+.ind{position:absolute;left:0;right:0;bottom:78px;font:500 italic 19px 'Cormorant Garamond',serif;color:rgba(251,250,247,.6)}   /* halk, lent, kiemelés nélkül */
+#zar{background:#000;opacity:0;pointer-events:none}   /* tiszta fekete, a minta nem látszik át */
+#zar img{width:29%;max-width:165px;aspect-ratio:1}
+#zar .cim{margin-top:24px}
+#zar.on{opacity:1;pointer-events:auto}
+.zar2{font:500 italic min(6.6vh,36px)/1.25 'Cormorant Garamond',serif;color:#FBFAF7;margin:22px 36px 0}
+.gomb{margin-top:44px;font:600 22px 'Cormorant Garamond',serif;color:#0f0f0f;background:#E3C68A;padding:12px 30px;border-radius:30px;text-decoration:none}
+.link{margin-top:18px;font:500 italic 20px 'Cormorant Garamond',serif;color:rgba(251,250,247,.85)}
+.ujra{margin-top:106px;font:500 italic 17px 'Cormorant Garamond',serif;color:rgba(251,250,247,.6);cursor:pointer;text-decoration:underline}
+.nev{position:absolute;bottom:30px;left:0;right:0;font:500 italic 17px 'Cormorant Garamond',serif;color:rgba(251,250,247,.6)}
+#info{display:none;position:absolute;left:8px;bottom:6px;font:12px system-ui,sans-serif;color:rgba(255,255,255,.55);z-index:5;pointer-events:none}
+</style></head><body>
+<div id="szin"><div id="keret">
+<canvas id="cv"></canvas>
+<div class="ov" id="nyit"><img class="logo" src="brand/logo-kaleidoscope.png" alt=""><div class="cim" data-t="cim">KALEIDOSCOPE</div><div class="kerd" data-t="kerd">Have you ever seen music?</div><div class="ind" id="ind" data-t="ind">Tap to begin ♪</div><div class="nev" data-t="nev">© András Bánky</div></div>
+<div class="ov" id="zar"><img class="logo" src="brand/logo-kaleidoscope.png" alt=""><div class="cim" data-t="cim">KALEIDOSCOPE</div><div class="zar2" data-t="zar2">Music, as you’ve never seen it.</div>
+<a class="gomb" href="https://bandras1949.github.io/kaleidoszkop/" target="_blank" rel="noopener" data-t="gomb">Try it free</a>
+<div class="link">bandras1949.github.io/kaleidoszkop</div><div class="ujra" id="ujra" data-t="ujra">again</div><div class="nev" data-t="nev">© András Bánky</div></div>
+<div id="info">promó v17 · logó felirattal · azonnali indítás</div>
+</div></div>
+<script>window.__zenePanel = false;
+// nyelv: alapból angol (a videó angol lesz); ?lang=hu → magyar
+window.LANG = new URLSearchParams(location.search).get('lang') === 'hu' ? 'hu' : 'en';
+const SZOV = { hu: { cim: 'KALEIDOSZKÓP', kerd: 'Láttál már zenét?', ind: 'Koppints az indításhoz ♪', zar2: 'A zene, ahogy még nem láttad.', gomb: 'Próbáld ki ingyen', ujra: 'újra', nev: '© Bánky András' } };
+addEventListener('DOMContentLoaded', () => { if (SZOV[LANG]) document.querySelectorAll('[data-t]').forEach(e => { e.textContent = SZOV[LANG][e.dataset.t]; }); document.documentElement.lang = LANG; if (LANG === 'hu') document.querySelectorAll('img.logo').forEach(i => i.src = 'brand/logo-kaleidoszkop.png'); });
+</script>
+<script src="zene-szinkron.js?v=6"></script>
+<script src="orveny.js?v=11"></script>
+<script>
+// KALEIDOSZKÓP PROMÓ – 5 mp nyitás, 6 zene × 30 mp (6 motívum × 5 mp), majd álló zárókép.
+// A zenék felváltva lassúak és gyorsak; a forgás a zenére gyorsul-lassul (zene-szinkron.js).
+const ZENE = [['Z-11', 0], ['G-01', 62.35], ['Z-12', 63.92], ['G-03', 2.55], ['Z-13', 75.74], ['G-04', 193.1]];
+// Z-11 a dal elejéről; a középsők zenei szakasz elején, ütemre lépnek be; a G-04 utolsó 30 mp-e → a dal valódi befejezése a zárókép előtt
+const LASSU = new Set(['Z-11', 'Z-13', 'Z-09', 'Z-10', 'Z-12', 'Z-14']);
+const NYIT = 5, DARAB = 30, SLOT = 5, VEGE = NYIT + ZENE.length * DARAB;
+// motívumok: minden tárgy legalább egyszer, felváltva egyedül és párban (rögzített sorsolás → a videó ugyanaz lesz)
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const SOKK = ['X-49', 'X-50', 'X-51', 'X-52', 'X-53'];
+const T = Orveny.TARGYAK.slice().sort(() => rnd() - 0.5);
+const SLOTS = [];
+for (let i = 0; i < ZENE.length * DARAB / SLOT; i++) {
+  const lassu = LASSU.has(ZENE[Math.floor(i * SLOT / DARAB)][0]);
+  let a = T[i % T.length]; if (a === 'X-44' && !lassu) a = T[(i + 7) % T.length];   // a remegős X-44 csak lassú zenére
+  const egy = i % 2 === 1 || SOKK.includes(a);
+  const b = egy ? a : (rnd() < 0.35 ? a : T[(i * 5 + 3) % T.length]);
+  SLOTS.push({ a, b: b === 'X-44' && !lassu ? a : b, n: egy ? '1' : '2' });
+}
+const cv = document.getElementById('cv'), info = document.getElementById('info');
+let t0 = null, now = () => (t0 == null ? 0 : (performance.now() - t0) / 1000);
+window.PROMO_T = null;   // felvételhez: kívülről megadott idő
+const ido = () => window.PROMO_T != null ? window.PROMO_T : now();
+const host = () => {
+  const t = ido(), k = Math.max(0, Math.min(SLOTS.length - 1, Math.floor(Math.max(0, t - NYIT) / SLOT))), s = SLOTS[k];
+  return { mode: 'orv', paused: false, ad: false, P: { 'tárgy1': s.a, 'tárgy2': s.b, 'örvényTárgyakSzáma': s.n, 'tárgy1Szín': 'véletlen', 'tárgy2Szín': 'véletlen', 'örvényHáttér': 'váltakozó', 'párosításMp': 60, 'lélegzés': 60, 'lélegzésMp': 10 } };
+};
+const orv = new Orveny(cv, host);
+// zenelejátszás: két lejátszó felváltva, 1 mp-es áttűnéssel
+const A = [new Audio(), new Audio()]; A.forEach(a => { a.preload = 'auto'; a.setAttribute('playsinline', ''); });
+let cur = -1, fadeT = null, valtas = 0;
+const ZK = NYIT - 1.2;   // a zene akkor indul, amikor a nyitókép elkezd eltűnni és jön az első kép
+const zeneIdx = t => Math.max(0, Math.min(ZENE.length - 1, Math.floor((t - NYIT) / DARAB)));
+function zene(i) {
+  const a = A[i % 2], b = A[(i + 1) % 2];
+  clearInterval(fadeT);
+  a.pause(); a.src = 'zene/' + ZENE[i][0] + '.mp3'; a.currentTime = ZENE[i][1]; a.volume = 0; a.play().catch(() => {});
+  const v0 = b.paused ? 0 : b.volume, st = performance.now(); valtas = st;
+  fadeT = setInterval(() => { const ms = performance.now() - st; a.volume = Math.min(1, ms / 500); if (!b.paused) b.volume = Math.max(0, v0 * (1 - ms / 1600)); if (ms >= 1600) { clearInterval(fadeT); b.pause(); } }, 30);
+}
+// őr: áttűnésen kívül csak az aktuális lejátszó szólhat
+function zeneOr() { if (cur < 0 || performance.now() - valtas < 2200) return; const b = A[(cur + 1) % 2]; if (!b.paused) b.pause(); }
+function vegsoHalkitas() { clearInterval(fadeT); const a = A[cur % 2], b = A[(cur + 1) % 2]; b.pause(); const st = performance.now(), v0 = a.volume; const id = setInterval(() => { const k = Math.min(1, (performance.now() - st) / 4000); a.volume = v0 * (1 - k); if (k >= 1) { clearInterval(id); a.pause(); } }, 30); }
+function tick() {
+  const t = ido();
+  if (t0 != null || window.PROMO_T != null) {
+    const i = zeneIdx(t);
+    if (window.PROMO_T == null && t >= ZK && i !== cur && t < VEGE) { cur = i; zene(i); }
+    if (window.PROMO_T == null && t < VEGE) zeneOr();
+    document.getElementById('nyit').style.opacity = t < NYIT - 1.2 ? 1 : 0;
+    const zar = t >= VEGE; document.getElementById('zar').classList.toggle('on', zar);
+    if (zar && !tick.halk && window.PROMO_T == null) { tick.halk = true; vegsoHalkitas(); }
+    const k = Math.min(SLOTS.length - 1, Math.floor(Math.max(0, t - NYIT) / SLOT)), s = SLOTS[k], m = Math.floor(t / 60), ss = Math.floor(t % 60);
+    if (!window.__felvetel) info.textContent = `${m}:${String(ss).padStart(2, '0')} · ${t < ZK ? '–' : ZENE[zeneIdx(t)][0]} · ${s.n === '1' ? s.a : s.a + ' + ' + s.b}`;
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+// első zene előre betöltve, hogy a koppintásra azonnal szóljon
+A[0].src = 'zene/' + ZENE[0][0] + '.mp3'; A[0].load();
+// koppintásra AZONNAL indul: átugorjuk a várakozást, a zene még a koppintáson belül indul (telefonon ez kell)
+document.getElementById('nyit').addEventListener('pointerup', () => { if (t0 != null) return; document.getElementById('ind').style.visibility = 'hidden'; t0 = performance.now() - ZK * 1000; cur = 0; zene(0); });
+// „Try it free”: új lapon nyit; ha a keret ezt tiltja, az egész oldalt viszi át
+document.querySelector('.gomb').addEventListener('click', e => { e.preventDefault(); const u = e.currentTarget.href; let w = null; try { w = window.open(u, '_blank'); if (w) w.opener = null; } catch (x) {} if (!w) { try { window.top.location.href = u; } catch (x) { location.href = u; } } });
+document.getElementById('ujra').addEventListener('click', () => location.reload());
+</script></body></html>
