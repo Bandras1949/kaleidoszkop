@@ -8,7 +8,7 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'hold', 'spir'], OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
-  const FORMS = ['pálcika', 'korong', 'négyzet', 'háromszög', 'csillag', 'H-betű', 'szív', '8-as', 'lóhere'];
+  const FORMS = ['pálcika', 'csillag', 'H-betű', 'szív', 'lóhere', 'fánk', 'csavart'];   // fánk, csavart: írásjeles tóruszok (torusz.js, torusz2.js)
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
   const HCYC = ['#00F0FF', '#F5E62A', '#FF2BD6', '#39FF14', '#FF7A00', '#F5F5F0'];
@@ -50,6 +50,19 @@
       const GAP = 285 / num(P['spirálGyűrűk'], 17), RINGS = Math.ceil(RR / GAP) + 1, DGAP = num(P['spirálTáv'], 24), d = num(P['spirálHossz'], 16) / 2 * S * sc, DW = Math.max(0.01, num(P['spirálVastagság'], 4) * S * sc);
       const mk = W + 'x' + H + '/' + GAP + '/' + DGAP; if (this.mk !== mk) { this.mk = mk; this.mem = null; }
       x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+      // ÍRÁSJELES TÓRUSZOK: a FÁNK és a CSAVART saját rajzolóval készül (torusz.js / torusz2.js); ha nincs betöltve, pálcika lesz helyette
+      if (FORM === 'fánk' || FORM === 'csavart') {
+        const Cls = FORM === 'fánk' ? window.Torusz : window.Torusz2;
+        if (Cls) {
+          this.tz = this.tz || {};
+          const T = this.tz[FORM] || (this.tz[FORM] = new Cls({ width: W, height: H, getBoundingClientRect: () => ({ width: W, height: H }), getContext: () => x }));
+          T.cv.width = W; T.cv.height = H; T.cv.getContext = () => x;
+          x.save(); T.rajzol(); x.restore();
+          if (sc < 1) { x.globalAlpha = 1 - sc; x.fillStyle = '#000'; x.fillRect(0, 0, W, H); x.globalAlpha = 1; }   // formaváltáskor elsötétül, majd kivilágosodik
+          return;
+        }
+        FORM = 'pálcika';
+      }
       const NB = 48, paths = Array.from({ length: NB }, () => new Path2D()), stroke = FORM === 'pálcika' || FORM === 'H-betű' || FORM === '8-as';
       const mem = [], old = this.mem; let idx = 0;
       for (let i = 1; i <= RINGS; i++) {
