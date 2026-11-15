@@ -37,6 +37,7 @@
   .ka-ban.on{opacity:1;pointer-events:auto}
   .ka-zn{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 16px);transform:translateX(-50%);padding:6px 14px;border-radius:16px;background:rgba(15,15,15,.6);color:#FBFAF7;font:italic 500 15px 'Cormorant Garamond',Georgia,serif;white-space:nowrap;pointer-events:none;z-index:2147483000;opacity:0;transition:opacity .8s}
   .ka-zn.on{opacity:.85}
+  .ka-ver{position:fixed;right:calc(env(safe-area-inset-right) + 14px);top:calc(env(safe-area-inset-top) + 20px);z-index:2147483000;display:none;font:12px system-ui,sans-serif;color:rgba(251,250,247,.5);pointer-events:none}
   .ka-ny{position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:2147483000;display:none;gap:6px}
   .ka-ny button{background:transparent;border:1px solid rgba(224,194,90,.4);color:#E0C25A;border-radius:8px;padding:6px 12px;font:600 13px Cinzel,Georgia,serif;cursor:pointer;opacity:.8}
   .ka-ny button.on{background:#E0C25A;color:#0f0f0f;opacity:1}`;
@@ -62,6 +63,7 @@
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
     const ny = el(`<div class="ka-ny"><button type="button" data-l="hu" class="${HU ? 'on' : ''}">HU</button><button type="button" data-l="en" class="${HU ? '' : 'on'}">EN</button></div>`);
     ny.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === LANG) return; try { localStorage.setItem('appok-nyelv', b.dataset.l); } catch (e) {} location.replace(location.pathname + '?r=' + Date.now()); }));
+    const vr = el(`<div class="ka-ver">${window.__kVer || ''}</div>`);   // verziószám a nyitóképen, jobb felül
     const zn = el(`<div class="ka-zn">${T.zene}</div>`);   // visszatéréskor (és ha elhallgat) apró felirat: koppintásra szól
     let znS = null, znT = 0; const znShow = () => { znT = performance.now() + 6000; };
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') znShow(); });
@@ -82,6 +84,7 @@
       if (!st.isConnected) document.head.appendChild(st);
       [btn, pan, spl, ban, ny].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
       ny.style.display = splashOn() ? 'flex' : 'none';
+      if (!vr.isConnected) document.body.appendChild(vr); vr.style.display = splashOn() && window.__kVer ? 'block' : 'none';
       if (!zn.isConnected) document.body.appendChild(zn);
       const ks = window.__kSound; if (ks === false && znS !== false) znShow(); znS = ks;
       zn.classList.toggle('on', ks === false && performance.now() < znT && !splashOn() && !document.querySelector('.fpad'));
