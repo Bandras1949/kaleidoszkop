@@ -38,7 +38,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
 <div class="ov" id="zar"><img class="logo" src="brand/logo-kaleidoscope.png" alt=""><div class="cim" data-t="cim">KALEIDOSCOPE</div><div class="zar2" data-t="zar2">Music, as you’ve never seen it.</div>
 <a class="gomb" href="https://bandras1949.github.io/kaleidoszkop/" target="_blank" rel="noopener" data-t="gomb">Try it free</a>
 <div class="link">bandras1949.github.io/kaleidoszkop</div><div class="ujra" id="ujra" data-t="ujra">again</div><div class="nev" data-t="nev">© András Bánky</div></div>
-<div id="info">promó v17 · logó felirattal · azonnali indítás</div>
+<div id="info">promó v18 · gyorsabb forgás az 1–3. zenénél</div>
 </div></div>
 <script>window.__zenePanel = false;
 // nyelv: alapból angol (a videó angol lesz); ?lang=hu → magyar
@@ -46,13 +46,14 @@ window.LANG = new URLSearchParams(location.search).get('lang') === 'hu' ? 'hu' :
 const SZOV = { hu: { cim: 'KALEIDOSZKÓP', kerd: 'Láttál már zenét?', ind: 'Koppints az indításhoz ♪', zar2: 'A zene, ahogy még nem láttad.', gomb: 'Próbáld ki ingyen', ujra: 'újra', nev: '© Bánky András' } };
 addEventListener('DOMContentLoaded', () => { if (SZOV[LANG]) document.querySelectorAll('[data-t]').forEach(e => { e.textContent = SZOV[LANG][e.dataset.t]; }); document.documentElement.lang = LANG; if (LANG === 'hu') document.querySelectorAll('img.logo').forEach(i => i.src = 'brand/logo-kaleidoszkop.png'); });
 </script>
-<script src="zene-szinkron.js?v=6"></script>
+<script src="zene-szinkron.js?v=8"></script>
 <script src="orveny.js?v=11"></script>
 <script>
 // KALEIDOSZKÓP PROMÓ – 5 mp nyitás, 6 zene × 30 mp (6 motívum × 5 mp), majd álló zárókép.
 // A zenék felváltva lassúak és gyorsak; a forgás a zenére gyorsul-lassul (zene-szinkron.js).
 const ZENE = [['Z-11', 0], ['G-01', 62.35], ['Z-12', 63.92], ['G-03', 2.55], ['Z-13', 75.74], ['G-04', 193.1]];
 // Z-11 a dal elejéről; a középsők zenei szakasz elején, ütemre lépnek be; a G-04 utolsó 30 mp-e → a dal valódi befejezése a zárókép előtt
+const SZORZO = { 'Z-11': 1.3, 'G-01': 1.2, 'Z-12': 1.7 };   // ezeknél a zenéknél a forgás a zenéhez képest lassú volt – kézi gyorsítás
 const LASSU = new Set(['Z-11', 'Z-13', 'Z-09', 'Z-10', 'Z-12', 'Z-14']);
 const NYIT = 5, DARAB = 30, SLOT = 5, VEGE = NYIT + ZENE.length * DARAB;
 // motívumok: minden tárgy legalább egyszer, felváltva egyedül és párban (rögzített sorsolás → a videó ugyanaz lesz)
@@ -94,7 +95,7 @@ function vegsoHalkitas() { clearInterval(fadeT); const a = A[cur % 2], b = A[(cu
 function tick() {
   const t = ido();
   if (t0 != null || window.PROMO_T != null) {
-    const i = zeneIdx(t);
+    const i = zeneIdx(t); window.__zeneSzorzo = t >= ZK && t < VEGE ? (SZORZO[ZENE[i][0]] || 1) : 1;
     if (window.PROMO_T == null && t >= ZK && i !== cur && t < VEGE) { cur = i; zene(i); }
     if (window.PROMO_T == null && t < VEGE) zeneOr();
     document.getElementById('nyit').style.opacity = t < NYIT - 1.2 ? 1 : 0;

@@ -43,7 +43,7 @@
     // sebesség: halk, lassú zenénél lassabb (0,5×), erős, sűrű zenénél gyorsabb (akár 2,2×)
     // a zene tempója adja az alapot (lassú zene ~0,6×, gyors ~1,5×), az energia és a hangsúlyok sűrűsége ezen belül mozgat
     const tf = Z.tempo ? Math.max(0.45, Math.min(1.7, Z.tempo / 85)) : 1;
-    const raw = on ? tf * (0.75 + 0.5 * Z.energia) * (0.9 + 0.2 * Math.min(1, Z.suruseg / 2.5)) : 1;
+    const raw = on ? tf * (0.75 + 0.5 * Z.energia) * (0.9 + 0.2 * Math.min(1, Z.suruseg / 2.5)) * (window.__zeneSzorzo || 1) : 1;   // __zeneSzorzo: egy-egy zenéhez kézi gyorsítás (pl. a promóban)
     const target = 1 + (S.seb / 100) * (raw - 1);
     seb += (target - seb) * Math.min(1, dt * 1.2); window.__zeneSeb = Z.seb = seb;
     const sc = on ? 1 + (S.lukt / 100) * 0.06 * Z.utes : 1;
