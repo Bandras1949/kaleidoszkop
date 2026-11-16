@@ -23,7 +23,7 @@
       this.hullam = null;        // futó átváltás: { t0, cel }
       this.kovValt = 9;          // következő átváltás ideje (mp)
       this.szin = { fg: '#FFFFFF', bg: '#000000' }; this.szinRegi = null; this.szinT = 1;
-      this.kovSzin = 5;   // az első színváltás már 5 mp után (a spirálforma kb. 15 mp-enként vált)
+      this.kovSzin = 3;   // az első színváltás már 5 mp után (a spirálforma kb. 15 mp-enként vált)
       this.atlasz = {}; this.atlaszSzin = null;
       this.meret();
       addEventListener('resize', () => this.meret());
@@ -56,10 +56,10 @@
       // színváltás: fehér/fekete ↔ véletlen színpár
       if (this.valos >= this.kovSzin) {
         this.szinRegi = this.szin; this.szinT = 0;
-        this.szin = this.szin.fg === '#FFFFFF' ? { fg: pick(SZINES), bg: '#000000' } : { fg: '#FFFFFF', bg: '#000000' };   // a háttér mindig fekete, csak a jelek színe vált
-        this.kovSzin = this.valos + 6 + Math.random() * 3;
+        this.szin = { fg: (this.szn = (this.szn || 0) + 1) % 3 === 0 ? '#FFFFFF' : pick(SZINES.filter(c => c !== this.szin.fg)), bg: '#000000' };   // sorrend: fehér → szín → másik szín → fehér … (így egy formán belül 3 szín is látszik)   // a háttér mindig fekete, csak a jelek színe vált
+        this.kovSzin = this.valos + 4 + Math.random() * 2;
       }
-      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 1.5);
+      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 1.2);
     }
     rajzol() {
       this.lepes();

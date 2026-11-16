@@ -40,11 +40,11 @@
       if (pf === 'véletlen') {
         if (!this.form) this.form = this.form0;
         this.fT = (this.fT || 0) + dt;
-        if (this.fT > (F ? 10 : 15) && this.trU == null) { this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form)); }
+        if (this.fT > (['fánk', 'csavart', 'szalag', 'mérőszalag'].includes(this.form) ? 18 : (F ? 10 : 15)) && this.trU == null)   /* a térbeli formák tovább maradnak: 3 színük is látszódjon */ { this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form)); }
         if (this.trU != null) { this.trU += dt / 1.2; if (this.trU >= 0.5 && this.nextForm) { this.form = this.nextForm; this.nextForm = null; } if (this.trU >= 1) this.trU = null; else sc = Math.abs(1 - 2 * this.trU); }
         FORM = this.form;
       }
-      const base = P['spirálSzínváltás'] !== false ? cycle(this, SCYC, dt, Math.max(2, num(P['spirálSzínváltásMp'], 8)), num(P['spirálÁttűnésMp'], 2), 0) : hex(r.c1 ?? P['spirálSzín1'] ?? '#3C78E6');
+      const base = P['spirálSzínváltás'] !== false ? cycle(this, SCYC, dt, Math.max(2, num(P['spirálSzínváltásMp'], 4)), num(P['spirálÁttűnésMp'], 1.2), 0) : hex(r.c1 ?? P['spirálSzín1'] ?? '#3C78E6');
       const wh = hex(P['spirálSzín2'] ?? '#F5F5FA');
       const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy) / S;
       const GAP = 285 / num(P['spirálGyűrűk'], 17), RINGS = Math.ceil(RR / GAP) + 1, DGAP = num(P['spirálTáv'], 24), d = num(P['spirálHossz'], 16) / 2 * S * sc, DW = Math.max(0.01, num(P['spirálVastagság'], 4) * S * sc);
