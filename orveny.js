@@ -8,8 +8,8 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'hold', 'spir'], OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
-  const FORMS = ['pálcika', 'csillag', 'H-betű', 'szív', 'lóhere', 'fánk', 'csavart'];   // fánk, csavart: írásjeles tóruszok (torusz.js, torusz2.js)
-  const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A', '#FF2BD6', '#39FF14', '#00F0FF', '#FF7A00'];
+  const FORMS = ['pálcika', 'H-betű', 'szív', 'fánk', 'csavart', 'szalag', 'mérőszalag'];   // fánk, csavart: írásjeles tóruszok (torusz.js, torusz2.js)
+  const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#FF2BD6', '#FF7A00', '#8E2DE2'];   // halvány (sárga, neonzöld, türkiz) színek kivéve: a fehér mellett alig látszottak
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
   const HCYC = ['#00F0FF', '#F5E62A', '#FF2BD6', '#39FF14', '#FF7A00', '#F5F5F0'];
   const hex = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16));
@@ -20,7 +20,7 @@
     let u = into > per - fade ? (into - (per - fade)) / fade : 0; u = u * u * (3 - 2 * u);
     return mix(hex(L[(i0 + n) % L.length]), hex(L[(i0 + n + 1) % L.length]), u);
   }
-  const SCYC = ['#3C78E6', '#C0392B', '#1B6B3A', '#F5E62A'];
+  const SCYC = ['#3C78E6', '#C0392B', '#1B6B3A', '#8E2DE2'];   // sárga helyett lila (a sárga karok alig látszottak)
   const num = (v, d) => { const n = +v; return v == null || v === '' || isNaN(n) ? d : n; };
   const sigOf = (P, ks) => ks.map(k => P[k]).join('|');
   class Spir {
@@ -51,8 +51,8 @@
       const mk = W + 'x' + H + '/' + GAP + '/' + DGAP; if (this.mk !== mk) { this.mk = mk; this.mem = null; }
       x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
       // ÍRÁSJELES TÓRUSZOK: a FÁNK és a CSAVART saját rajzolóval készül (torusz.js / torusz2.js); ha nincs betöltve, pálcika lesz helyette
-      if (FORM === 'fánk' || FORM === 'csavart') {
-        const Cls = FORM === 'fánk' ? window.Torusz : window.Torusz2;
+      if (FORM === 'fánk' || FORM === 'csavart' || FORM === 'szalag' || FORM === 'mérőszalag') {
+        const Cls = FORM === 'fánk' ? window.Torusz : FORM === 'csavart' ? window.Torusz2 : FORM === 'szalag' ? window.Szalag : window.Meroszalag;
         if (Cls) {
           this.tz = this.tz || {};
           const T = this.tz[FORM] || (this.tz[FORM] = new Cls({ width: W, height: H, getBoundingClientRect: () => ({ width: W, height: H }), getContext: () => x }));
