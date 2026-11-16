@@ -23,7 +23,7 @@
       this.hullam = null;        // futó átváltás: { t0, cel }
       this.kovValt = 9;          // következő átváltás ideje (mp)
       this.szin = { fg: '#FFFFFF', bg: '#000000' }; this.szinRegi = null; this.szinT = 1;
-      this.kovSzin = 24;
+      this.kovSzin = 5;   // az első színváltás már 5 mp után (a spirálforma kb. 15 mp-enként vált)
       this.atlasz = {}; this.atlaszSzin = null;
       this.meret();
       addEventListener('resize', () => this.meret());
@@ -55,9 +55,9 @@
       if (this.valos >= this.kovSzin) {
         this.szinRegi = this.szin; this.szinT = 0;
         this.szin = this.szin.fg === '#FFFFFF' ? { fg: pick(SZINES), bg: '#000000' } : { fg: '#FFFFFF', bg: '#000000' };   // a háttér mindig fekete, csak a jelek színe vált
-        this.kovSzin = this.valos + 20 + Math.random() * 15;
+        this.kovSzin = this.valos + 6 + Math.random() * 3;
       }
-      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 2.5);
+      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 1.5);
     }
     rajzol() {
       this.lepes();

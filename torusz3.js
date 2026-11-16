@@ -11,7 +11,7 @@
     constructor(cv) {
       this.cv = cv; this.NU = 230;
       this.t = 0; this.last = performance.now(); this.valos = 0;
-      this.szin = '#FFFFFF'; this.regi = null; this.szinT = 1; this.kovSzin = 24;
+      this.szin = '#FFFFFF'; this.regi = null; this.szinT = 1; this.kovSzin = 5;   // az első színváltás már 5 mp után (a spirálforma kb. 15 mp-enként vált)
       if (cv.getBoundingClientRect) this.meret();
       if (cv.nodeType) addEventListener('resize', () => this.meret());
     }
@@ -22,8 +22,8 @@
     lepes() {
       const now = performance.now(), dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
       this.t += dt * (window.__zeneSeb || 1); this.valos += dt;
-      if (this.valos >= this.kovSzin) { this.regi = this.szin; this.szinT = 0; this.szin = this.szin === '#FFFFFF' ? pick(SZINES) : '#FFFFFF'; this.kovSzin = this.valos + 20 + Math.random() * 15; }
-      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 2.5);
+      if (this.valos >= this.kovSzin) { this.regi = this.szin; this.szinT = 0; this.szin = this.szin === '#FFFFFF' ? pick(SZINES) : '#FFFFFF'; this.kovSzin = this.valos + 6 + Math.random() * 3; }
+      if (this.szinT < 1) this.szinT = Math.min(1, this.szinT + dt / 1.5);
     }
     // A TEST GERINCE: spirál, amely lentről-bentről kifelé és felfelé tekeredik; a menetek kissé billegnek
     kozep(u, T) {
