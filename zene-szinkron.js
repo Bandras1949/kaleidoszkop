@@ -46,7 +46,7 @@
     const raw = on ? tf * (0.75 + 0.5 * Z.energia) * (0.9 + 0.2 * Math.min(1, Z.suruseg / 2.5)) * (window.__zeneSzorzo || 1) : 1;   // __zeneSzorzo: egy-egy zenéhez kézi gyorsítás (pl. a promóban)
     const target = 1 + (S.seb / 100) * (raw - 1);
     seb += (target - seb) * Math.min(1, dt * 1.2); window.__zeneSeb = (Z.seb = seb) * (window.__kTourSeb || 1);   // __kTourSeb: a ⚙ bemutató sebesség-kártyája élőben gyorsítja-lassítja a képet
-    const sc = on && !window.__nincsDobbanas && !window.__nincsDobbanasSz ? 1 + (S.lukt / 100) * 0.06 * Z.utes : 1;   // __nincsDobbanas: egyes képeknél (pl. szivárvány) a dobbanás zavaró, ott nincs
+    const sc = on && (window.__luktetes === true || PANEL) && !window.__nincsDobbanas && !window.__nincsDobbanasSz ? 1 + (S.lukt / 100) * 0.06 * Z.utes : 1;   // __nincsDobbanas: egyes képeknél (pl. szivárvány) a dobbanás zavaró, ott nincs
     const br = on ? 1 + (S.feny / 100) * 0.5 * (Z.energia - 0.5) : 1;
     document.querySelectorAll('canvas').forEach(c => {
       if (c.closest('#zsz')) return;

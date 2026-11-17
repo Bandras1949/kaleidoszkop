@@ -34,14 +34,17 @@
       if (o === '1' && ++d._n % 3 === 0) {
         let szin = '#D8D8D8';
         try {
-          const vas = [...stage.querySelectorAll('canvas')].filter(c => c.width && +getComputedStyle(c).opacity > 0.5 && c !== d), c = vas[vas.length - 1];
-          if (c) {
-            const W = c.width, H = c.height, r = Math.min(W, H) * 0.06, x = c.getContext('2d'), db = {};
+          // a legfelső olyan vászonról mérünk, amely tényleg rajzol (az üres, átlátszó vásznak feketét adnának)
+          const vas = [...stage.querySelectorAll('canvas')].filter(c => c.width && c.height && c.offsetParent !== null && +getComputedStyle(c).opacity > 0.5).reverse();
+          for (const c of vas) { try {
+            const W = c.width, H = c.height, r = Math.min(W, H) * 0.06, x = c.getContext('2d'), db = {}; let fedett = 0; if (!x) continue;
             for (let i = 0; i < 48; i++) { const a = i / 48 * 2 * Math.PI, rr = r * (1.25 + (i % 3) * 0.35), p = x.getImageData(Math.round(W / 2 + rr * Math.cos(a)), Math.round(H / 2 + rr * Math.sin(a)), 1, 1).data;
-              const k = (p[0] >> 5) + '-' + (p[1] >> 5) + '-' + (p[2] >> 5); (db[k] = db[k] || []).push(p); }
-            const leg = Object.values(db).sort((a, b) => b.length - a.length)[0];
-            if (leg) { const m = [0, 1, 2].map(j => Math.round(leg.reduce((s, p) => s + p[j], 0) / leg.length)); szin = `rgb(${m.join(',')})`; }
-          }
+              if (p[3] < 200) continue; fedett++; const k = (p[0] >> 5) + '-' + (p[1] >> 5) + '-' + (p[2] >> 5); (db[k] = db[k] || []).push(p); }
+            if (fedett < 24) continue;
+            const vil = p => 0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2], cs = Object.values(db), fenyes = cs.filter(g => vil(g[0]) > 70);   // a sötét (fekete) részeket kerüljük, ha van világos szín
+            const leg = (fenyes.length ? fenyes : cs).sort((a, b) => b.length - a.length)[0];
+            const m = [0, 1, 2].map(j => Math.round(leg.reduce((s, p) => s + p[j], 0) / leg.length)); szin = `rgb(${m.join(',')})`; break;
+          } catch (e) {} }
         } catch (e) {}
         if (d._sz !== szin) { d._sz = szin; d.style.backgroundColor = szin; d.style.borderColor = szin; }
       }
