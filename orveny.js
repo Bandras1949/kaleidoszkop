@@ -14,7 +14,24 @@
   const SZIV = ['#FF2A2A', '#FF8A00', '#FFE600', '#39FF14', '#00E5FF', '#2F6BFF', '#9B30FF', '#FF2BD6'];   // szivárványkorong (HOLDAS-lap alatt)
   // SZIVÁRVÁNY-JELENETEK: egy jelenet = egy rendezett mintázat + egy 2–4 színű harmónia a 8 színből (SZIV: színkör-sorrend).
   // 8–10 mp-enként új jelenet jön, 1,5 mp-es áttűnéssel.
-  let SZ_LOGO = null;
+  // KÖZÉPSŐ LOGÓ: minden üzemmódban a kép közepén áll a BRILLIDEA-logó belseje (fekete agy, arany perem) – a képpel nem forog,
+  // nem lüktet. Nem látszik: a térbeli spirálformáknál és a holdaknál, a nyitóképen, hirdetés, feliratos kép és nyitott ⚙ panel alatt.
+  const LOGO_NELKUL = ['fánk', 'csavart', 'szalag', 'mérőszalag', 'holdak', 'holdkarok'];
+  function kozepLogo(orv) {
+    const cv = orv.cv, stage = cv.parentElement; if (!stage) return;
+    const d = document.createElement('div'); d.className = 'k-kozep';
+    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png) center/100% 100% no-repeat;border:1.5px solid #C9A55C';
+    const lathato = el => { for (let n = el; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity < 0.05) return false; } return true; };
+    setInterval(() => {
+      if (!d.isConnected) stage.appendChild(d);
+      const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * 0.108) + 'px'; if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
+      const nyito = document.querySelector('img[src*="logo-nyitokep"]'), tb = stage.querySelector('div[style*="translateY("]');
+      const takar = (nyito && lathato(nyito)) || !!document.querySelector('.fpad') || !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]') || (tb && tb.parentElement && +getComputedStyle(tb.parentElement).opacity > 0.05);
+      const spirOn = +getComputedStyle(cv).opacity > 0.5 && (orv.kind === 'spir' || orv.kind === 'hold');
+      const tilt = spirOn && (orv.kind === 'hold' || LOGO_NELKUL.includes(orv.spir.curForm));
+      const o = takar || tilt ? '0' : '1'; if (d.style.opacity !== o) d.style.opacity = o;
+    }, 250);
+  }
   const SZ_MINTAK = ['gyűrűk', 'váltott', 'csillag', 'lépcső', 'hullám'];
   const hsl2hex = (h, s, l) => { s /= 100; l /= 100; const f = n => { const k = (n + h / 30) % 12, c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); };
   function szivHarmonia() {
@@ -99,6 +116,7 @@
         if (this.trU != null) { this.trU += dt / 1.2; if (this.trU >= 0.5 && this.nextForm) { this.form = this.nextForm; this.nextForm = null; } if (this.trU >= 1) this.trU = null; else sc = Math.abs(1 - 2 * this.trU); }
         FORM = this.form;
       }
+      this.curForm = FORM;
       const base = P['spirálSzínváltás'] !== false ? cycle(this, SCYC, dt, Math.max(2, num(P['spirálSzínváltásMp'], 4)), num(P['spirálÁttűnésMp'], 1.2), 0) : hex(r.c1 ?? P['spirálSzín1'] ?? '#3C78E6');
       const wh = hex(P['spirálSzín2'] ?? '#F5F5FA');
       const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy) / S;
@@ -127,6 +145,7 @@
         }
         FORM = 'pálcika';
       }
+      this.curForm = FORM;
       const NB = 48, paths = Array.from({ length: NB }, () => new Path2D()), stroke = FORM === 'pálcika' || FORM === 'H-betű' || FORM === '8-as';
       const mem = [], old = this.mem; let idx = 0;
       for (let i = 1; i <= RINGS; i++) {
@@ -197,11 +216,7 @@
           this.szA += dt / 1.5; x.globalAlpha = Math.min(1, this.szA); szivRajzol(x, this.szUj, cx, cy, Rx, t); x.globalAlpha = 1;
           if (this.szA >= 1) { this.szJ = this.szUj; this.szUj = null; this.szT = 0; }
         }
-        x.drawImage(this.shade, 0, 0); x.drawImage(this.plate, 0, 0);
-        const hR = this.SP * 3.1; x.beginPath(); x.arc(cx, cy, hR, 0, 2 * Math.PI); x.fillStyle = '#121214'; x.fill();   // középen fix fekete agy, benne a BRILLIDEA-logó belseje (drágakő)
-        if (!SZ_LOGO) { SZ_LOGO = new Image(); SZ_LOGO.src = 'brand/kozep-logo.png'; }
-        if (SZ_LOGO.complete && SZ_LOGO.naturalWidth) x.drawImage(SZ_LOGO, cx - hR, cy - hR, 2 * hR, 2 * hR);
-        x.beginPath(); x.arc(cx, cy, hR, 0, 2 * Math.PI); x.lineWidth = Math.max(1.5, this.S * 1.8); x.strokeStyle = '#C9A55C'; x.stroke();   // határozott arany perem
+        x.drawImage(this.shade, 0, 0); x.drawImage(this.plate, 0, 0);   // középen a közös logó-agy áll (kozepLogo)
         return;
       }
       const vil = String(P['holdVilágos'] ?? '#00F0FF').toUpperCase();
@@ -262,6 +277,7 @@
       this.pairLeft = 0; this.bgToggle = false; this.ai = null; this.kind = null; this.spir = new Spir(); this.hold = new Hold();
       const tick = now => { try { this.frame(now); } catch (e) { console.error(e); } this.raf = requestAnimationFrame(tick); };
       this.raf = requestAnimationFrame(tick);
+      kozepLogo(this);
     }
     destroy() { cancelAnimationFrame(this.raf); }
     prep(im) {
