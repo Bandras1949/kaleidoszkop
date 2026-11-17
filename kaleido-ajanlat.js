@@ -67,7 +67,7 @@
   .ka-tur .gs .fo{background:#E0C25A;color:#0f0f0f}
   .ka-tur .x{position:absolute;right:14px;top:10px;background:none;border:0;color:rgba(251,250,247,.6);font-size:22px;cursor:pointer}`;
   // a felület állandó feliratai [angol, magyar] – a sablon angolul van, magyar nyelven ezeket cseréljük
-  const UI = [['KALEIDOSCOPE', 'KALEIDOSZKÓP'], ['Tap to begin ♪', 'Koppints az indításhoz ♪'], ['© 2026 Andras Banky', '© 2026 Bánky András'], ['Try me!', 'Próbálj ki!'], ['Beállítások', 'Beállítások'], ['Kész', 'Kész']];
+  const UI = [['KALEIDOSCOPE', 'KALEIDOSZKÓP'], ['Tap to begin ♪', 'Koppints az indításhoz ♪'], ['© 2026 Andras Banky', '© 2026 Bánky András'], ['Try me!', 'Próbálj ki!'], ['Beállítások', 'Beállítások'], ['Kész', 'Kész'], ['LOG', 'NAPLÓ'], ['No errors logged.', 'Nincs hiba feljegyezve.'], ['Clear log', 'Napló törlése'], ['Reset to defaults', 'Alapértékek visszaállítása']];
   const EN = { 'Beállítások': 'Settings', 'Kész': 'Done', '© 2026 Andras Banky': '© 2026 András Bánky' };
   function relabel() {
     const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
