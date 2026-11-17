@@ -7,10 +7,65 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const rnd = (a, b) => a + Math.random() * (b - a);
 
-  const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'hold', 'hold', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'hold', 'spir'], OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
-  const FORMS = ['pálcika', 'H-betű', 'szív', 'fánk', 'csavart', 'szalag', 'mérőszalag'];   // fánk, csavart: írásjeles tóruszok (torusz.js, torusz2.js)
+  const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'spir'],   /* a HOLDAS a SPIRÁLOS formái közé került */ OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
+  const FORMS = ['pálcika', 'H-betű', 'szív', 'fánk', 'csavart', 'szalag', 'mérőszalag', 'holdak', 'holdkarok', 'szivárvány'];   // fánk, csavart: írásjeles tóruszok (torusz.js, torusz2.js)
   const SP1 = ['#3C78E6', '#C0392B', '#1B6B3A', '#FF2BD6', '#FF7A00', '#8E2DE2'];   // halvány (sárga, neonzöld, türkiz) színek kivéve: a fehér mellett alig látszottak
   const SP2 = ['#F5F5FA', '#F5F5FA', '#8E5BD6', '#8EE07A', '#E0C25A', '#00F0FF'];
+  const SZIV = ['#FF2A2A', '#FF8A00', '#FFE600', '#39FF14', '#00E5FF', '#2F6BFF', '#9B30FF', '#FF2BD6'];   // szivárványkorong (HOLDAS-lap alatt)
+  // SZIVÁRVÁNY-JELENETEK: egy jelenet = egy rendezett mintázat + egy 2–4 színű harmónia a 8 színből (SZIV: színkör-sorrend).
+  // 8–10 mp-enként új jelenet jön, 1,5 mp-es áttűnéssel.
+  let SZ_LOGO = null;
+  const SZ_MINTAK = ['gyűrűk', 'váltott', 'csillag', 'lépcső', 'hullám'];
+  const hsl2hex = (h, s, l) => { s /= 100; l /= 100; const f = n => { const k = (n + h / 30) % 12, c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); };
+  function szivHarmonia() {
+    const k = Math.floor(Math.random() * 8), m = i => SZIV[((i % 8) + 8) % 8], h = Math.random() * 360;
+    const fajta = pick(['szomszédos', 'kiegészítő', 'hármas', 'négyes', 'árnyalatok', 'árnyalatok', 'pasztell']);
+    if (fajta === 'szomszédos') return [m(k), m(k + 1), m(k + 2)];
+    if (fajta === 'kiegészítő') return [m(k), '#F5F5F0', m(k + 4)];
+    if (fajta === 'hármas') return [m(k), m(k + 2), m(k + 5)];
+    if (fajta === 'árnyalatok') return [hsl2hex(h, 70, 80), hsl2hex(h, 85, 38), hsl2hex(h, 80, 60), hsl2hex(h, 75, 24)];   // egy szín árnyalatai: világos – sötét – közép – legsötétebb (a szomszédok így jól elválnak)
+    if (fajta === 'pasztell') { const d = pick([30, 120, 180]); return [hsl2hex(h, 65, 80), hsl2hex(h + d, 60, 74), hsl2hex(h + 2 * d, 55, 84)]; }
+    return [m(k), m(k + 2), m(k + 4), m(k + 6)];
+  }
+  // gyűrűszélesség-sor: a gyűrűk szélessége ezt a sort ismétli (minden cikkelyben ugyanígy, így a minta megmarad)
+  const SZ_SZEL = [[1], [1], [0.55, 1.45], [0.6, 0.6, 1.8], [1.5, 0.75, 0.75], [0.4, 1.6]];
+  function szivJelenet(elozo) { return { minta: pick(SZ_MINTAK.filter(s => !elozo || s !== elozo.minta)), H: szivHarmonia(), w: pick(SZ_SZEL), ir: Math.random() < 0.5 ? -1 : 1, hossz: 8 + Math.random() * 2 }; }
+  const szKever = (a, b, k) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',') + ')'; };
+  function szivRajzol(x, J, cx, cy, Rx, t) {
+    const H = J.H, m = H.length, mod = (a, b) => ((a % b) + b) % b, cella = (r0, r1, a0, a1, c) => { x.beginPath(); x.arc(cx, cy, r1, a0, a1); x.arc(cx, cy, Math.max(0, r0), a1, a0, true); x.closePath(); x.fillStyle = c; x.fill(); };
+    const rot = t * 0.25 * J.ir, w = J.w || [1], L = w.length;
+    const Fc = q => { const p = Math.floor(q / L), r = mod(q, L); let s = p * L; for (let i = 0; i < r; i++) s += w[i]; return s; };   // a q-adik gyűrű belső széle (átlagos gyűrűszélesség = 1)
+    if (J.minta === 'hullám') {
+      // keskeny, egyforma gyűrűk vándorolnak; a színek sávonként tiszták, csak a szélükön mennek át a következőbe
+      const NR = 18, dr = Rx / NR, ph = t * 0.2 * J.ir, fr = mod(ph, 1), fl = Math.floor(ph);
+      for (let k = NR; k >= -1; k--) {
+        const r0 = (k + fr) * dr, r1 = r0 + dr + 0.5; if (r1 <= 0) continue;
+        const u = (k - fl) / 3, a = Math.floor(u), q = Math.max(0, Math.min(1, (u - a - 0.65) / 0.35)), c = szKever(H[mod(a, m)], H[mod(a + 1, m)], q * q * (3 - 2 * q));
+        x.beginPath(); x.arc(cx, cy, r1, 0, 2 * Math.PI); if (r0 > 0) x.arc(cx, cy, r0, 2 * Math.PI, 0, true); x.fillStyle = c; x.fill('evenodd');
+      }
+      return;
+    }
+    if (J.minta === 'gyűrűk') {
+      // egyszínű gyűrűk (a szélesség-sor szerint), amelyek egyben vándorolnak kifelé vagy befelé
+      const dr = Rx / 8, ph = t * 0.1 * J.ir;
+      for (let q = Math.floor(-ph) - 2 * L - 1; ; q++) {
+        const r0 = (Fc(q) + ph) * dr, r1 = (Fc(q + 1) + ph) * dr + 0.5; if (r0 > Rx) break; if (r1 <= 0) continue;
+        x.beginPath(); x.arc(cx, cy, r1, 0, 2 * Math.PI); if (r0 > 0) x.arc(cx, cy, r0, 2 * Math.PI, 0, true); x.fillStyle = H[mod(q, m)]; x.fill('evenodd');
+      }
+      const NS = 12, sp = 2 * Math.PI / NS; for (let i = 0; i < NS; i++) cella(0, dr * 0.9, rot + sp * i, rot + sp * (i + 1.01), H[i % m]);   // a csúcsnál minden szín ott van
+      return;
+    }
+    const NS = 12, sp = 2 * Math.PI / NS, dr = Rx / 8;
+    for (let j = 0; ; j++) {
+      const r0 = Fc(j) * dr, r1 = Fc(j + 1) * dr + 0.5; if (r0 > Rx) break;
+      // váltott: a gyűrűk felváltva ellentétes irányba forognak (számzár); csillag, lépcső: az egész korong együtt forog
+      const rj = J.minta === 'váltott' ? rot * (j % 2 ? -1 : 1) * (0.75 + 0.07 * j) : rot * 0.7;
+      for (let i = 0; i < NS; i++) {
+        const c = J.minta === 'váltott' ? H[mod((i + j) % 2 + 2 * Math.floor(j / 2), m)] : J.minta === 'csillag' ? H[i % m] : H[mod(i + j, m)];
+        cella(r0, r1, rj + sp * i, rj + sp * (i + 1.01), c);
+      }
+    }
+  }
   const HCYC = ['#00F0FF', '#F5E62A', '#FF2BD6', '#39FF14', '#FF7A00', '#F5F5F0'];
   const hex = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16));
   const mix = (A, B, u) => A.map((v, q) => v + (B[q] - v) * u);
@@ -40,7 +95,7 @@
       if (pf === 'véletlen') {
         if (!this.form) this.form = this.form0;
         this.fT = (this.fT || 0) + dt;
-        if (this.fT > (['fánk', 'csavart', 'szalag', 'mérőszalag'].includes(this.form) ? 18 : (F ? 10 : 15)) && this.trU == null)   /* a térbeli formák tovább maradnak: 3 színük is látszódjon */ { this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form)); }
+        if (this.fT > (['fánk', 'csavart', 'szalag', 'mérőszalag', 'holdak', 'holdkarok', 'szivárvány'].includes(this.form) ? 18 : (F ? 10 : 15)) && this.trU == null)   /* a térbeli formák tovább maradnak: 3 színük is látszódjon */ { this.fT = 0; this.trU = 0; this.nextForm = pick(FORMS.filter(f => f !== this.form)); }
         if (this.trU != null) { this.trU += dt / 1.2; if (this.trU >= 0.5 && this.nextForm) { this.form = this.nextForm; this.nextForm = null; } if (this.trU >= 1) this.trU = null; else sc = Math.abs(1 - 2 * this.trU); }
         FORM = this.form;
       }
@@ -51,6 +106,15 @@
       const mk = W + 'x' + H + '/' + GAP + '/' + DGAP; if (this.mk !== mk) { this.mk = mk; this.mem = null; }
       x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
       // ÍRÁSJELES TÓRUSZOK: a FÁNK és a CSAVART saját rajzolóval készül (torusz.js / torusz2.js); ha nincs betöltve, pálcika lesz helyette
+      // HOLDAK, HOLDKAROK: a korábbi HOLDAS üzemmód, rögzített beállításokkal (csak a sebesség és a világos szín állítható)
+      if (FORM === 'holdak' || FORM === 'holdkarok' || FORM === 'szivárvány') {
+        if (FORM === 'szivárvány') window.__nincsDobbanas = true;
+        this.hd = this.hd || new Hold();
+        const HP = Object.assign({ 'holdKarok': 7, 'holdCsavarás': 1.2, 'holdKarSzélesség': 0.5, 'holdSpirálkarok': 2, 'holdKorong': 0.35, 'holdHullámok': 1, 'holdSebesség': 4, 'holdLélegzés': 0.35, 'holdLyukakSzáma': 3000, 'holdLyukTáv': 24, 'holdLyukMéret': 32, 'holdLapSzín': '#2A3F78', 'holdVilágos': '#00F0FF', 'holdSötét': '#0A0A0A' }, P, { 'holdVáltozat': FORM === 'holdak' ? 'holdak' : FORM === 'szivárvány' ? 'szivarvany' : 'karok', 'holdSzínváltás': true, 'holdSzínváltásMp': 4, 'holdÁttűnésMp': 1.2 }, FORM === 'szivárvány' ? { 'holdLapSzín': '#0E0E12', 'holdLyukTáv': 14, 'holdLyukMéret': 24, 'holdLyukakSzáma': 6000 } : {}   /* szivárvány: sűrűbb, kisebb, egymáshoz közelebbi lyukak – kevesebb fekete, finomabb kép */);
+        this.hd.draw(x, W, H, dt, F, HP);
+        if (sc < 1) { x.globalAlpha = 1 - sc; x.fillStyle = '#000'; x.fillRect(0, 0, W, H); x.globalAlpha = 1; }
+        return;
+      }
       if (FORM === 'fánk' || FORM === 'csavart' || FORM === 'szalag' || FORM === 'mérőszalag') {
         const Cls = FORM === 'fánk' ? window.Torusz : FORM === 'csavart' ? window.Torusz2 : FORM === 'szalag' ? window.Szalag : window.Meroszalag;
         if (Cls) {
@@ -106,7 +170,7 @@
       const key = [W, H, SPu, HSu, N, PC].join('/'); if (this.key === key) return; this.key = key;
       const M = Math.min(W, H), S = M / 600, cx = W / 2, cy = H / 2, RR = Math.hypot(cx, cy), SP = SPu * S, hr = HSu / 2 * S, gold = Math.PI * (3 - Math.sqrt(5));
       this.holes = []; for (let n = 1; n <= N && SP * Math.sqrt(n) < RR + 2 * hr; n++) { const r = SP * Math.sqrt(n), a = n * gold; this.holes.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), r }); }
-      this.R = Math.min(RR, SP * Math.sqrt(this.holes.length) + 2 * hr); this.hr = hr; this.S = S; this.M = M;
+      this.R = Math.min(RR, SP * Math.sqrt(this.holes.length) + 2 * hr); this.hr = hr; this.SP = SP; this.S = S; this.M = M;
       const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
       const pl = mk(), p = pl.getContext('2d'); p.fillStyle = PC; p.fillRect(0, 0, W, H); p.globalCompositeOperation = 'destination-out';
       const all = new Path2D(); for (const h of this.holes) { all.moveTo(h.x + hr, h.y); all.arc(h.x, h.y, hr, 0, 2 * Math.PI); } p.fill(all);
@@ -122,6 +186,24 @@
       const sp = ez(e, 'sp', r.sp ?? num(P['holdSebesség'], 4), dt), tw = ez(e, 'tw', r.csav ?? num(P['holdCsavarás'], 1.2), dt);
       const wv = ez(e, 'wv', r.wv ?? num(P['holdHullámok'], 1), dt), spn = ez(e, 'spn', r.spn ?? num(P['holdSpirálkarok'], 0), dt), arms = Math.max(1, Math.round(r.karok ?? num(P['holdKarok'], 3)));
       this.t += sp * dt; const t = this.t, cx = W / 2, cy = H / 2, R = this.R, hr = this.hr;
+      // SZIVÁRVÁNY: a lyukacsos lap alatt színes korong forog; rendezett mintázatok és színharmóniák váltják egymást (sebesség: holdSebesség)
+      if (V === 'SZIVARVANY') {
+        const Rx = Math.hypot(cx, cy) * 1.02;
+        if (!this.szJ) { this.szJ = szivJelenet(); this.szT = 0; }
+        this.szT += dt;
+        if (!this.szUj && this.szT > this.szJ.hossz) { this.szUj = szivJelenet(this.szJ); this.szA = 0; }
+        szivRajzol(x, this.szJ, cx, cy, Rx, t);
+        if (this.szUj) {
+          this.szA += dt / 1.5; x.globalAlpha = Math.min(1, this.szA); szivRajzol(x, this.szUj, cx, cy, Rx, t); x.globalAlpha = 1;
+          if (this.szA >= 1) { this.szJ = this.szUj; this.szUj = null; this.szT = 0; }
+        }
+        x.drawImage(this.shade, 0, 0); x.drawImage(this.plate, 0, 0);
+        const hR = this.SP * 3.1; x.beginPath(); x.arc(cx, cy, hR, 0, 2 * Math.PI); x.fillStyle = '#121214'; x.fill();   // középen fix fekete agy, benne a BRILLIDEA-logó belseje (drágakő)
+        if (!SZ_LOGO) { SZ_LOGO = new Image(); SZ_LOGO.src = 'brand/kozep-logo.png'; }
+        if (SZ_LOGO.complete && SZ_LOGO.naturalWidth) x.drawImage(SZ_LOGO, cx - hR, cy - hR, 2 * hR, 2 * hR);
+        x.beginPath(); x.arc(cx, cy, hR, 0, 2 * Math.PI); x.lineWidth = Math.max(1.5, this.S * 1.8); x.strokeStyle = '#C9A55C'; x.stroke();   // határozott arany perem
+        return;
+      }
       const vil = String(P['holdVilágos'] ?? '#00F0FF').toUpperCase();
       const L = P['holdSzínváltás'] !== false ? cycle(this, HCYC, dt, Math.max(2, num(P['holdSzínváltásMp'], 8)), num(P['holdÁttűnésMp'], 2), Math.max(0, HCYC.indexOf(vil))) : hex(vil);
       x.fillStyle = 'rgb(' + L.map(Math.round) + ')'; x.fillRect(0, 0, W, H);
@@ -228,6 +310,7 @@
       const s = this.snap.getContext('2d'); s.clearRect(0, 0, c.width, c.height); s.drawImage(c, 0, 0); this.snapA = 1;
     }
     frame(now) {
+      window.__nincsDobbanas = false;   // a szivárvány (SPIRÁLOS) alatt a zenei dobbanás ki van kapcsolva – lásd Spir.draw
       const st = this.host(); const P = st.P || {}; this.P = P;
       let dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
       if (st.paused) dt = 0;
