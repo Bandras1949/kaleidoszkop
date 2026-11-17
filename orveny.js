@@ -20,7 +20,7 @@
   function kozepLogo(orv) {
     const cv = orv.cv, stage = cv.parentElement; if (!stage) return;
     const d = document.createElement('div'); d.className = 'k-kozep';
-    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png?v=2) center/100% 100% no-repeat;border:1.5px solid #C9A55C';
+    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png?v=3) center/100% 100% no-repeat;border:1.5px solid #BDBDBD';
     const lathato = el => { for (let n = el; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity < 0.05) return false; } return true; };
     setInterval(() => {
       if (!d.isConnected) stage.appendChild(d);
