@@ -20,11 +20,11 @@
   function kozepLogo(orv) {
     const cv = orv.cv, stage = cv.parentElement; if (!stage) return;
     const d = document.createElement('div'); d.className = 'k-kozep';
-    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png) center/100% 100% no-repeat;border:1.5px solid #C9A55C';
+    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png?v=2) center/100% 100% no-repeat;border:1.5px solid #C9A55C';
     const lathato = el => { for (let n = el; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity < 0.05) return false; } return true; };
     setInterval(() => {
       if (!d.isConnected) stage.appendChild(d);
-      const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * 0.108) + 'px'; if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
+      const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * 0.064) + 'px'; if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
       const nyito = document.querySelector('img[src*="logo-nyitokep"]'), tb = stage.querySelector('div[style*="translateY("]');
       const takar = (nyito && lathato(nyito)) || !!document.querySelector('.fpad') || !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]') || (tb && tb.parentElement && +getComputedStyle(tb.parentElement).opacity > 0.05);
       const spirOn = +getComputedStyle(cv).opacity > 0.5 && (orv.kind === 'spir' || orv.kind === 'hold');
