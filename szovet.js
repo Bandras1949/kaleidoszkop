@@ -113,6 +113,7 @@
       if (want && !this.cloth) this.newCloth(P);
       const k = Math.min(1, dt * 1.6 + (st.paused ? 0 : 0.002));
       this.op += (want - this.op) * k; if (want === 0 && this.op < 0.01) this.op = 0; if (want === 1 && this.op > 0.995) this.op = 1;
+      window.__nincsDobbanasSz = this.op > 0.3;   // a SZÖVET alatt nincs zenei dobbanás (a kép nem rándul össze)
       if (this.cv._op !== this.op) { this.cv.style.opacity = this.op.toFixed(3); this.cv._op = this.op; }
       if (this.op <= 0) { this.drawnOnce = false; return; }
       const pk = ['szövetFajta', 'szövetLánc', 'szövetVetülék', 'csík: lánc = vetülék', 'csík: változó szélesség', 'szövetKötés', 'szövetTükör'].map(q => P[q]).join('|');

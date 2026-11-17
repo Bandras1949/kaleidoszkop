@@ -19,8 +19,8 @@
   const LOGO_NELKUL = ['fánk', 'csavart', 'szalag', 'mérőszalag', 'holdak', 'holdkarok'];
   function kozepLogo(orv) {
     const cv = orv.cv, stage = cv.parentElement; if (!stage) return;
-    const d = document.createElement('div'); d.className = 'k-kozep';
-    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease;background:#121214 url(brand/kozep-logo.png?v=3) center/100% 100% no-repeat;border:1.5px solid #BDBDBD';
+    const d = document.createElement('div'); d.className = 'k-kozep'; d._n = 0;
+    d.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;box-sizing:border-box;pointer-events:none;opacity:0;transition:opacity .6s ease,background-color 1.2s ease,border-color 1.2s ease;background:#D8D8D8 url(brand/kozep-logo.png?v=4) center/100% 100% no-repeat;border:1.5px solid #D8D8D8';
     const lathato = el => { for (let n = el; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity < 0.05) return false; } return true; };
     setInterval(() => {
       if (!d.isConnected) stage.appendChild(d);
@@ -30,6 +30,21 @@
       const spirOn = +getComputedStyle(cv).opacity > 0.5 && (orv.kind === 'spir' || orv.kind === 'hold');
       const tilt = spirOn && (orv.kind === 'hold' || LOGO_NELKUL.includes(orv.spir.curForm));
       const o = takar || tilt ? '0' : '1'; if (d.style.opacity !== o) d.style.opacity = o;
+      // a korong színe a kép körülötte uralkodó színét veszi fel (így nem „bogár” a közepén); ha nem mérhető, halványszürke
+      if (o === '1' && ++d._n % 3 === 0) {
+        let szin = '#D8D8D8';
+        try {
+          const vas = [...stage.querySelectorAll('canvas')].filter(c => c.width && +getComputedStyle(c).opacity > 0.5 && c !== d), c = vas[vas.length - 1];
+          if (c) {
+            const W = c.width, H = c.height, r = Math.min(W, H) * 0.06, x = c.getContext('2d'), db = {};
+            for (let i = 0; i < 48; i++) { const a = i / 48 * 2 * Math.PI, rr = r * (1.25 + (i % 3) * 0.35), p = x.getImageData(Math.round(W / 2 + rr * Math.cos(a)), Math.round(H / 2 + rr * Math.sin(a)), 1, 1).data;
+              const k = (p[0] >> 5) + '-' + (p[1] >> 5) + '-' + (p[2] >> 5); (db[k] = db[k] || []).push(p); }
+            const leg = Object.values(db).sort((a, b) => b.length - a.length)[0];
+            if (leg) { const m = [0, 1, 2].map(j => Math.round(leg.reduce((s, p) => s + p[j], 0) / leg.length)); szin = `rgb(${m.join(',')})`; }
+          }
+        } catch (e) {}
+        if (d._sz !== szin) { d._sz = szin; d.style.backgroundColor = szin; d.style.borderColor = szin; }
+      }
     }, 250);
   }
   const SZ_MINTAK = ['gyűrűk', 'váltott', 'csillag', 'lépcső', 'hullám'];
