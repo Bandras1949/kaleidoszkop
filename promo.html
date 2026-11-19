@@ -1,18 +1,14 @@
 <!doctype html>
 <html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Kaleidoscope – music, as you’ve never seen it</title>
-<meta name="description" content="Have you ever seen music? A 3-minute journey through the Kaleidoscope app.">
-<meta property="og:title" content="Kaleidoscope – music, as you’ve never seen it">
-<meta property="og:description" content="Have you ever seen music? Tap and listen – 3 minutes.">
-<meta property="og:image" content="https://bandras1949.github.io/kaleidoszkop/brand/logo-kaleidoscope.png">
-<meta property="og:url" content="https://bandras1949.github.io/kaleidoszkop/promo.html">
-<meta property="og:type" content="website">
+<title>Kaleidoszkóp – promó</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
 <style>
 html,body{margin:0;height:100%;background:#000;overflow:hidden}
 #szin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 #keret{position:relative;height:100%;aspect-ratio:9/16;max-width:100%;overflow:hidden;background:#000}
-#cv{position:absolute;inset:0;width:100%;height:100%}
+#cv,#szv{position:absolute;inset:0;width:100%;height:100%}
+#szv{opacity:0}
+.ov{z-index:10}   /* a középső logó a nyitó- és zárókép alatt marad */
 .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:opacity 1.2s ease}
 #nyit{background:#000;cursor:pointer;justify-content:flex-start;padding-top:22%;box-sizing:border-box}
 #nyit .kerd{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);margin:0}   /* a kérdés pontosan középen */
@@ -30,15 +26,15 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
 .link{margin-top:18px;font:500 italic 20px 'Cormorant Garamond',serif;color:rgba(251,250,247,.85)}
 .ujra{margin-top:106px;font:500 italic 17px 'Cormorant Garamond',serif;color:rgba(251,250,247,.6);cursor:pointer;text-decoration:underline}
 .nev{position:absolute;bottom:30px;left:0;right:0;font:500 italic 17px 'Cormorant Garamond',serif;color:rgba(251,250,247,.6)}
-#info{display:none;position:absolute;left:8px;bottom:6px;font:12px system-ui,sans-serif;color:rgba(255,255,255,.55);z-index:5;pointer-events:none}
+#info{position:absolute;left:8px;bottom:6px;font:12px system-ui,sans-serif;color:rgba(255,255,255,.55);z-index:5;pointer-events:none}
 </style></head><body>
 <div id="szin"><div id="keret">
-<canvas id="cv"></canvas>
+<canvas id="cv"></canvas><canvas id="szv"></canvas>
 <div class="ov" id="nyit"><img class="logo" src="brand/logo-kaleidoscope.png" alt=""><div class="cim" data-t="cim">KALEIDOSCOPE</div><div class="kerd" data-t="kerd">Have you ever seen music?</div><div class="ind" id="ind" data-t="ind">Tap to begin ♪</div><div class="nev" data-t="nev">© András Bánky</div></div>
 <div class="ov" id="zar"><img class="logo" src="brand/logo-kaleidoscope.png" alt=""><div class="cim" data-t="cim">KALEIDOSCOPE</div><div class="zar2" data-t="zar2">Music, as you’ve never seen it.</div>
 <a class="gomb" href="https://bandras1949.github.io/kaleidoszkop/" target="_blank" rel="noopener" data-t="gomb">Try it free</a>
 <div class="link">bandras1949.github.io/kaleidoszkop</div><div class="ujra" id="ujra" data-t="ujra">again</div><div class="nev" data-t="nev">© András Bánky</div></div>
-<div id="info">promó v18 · gyorsabb forgás az 1–3. zenénél</div>
+<div id="info">promó v20</div>
 </div></div>
 <script>window.__zenePanel = false;
 // nyelv: alapból angol (a videó angol lesz); ?lang=hu → magyar
@@ -46,10 +42,12 @@ window.LANG = new URLSearchParams(location.search).get('lang') === 'hu' ? 'hu' :
 const SZOV = { hu: { cim: 'KALEIDOSZKÓP', kerd: 'Láttál már zenét?', ind: 'Koppints az indításhoz ♪', zar2: 'A zene, ahogy még nem láttad.', gomb: 'Próbáld ki ingyen', ujra: 'újra', nev: '© Bánky András' } };
 addEventListener('DOMContentLoaded', () => { if (SZOV[LANG]) document.querySelectorAll('[data-t]').forEach(e => { e.textContent = SZOV[LANG][e.dataset.t]; }); document.documentElement.lang = LANG; if (LANG === 'hu') document.querySelectorAll('img.logo').forEach(i => i.src = 'brand/logo-kaleidoszkop.png'); });
 </script>
-<script src="zene-szinkron.js?v=8"></script>
-<script src="orveny.js?v=11"></script>
+<script src="zene-szinkron.js?v=10"></script>
+<script src="torusz.js?v=6"></script><script src="torusz2.js?v=7"></script><script src="torusz3.js?v=6"></script><script src="torusz4.js?v=6"></script>
+<script src="szovet.js?v=10"></script>
+<script src="orveny.js?v=32"></script>
 <script>
-// KALEIDOSZKÓP PROMÓ – 5 mp nyitás, 6 zene × 30 mp (6 motívum × 5 mp), majd álló zárókép.
+// KALEIDOSZKÓP PROMÓ v19 – 5 mp nyitás, 6 zene × 30 mp (ÖRVÉNYES, szivárvány, élő szövés, SPIRÁLOS formák), majd álló zárókép.
 // A zenék felváltva lassúak és gyorsak; a forgás a zenére gyorsul-lassul (zene-szinkron.js).
 const ZENE = [['Z-11', 0], ['G-01', 62.35], ['Z-12', 63.92], ['G-03', 2.55], ['Z-13', 75.74], ['G-04', 193.1]];
 // Z-11 a dal elejéről; a középsők zenei szakasz elején, ütemre lépnek be; a G-04 utolsó 30 mp-e → a dal valódi befejezése a zárókép előtt
@@ -72,10 +70,21 @@ const cv = document.getElementById('cv'), info = document.getElementById('info')
 let t0 = null, now = () => (t0 == null ? 0 : (performance.now() - t0) / 1000);
 window.PROMO_T = null;   // felvételhez: kívülről megadott idő
 const ido = () => window.PROMO_T != null ? window.PROMO_T : now();
+// ÜZEMMÓDOK zenénként: 1 ÖRVÉNYES · 2 SZIVÁRVÁNY · 3 ÉLŐ SZÖVÉS · 4 ÖRVÉNYES · 5 SPIRÁLOS formák · 6 szivárvány + szövés
+const TERV = ['orv', 'sziv', 'szov', 'orv', 'spir', 'vege'];
+const FORMAK = ['szív', 'mérőszalag', 'holdkarok', 'fánk'];
+const resz = t => { const i = zeneIdx(t), u = Math.max(0, t - NYIT - i * DARAB); let r = TERV[i]; if (t < NYIT) r = 'orv'; if (r === 'vege') r = u < 15 ? 'sziv' : 'szov'; return { r, u }; };
+// a promó színei: a szivárvány egy-egy szín árnyalataiból, a szövés élénk és lila–zöld színekből
+window.__promoSziv = [['#D9C2F0', '#6A2C9E', '#A271D6', '#3E1563'], ['#C8EBC4', '#2E7D32', '#74C26E', '#1B4D20'], ['#BFE3F5', '#14608F', '#5FB0DE', '#0B3550'], ['#F7D9B5', '#A3541A', '#E59A4E', '#5E2E0C']];
+window.__promoSzov = [['#FF7A00', '#0096FF', '#FFD400', '#E0157A'], ['#CDB4EE', '#2F6B34', '#9B6BD0', '#9ED99A']];
 const host = () => {
-  const t = ido(), k = Math.max(0, Math.min(SLOTS.length - 1, Math.floor(Math.max(0, t - NYIT) / SLOT))), s = SLOTS[k];
-  return { mode: 'orv', paused: false, ad: false, P: { 'tárgy1': s.a, 'tárgy2': s.b, 'örvényTárgyakSzáma': s.n, 'tárgy1Szín': 'véletlen', 'tárgy2Szín': 'véletlen', 'örvényHáttér': 'váltakozó', 'párosításMp': 60, 'lélegzés': 60, 'lélegzésMp': 10 } };
+  const t = ido(), { r, u } = resz(t), k = Math.max(0, Math.min(SLOTS.length - 1, Math.floor(Math.max(0, t - NYIT) / SLOT))), s = SLOTS[k];
+  if (r === 'sziv') return { mode: 'spir', paused: false, ad: false, P: { 'spirálForma': 'szivárvány', 'holdSebesség': 4 } };
+  if (r === 'spir') return { mode: 'spir', paused: false, ad: false, P: { 'spirálForma': FORMAK[Math.min(FORMAK.length - 1, Math.floor(u / 7.5))] } };
+  if (r === 'szov') return { mode: 'szov', paused: false, ad: false, P: {} };
+  return { mode: 'orv', paused: false, ad: false, P: { 'tárgy1': s.a, 'tárgy2': s.b, 'örvényTárgyakSzáma': s.n, 'tárgy1Szín': 'véletlen', 'tárgy2Szín': 'véletlen', 'örvényHáttér': k === 0 ? 'fekete' : 'váltakozó', 'párosításMp': 60, 'lélegzés': 60, 'lélegzésMp': 10 } };   // az első kép fekete hátterű (a piros nem volt szép)
 };
+const szv = new Szovet(document.getElementById('szv'), () => ({ want: resz(ido()).r === 'szov' && ido() < VEGE, paused: false, P: { 'szövetVáltásMp': 15 } }));
 const orv = new Orveny(cv, host);
 // zenelejátszás: két lejátszó felváltva, 1 mp-es áttűnéssel
 const A = [new Audio(), new Audio()]; A.forEach(a => { a.preload = 'auto'; a.setAttribute('playsinline', ''); });
@@ -102,7 +111,7 @@ function tick() {
     const zar = t >= VEGE; document.getElementById('zar').classList.toggle('on', zar);
     if (zar && !tick.halk && window.PROMO_T == null) { tick.halk = true; vegsoHalkitas(); }
     const k = Math.min(SLOTS.length - 1, Math.floor(Math.max(0, t - NYIT) / SLOT)), s = SLOTS[k], m = Math.floor(t / 60), ss = Math.floor(t % 60);
-    if (!window.__felvetel) info.textContent = `${m}:${String(ss).padStart(2, '0')} · ${t < ZK ? '–' : ZENE[zeneIdx(t)][0]} · ${s.n === '1' ? s.a : s.a + ' + ' + s.b}`;
+    if (!window.__felvetel) info.textContent = `${m}:${String(ss).padStart(2, '0')} · ${t < ZK ? '–' : ZENE[zeneIdx(t)][0]} · ${resz(t).r === 'orv' ? (s.n === '1' ? s.a : s.a + ' + ' + s.b) : resz(t).r}`;
   }
   requestAnimationFrame(tick);
 }

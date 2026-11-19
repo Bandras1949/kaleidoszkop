@@ -27,8 +27,12 @@
       const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * 0.064) + 'px'; if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
       const nyito = document.querySelector('img[src*="logo-nyitokep"]'), tb = stage.querySelector('div[style*="translateY("]');
       const takar = (nyito && lathato(nyito)) || !!document.querySelector('.fpad') || !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]') || (tb && tb.parentElement && +getComputedStyle(tb.parentElement).opacity > 0.05);
-      const spirOn = +getComputedStyle(cv).opacity > 0.5 && (orv.kind === 'spir' || orv.kind === 'hold');
-      const tilt = spirOn && (orv.kind === 'hold' || LOGO_NELKUL.includes(orv.spir.curForm));
+      // csak ott, ahol van középpont, ami körül forog a kép: ÖRVÉNYES (egy közös középpontú tárgyak), SPIRÁLOS (síkbeli formák), SZÖVET.
+      // Nincs logó: TÜKRÖS (nincs közös középpont), sokkorongos tárgyak (X-49…), térbeli spirálformák, holdak.
+      const orvOn = +getComputedStyle(cv).opacity > 0.5, sz = stage.querySelector('canvas[data-szovet]'), szOn = !!sz && +getComputedStyle(sz).opacity > 0.5;
+      const sokk = orv.kind === 'orv' && orv.cfg && (DYN[orv.cfg.n1] || DYN[orv.cfg.n2]);
+      const jo = szOn || (orvOn && (orv.kind === 'orv' ? !sokk : orv.kind === 'spir' && !LOGO_NELKUL.includes(orv.spir.curForm)));
+      const tilt = !jo;
       const o = takar || tilt ? '0' : '1'; if (d.style.opacity !== o) d.style.opacity = o;
       // a korong színe a kép körülötte uralkodó színét veszi fel (így nem „bogár” a közepén); ha nem mérhető, halványszürke
       if (o === '1' && ++d._n % 3 === 0) {

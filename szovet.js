@@ -42,7 +42,7 @@
 
   class Szovet {
     constructor(cv, host) {
-      this.cv = cv; this.host = host; this.op = 0; this.t = 0; this.last = performance.now();
+      this.cv = cv; this.host = host; this.op = 0; try { cv.dataset.szovet = '1'; } catch (e) {}   // a középső logó így ismeri fel this.t = 0; this.last = performance.now();
       this.src = document.createElement('canvas'); this.lanc = document.createElement('canvas');
       this.shV = arnyek(true); this.shH = arnyek(false);
       this.snap = null; this.snapA = 0; this.cloth = null; this.drawnOnce = false;
