@@ -24,13 +24,16 @@
     const lathato = el => { for (let n = el; n && n !== document.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity < 0.05) return false; } return true; };
     setInterval(() => {
       if (!d.isConnected) stage.appendChild(d);
-      const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * 0.064) + 'px'; if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
+      // a ténylegesen kirajzolt tárgyak (egytárgyas módban a második nem látszik, nem számít)
+      const c0 = orv.kind === 'orv' && orv.cfg, P0 = orv.P || {}, tsz = String(P0['örvényTárgyakSzáma'] ?? '2'), ket = tsz === '2' || (tsz === 'véletlen' && !orv.pairOne);
+      const lat = c0 ? (ket ? [c0.n1, c0.n2] : [c0.n1]) : [], hat = window.__logoX50 && lat.some(n => DYN[n] && DYN[n].n === 6);
+      const M = Math.min(stage.clientWidth, stage.clientHeight), m = Math.round(M * (hat ? 0.11 : 0.064)) + 'px';   /* a hatkorongosok nagy középső korongján nagyobb logó */ if (d.style.width !== m) { d.style.width = m; d.style.height = m; }
       const nyito = document.querySelector('img[src*="logo-nyitokep"]'), tb = stage.querySelector('div[style*="translateY("]');
       const takar = (nyito && lathato(nyito)) || !!document.querySelector('.fpad') || !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]') || (tb && tb.parentElement && +getComputedStyle(tb.parentElement).opacity > 0.05);
       // csak ott, ahol van középpont, ami körül forog a kép: ÖRVÉNYES (egy közös középpontú tárgyak), SPIRÁLOS (síkbeli formák), SZÖVET.
       // Nincs logó: TÜKRÖS (nincs közös középpont), sokkorongos tárgyak (X-49…), térbeli spirálformák, holdak.
       const orvOn = +getComputedStyle(cv).opacity > 0.5, sz = stage.querySelector('canvas[data-szovet]'), szOn = !!sz && +getComputedStyle(sz).opacity > 0.5;
-      const dk = n => DYN[n] && !(DYN[n].n === 6 && window.__logoX50);   /* a K-appban a hatkorongos tárgyak (X-50…X-53) nem forgó középső korongján van logó */ const sokk = orv.kind === 'orv' && orv.cfg && (dk(orv.cfg.n1) || dk(orv.cfg.n2));
+      const dk = n => DYN[n] && !(DYN[n].n === 6 && window.__logoX50);   /* a K-appban a hatkorongos tárgyak (X-50…X-53) nem forgó középső korongján van logó */ const sokk = lat.some(dk);
       const jo = szOn || (orvOn && (orv.kind === 'orv' ? !sokk : orv.kind === 'spir' && !LOGO_NELKUL.includes(orv.spir.curForm)));
       const tilt = !jo;
       const o = takar || tilt ? '0' : '1'; if (d.style.opacity !== o) d.style.opacity = o;
