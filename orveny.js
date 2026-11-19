@@ -30,7 +30,7 @@
       // csak ott, ahol van középpont, ami körül forog a kép: ÖRVÉNYES (egy közös középpontú tárgyak), SPIRÁLOS (síkbeli formák), SZÖVET.
       // Nincs logó: TÜKRÖS (nincs közös középpont), sokkorongos tárgyak (X-49…), térbeli spirálformák, holdak.
       const orvOn = +getComputedStyle(cv).opacity > 0.5, sz = stage.querySelector('canvas[data-szovet]'), szOn = !!sz && +getComputedStyle(sz).opacity > 0.5;
-      const sokk = orv.kind === 'orv' && orv.cfg && (DYN[orv.cfg.n1] || DYN[orv.cfg.n2]);
+      const dk = n => DYN[n] && !(n === 'X-50' && window.__logoX50);   /* a K-appban az X-50 nem forgó középső korongján van logó */ const sokk = orv.kind === 'orv' && orv.cfg && (dk(orv.cfg.n1) || dk(orv.cfg.n2));
       const jo = szOn || (orvOn && (orv.kind === 'orv' ? !sokk : orv.kind === 'spir' && !LOGO_NELKUL.includes(orv.spir.curForm)));
       const tilt = !jo;
       const o = takar || tilt ? '0' : '1'; if (d.style.opacity !== o) d.style.opacity = o;
