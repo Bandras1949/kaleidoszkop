@@ -64,7 +64,7 @@
   }
   // gyűrűszélesség-sor: a gyűrűk szélessége ezt a sort ismétli (minden cikkelyben ugyanígy, így a minta megmarad)
   const SZ_SZEL = [[1], [1], [0.55, 1.45], [0.6, 0.6, 1.8], [1.5, 0.75, 0.75], [0.4, 1.6]];
-  function szivJelenet(elozo) { return { minta: pick(SZ_MINTAK.filter(s => !elozo || s !== elozo.minta)), H: szivHarmonia(), w: pick(SZ_SZEL), ir: Math.random() < 0.5 ? -1 : 1, hossz: 8 + Math.random() * 2 }; }
+  function szivJelenet(elozo) { return { minta: pick(SZ_MINTAK.filter(s => !elozo || s !== elozo.minta)), H: (window.__promoSziv && pick(window.__promoSziv).slice()) || szivHarmonia(),   /* __promoSziv: a promóvideó rögzített színei */ w: pick(SZ_SZEL), ir: Math.random() < 0.5 ? -1 : 1, hossz: 8 + Math.random() * 2 }; }
   const szKever = (a, b, k) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',') + ')'; };
   function szivRajzol(x, J, cx, cy, Rx, t) {
     const H = J.H, m = H.length, mod = (a, b) => ((a % b) + b) % b, cella = (r0, r1, a0, a1, c) => { x.beginPath(); x.arc(cx, cy, r1, a0, a1); x.arc(cx, cy, Math.max(0, r0), a1, a0, true); x.closePath(); x.fillStyle = c; x.fill(); };

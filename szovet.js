@@ -57,6 +57,7 @@
       const fa = NAMES.indexOf(P['szövetLánc']), fb = NAMES.indexOf(P['szövetVetülék']);
       let pal, W, F;
       if (fa >= 0 && fb >= 0) pal = [COLORS[fa], COLORS[fb]];   // a felhasználó két megnevezett színe
+      else if (window.__promoSzov) pal = pick(window.__promoSzov).slice();   // a promóvideó rögzített színei
       else pal = harmonia(fa >= 0 ? hueOf(COLORS[fa]) : fb >= 0 ? hueOf(COLORS[fb]) : null);
       if (fajta === 'kétszínű') {
         if (pal.length === 2) { W = [{ c: 0, w: 1 }]; F = [{ c: 1, w: 1 }]; }
