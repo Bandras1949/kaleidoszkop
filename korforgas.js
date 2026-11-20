@@ -54,7 +54,7 @@
       const want = new Set(LOOPS(S));
       for (const n of Object.keys(H.loops)) if (!want.has(n)) H.stop(n);
       for (const n of want) if (!H.loops[n]) H.start(n);
-      H.level('eső', RAIN(S) * (S < 60 ? 0.45 : 1));   // őszi szitálás: csendesebb H.level('zápor', SHOW(S));
+      H.level('eső', RAIN(S) * (S < 60 ? 0.45 : 1));   /* őszi szitálás: csendesebb */ H.level('zápor', SHOW(S));
       const ms = NAMES[((S + 2) % 240) / 60 | 0];
       H.musicSeason(ms, SEG[ms][0], SEG[ms][1]);
       const busy = ['eső', 'zápor', 'madárdal', 'méhek', 'csöpögés'].some(n => want.has(n)) || performance.now() - (this.lastEv || 0) < 3000;

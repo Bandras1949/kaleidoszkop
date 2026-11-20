@@ -5,6 +5,14 @@
   const SZINEK = ['háttérrel azonos, késleltetve', 'háttérrel azonos, késleltetve', 'sárga', 'fehér', 'piros', 'kék', 'zöld', 'lila', 'narancs'];
   const FEM = ['ezüst', 'arany', 'bronz'], is3D = n => /3D$/.test(n) || n === 'X-18' || n === 'X-19';
   const pick = a => a[Math.floor(Math.random() * a.length)];
+  // ZSÁKBÓL HÚZÁS: minden elem véletlen sorrendben egyszer kerül sorra, aztán a zsák újratöltődik (egyenletes, mégis véletlen).
+  // ok(x): csak az olyan elemet húzzuk, amelyik most használható (pl. a képe már betöltődött; nem ugyanaz, mint az előző).
+  const ZSAK = {};
+  const huz = (nev, lista, ok) => {
+    let z = ZSAK[nev]; if (!z || !z.length) { z = ZSAK[nev] = lista.slice(); for (let i = z.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [z[i], z[j]] = [z[j], z[i]]; } }
+    let i = ok ? z.findIndex(ok) : 0; if (i < 0) { const jo = lista.filter(ok); if (jo.length) return pick(jo); i = 0; }
+    return z.splice(i, 1)[0];
+  };
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   const SEQ0 = ['mir', 'mir', 'orv', 'szov', 'szov', 'spir', 'spir'], SEQ_GY = ['mir', 'orv', 'szov', 'spir'],   /* a HOLDAS a SPIRÁLOS formái közé került */ OV = ['orv', 'spir', 'hold'];   // SEQ_GY: gyors kör (window.__altGyors), üzemmódonként egy minta, 10 mp, ÖRVÉNYES 2 × 10 mp   // VÁLTAKOZÓ (2026-11-09): TÜKRÖS (Cs + AD) → ÖRVÉNYES ×2 → SZÖVET ×2 → HOLDAS ×2 → SPIRÁLOS ×2
@@ -330,7 +338,7 @@
       const t1 = P['tárgy1'] ?? 'véletlen', t2 = P['tárgy2'] ?? 'véletlen';
       this.pairOne = Math.random() < 0.5;   // „véletlen” tárgyszám: páronként sorsolt, egy vagy két tárgy
       const ready = TARGYAK.filter(n => this.grays[n]), POOL = ready.length ? ready : TARGYAK;
-      const n1 = t1 === 'véletlen' ? pick(POOL) : t1;
+      const n1 = t1 === 'véletlen' ? huz('tárgy', TARGYAK, n => !!this.grays[n] && n !== (this.cfg && this.cfg.n1)) : t1;   // zsákból: a betöltetlen tárgy a zsákban vár a sorára
       const n2 = t2 === 'véletlen' ? (Math.random() < 0.5 ? n1 : pick(POOL)) : t2;
       const z1 = P['tárgy1Szín'] ?? 'véletlen', z2 = P['tárgy2Szín'] ?? 'másikkal azonos', hb = P['örvényHáttér'] ?? 'váltakozó';
       this.bgToggle = !this.bgToggle;
@@ -365,11 +373,11 @@
       let kind = null;
       const GY = !!window.__altGyors, SEQ = GY ? SEQ_GY : SEQ0;
       if (st.mode === 'alt') {
-        if (this.ai == null) { this.ai = 0; this.segLeft = this.segDur(SEQ[0], pairSec); }
+        if (this.ai == null) { this.ai = GY ? SEQ.indexOf(huz('üzemmód', SEQ)) : 0; this.kor = 0; this.segLeft = this.segDur(SEQ[this.ai], pairSec); st.setSeg && GY && st.setSeg(SEQ[this.ai]); }
         this.segLeft -= dt;
-        if (this.segLeft <= 0 || this.jump) { this.jump = false; const s0 = SEQ[this.ai]; this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai]; this.segLeft = this.segDur(s, pairSec); if (GY) { if (s === 'spir' && this.spir) this.spir.fT = 0; if (s === 'orv') { this.newPair(P); this.pairLeft = 10; } } st.setSeg && st.setSeg(s);
+        if (this.segLeft <= 0 || this.jump) { this.jump = false; const s0 = SEQ[this.ai]; if (GY) { this.ai = SEQ.indexOf(huz('üzemmód', SEQ, x => x !== s0)); this.kor = (this.kor || 0) + 1; } else this.ai = (this.ai + 1) % SEQ.length; const s = SEQ[this.ai];   /* gyors körben az üzemmód zsákból, véletlenül */ this.segLeft = this.segDur(s, pairSec); if (GY) { if (s === 'spir' && this.spir) { this.spir.fT = 0; this.spir.form = huz('forma', FORMS, f => f !== this.spir.form); this.spir.nextForm = null; this.spir.trU = null; } if (s === 'orv') { this.newPair(P); this.pairLeft = 10; } } st.setSeg && st.setSeg(s);
           if (s === s0 && OV.includes(s) && this.op > 0.5) { this.snapshot(); if (s === 'spir') this.spir.shuffle(P); else this.hold.shuffle(P); }   // ugyanaz az üzemmód: második változat
-          if (this.ai === 0 && st.onCycle) st.onCycle(); }   // egy teljes kör lement
+          if ((GY ? this.kor % SEQ.length === 0 : this.ai === 0) && st.onCycle) st.onCycle(); }   // egy teljes kör lement
         const s = SEQ[this.ai]; kind = OV.includes(s) ? s : null;
       } else { this.ai = null; kind = OV.includes(st.mode) ? st.mode : null; }
       if (kind && this.kind && kind !== this.kind && this.op > 0.02) this.snapshot();
