@@ -40,7 +40,7 @@ h1{margin:0;font:600 clamp(56px,19vw,112px)/1 Cinzel,Georgia,serif;letter-spacin
   <div class="sub">fragments before sleep</div>
   <div class="gift">A GIFT FROM THE VISIONS SERIES</div>
 </header>
-<a class="open" href="https://bandras1949.github.io/kaleidoszkop/alom.html?lang=en">Open DREAM →</a>
+<a class="open" href="https://bandras1949.github.io/kaleidoszkop/alom.html?lang=en" data-page="alom.html">Open DREAM →</a>
 <nav class="apps" aria-label="Apps by András Bánky">
   <h2>APPS BY ANDRÁS BÁNKY</h2>
   <div class="row">
@@ -49,5 +49,24 @@ h1{margin:0;font:600 clamp(56px,19vw,112px)/1 Cinzel,Georgia,serif;letter-spacin
   </div>
 </nav>
 <div class="copy">© András Bánky</div>
+<script>
+/* NYELV: magyar telefonon magyarul, máshol angolul (a Látomásokkal azonos szabály: ?lang=, a mentett appnyelv, a böngésző nyelve) */
+(function () {
+  var l = null; try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'hu' || q === 'en') l = q; } catch (e) {}
+  if (!l) { try { var m = localStorage.getItem('appok-nyelv'); if (m === 'hu' || m === 'en') l = m; } catch (e) {} }
+  if (!l) l = (navigator.language || 'en').toLowerCase().indexOf('hu') === 0 ? 'hu' : 'en';
+  var o = document.querySelector('a.open'); o.href = 'https://bandras1949.github.io/kaleidoszkop/' + o.dataset.page + '?lang=' + l;
+  if (l !== 'hu') return;
+  document.documentElement.lang = 'hu'; document.title = 'ÁLOM – ajándék a Látomások sorozatból · © Bánky András';
+  var t = function (sel, txt) { var e = document.querySelector(sel); if (e) e.textContent = txt; };
+  t('h1', 'ÁLOM'); t('.sub', 'foszlányok elalvás előtt'); t('.gift', 'AJÁNDÉK A LÁTOMÁSOK SOROZATBÓL');
+  t('a.open', 'ÁLOM megnyitása →'); t('.apps h2', 'BÁNKY ANDRÁS ALKALMAZÁSAI');
+  var p = document.querySelectorAll('.pill');
+  p[0].querySelector('b').textContent = 'KALEIDOSZKÓP'; p[0].querySelector('i').textContent = '· ingyen kipróbálható';
+  p[1].querySelector('i').textContent = '· próbaváltozat';
+  var h = document.querySelector('h1'); if (h.textContent.length > 6) h.style.fontSize = 'clamp(38px,11.5vw,96px)';   /* a hosszú magyar cím is férjen el */
+  t('.copy', '© Bánky András'); document.querySelector('.apps').setAttribute('aria-label', 'Bánky András alkalmazásai');
+})();
+</script>
 </body>
 </html>
