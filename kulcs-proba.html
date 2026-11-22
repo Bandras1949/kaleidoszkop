@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kulcs-próba – Kaleidoszkóp</title>
+<style>
+  :root { --bg:#14121a; --lap:#1f1c28; --szel:#3a3550; --szoveg:#eeeaf6; --halvany:#a49fb5;
+          --jo:#3ecf8e; --rossz:#ff6b6b; --figy:#ffc857; --gomb:#8b5cf6; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--szoveg);
+         font:16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:480px; margin:0 auto; padding:20px 16px 40px; }
+  h1 { font-size:22px; margin:4px 0 2px; }
+  .verzio { color:var(--halvany); font-size:13px; margin-bottom:18px; }
+  .lap { background:var(--lap); border:1px solid var(--szel); border-radius:14px; padding:16px; margin-bottom:14px; }
+  label { display:block; font-size:14px; color:var(--halvany); margin-bottom:6px; }
+  input { width:100%; padding:12px; font-size:17px; letter-spacing:.5px; border-radius:10px;
+          border:1px solid var(--szel); background:#0f0d14; color:var(--szoveg); font-family:ui-monospace, Menlo, Consolas, monospace; }
+  .gombok { display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; }
+  button { padding:14px; font-size:17px; border:0; border-radius:10px; cursor:pointer; color:#fff; background:var(--gomb); }
+  button.masodik { background:#2d2840; border:1px solid var(--szel); }
+  button.veszely { background:#4a2230; border:1px solid #7a3446; }
+  button:disabled { opacity:.5; cursor:wait; }
+  #allapot { font-size:18px; font-weight:600; }
+  .jo { color:var(--jo); } .rossz { color:var(--rossz); } .figy { color:var(--figy); }
+  .adat { color:var(--halvany); font-size:14px; margin-top:6px; }
+  details { margin-top:10px; color:var(--halvany); font-size:13px; }
+  pre { white-space:pre-wrap; word-break:break-all; background:#0f0d14; padding:10px; border-radius:8px; }
+  .megj { color:var(--halvany); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kulcs-próba</h1>
+  <div class="verzio">kulcs-próba v1 · 2026-11-22 · TESZTMÓD – valódi pénz nem mozdul</div>
+
+  <div class="lap">
+    <label for="kulcs">Licenckulcs (a vásárlás után e-mailben érkezik)</label>
+    <input id="kulcs" autocomplete="off" autocapitalize="characters" spellcheck="false"
+           placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
+    <div class="gombok">
+      <button id="bAktival">Aktiválás ezen a telefonon</button>
+      <button id="bEllenoriz" class="masodik">Ellenőrzés</button>
+      <button id="bLevalaszt" class="veszely">Kulcs leválasztása erről a telefonról</button>
+    </div>
+  </div>
+
+  <div class="lap">
+    <div id="allapot">Még nincs aktiválva ezen a telefonon.</div>
+    <div class="adat" id="reszlet"></div>
+    <details>
+      <summary>Technikai részletek</summary>
+      <pre id="nyers">–</pre>
+    </details>
+  </div>
+
+  <p class="megj">Ez csak próbaoldal. A feloldás a telefonon, ebben a böngészőben tárolódik.
+     Másik böngészőben vagy privát ablakban újra aktiválni kell.</p>
+</main>
+
+<script>
+(function () {
+  var CIM = 'https://www.brillidea.hu/wp-json/brillidea/v1/licenc';
+  var TAR = 'brl_kulcsproba_v1';
+
+  var el = function (id) { return document.getElementById(id); };
+  var mezo = el('kulcs');
+
+  function betolt() {
+    try { return JSON.parse(localStorage.getItem(TAR)) || {}; } catch (e) { return {}; }
+  }
+  function ment(adat) {
+    try { localStorage.setItem(TAR, JSON.stringify(adat)); } catch (e) {}
+  }
+
+  // Ennek a telefonnak a saját neve – egyszer jön létre, utána megmarad
+  var tarolt = betolt();
+  if (!tarolt.eszkoz) {
+    tarolt.eszkoz = 'telefon-' + Math.random().toString(36).slice(2, 8);
+    ment(tarolt);
+  }
+  if (tarolt.kulcs) { mezo.value = tarolt.kulcs; }
+
+  var SZOVEG = {
+    rendben: 'Rendben.',
+    nem_aktiv: 'A kulcs ezen a telefonon nincs aktiválva.',
+    limit_elerve: 'Ez a kulcs már 3 eszközön aktív. Egy régi eszközről előbb válaszd le, vagy írj nekünk.',
+    ismeretlen_kulcs: 'Ilyen kulcs nincs. Nézd meg, pontosan másoltad-e ki az e-mailből.',
+    hibas_kulcs_formatum: 'A kulcs formája nem jó. Csak betűk, számok és kötőjelek lehetnek benne.',
+    mar_levalasztva: 'Ez a telefon már le volt választva.',
+    visszavont_vagy_lejart: 'Ezt a kulcsot visszavonták (például visszatérítés miatt).',
+    tul_sok_keres: 'Túl sok próbálkozás. Várj 10 percet, és próbáld újra.',
+    creem_nem_elerheto: 'A fizetési szolgáltató most nem érhető el. Próbáld újra pár perc múlva.',
+    szerver_beallitasi_hiba: 'Szerverhiba (beállítás). Szólj Andrásnak.',
+    hianyzo_peldany: 'Ezen a telefonon még nem volt aktiválás.',
+    ismeretlen_muvelet: 'Ismeretlen művelet.',
+    hibas_keres: 'Hibás kérés.',
+    ismeretlen_hiba: 'Ismeretlen hiba.'
+  };
+
+  function kiir(szoveg, osztaly, reszlet) {
+    var a = el('allapot');
+    a.textContent = szoveg;
+    a.className = osztaly || '';
+    el('reszlet').textContent = reszlet || '';
+  }
+
+  function gombok(tilt) {
+    ['bAktival', 'bEllenoriz', 'bLevalaszt'].forEach(function (id) { el(id).disabled = tilt; });
+  }
+
+  function hiv(parameterek) {
+    gombok(true);
+    kiir('Kapcsolódás…', 'figy');
+    return fetch(CIM, { method: 'POST', body: new URLSearchParams(parameterek), cache: 'no-store' })
+      .then(function (r) { return r.json().catch(function () { return { ok: false, uzenet: 'ismeretlen_hiba' }; }); })
+      .then(function (j) { el('nyers').textContent = JSON.stringify(j, null, 2); return j; })
+      .catch(function () {
+        var j = { ok: false, uzenet: 'nincs_kapcsolat' };
+        el('nyers').textContent = 'Nincs kapcsolat a szerverrel.';
+        return j;
+      })
+      .finally(function () { gombok(false); });
+  }
+
+  function szamlalo(j) {
+    return (j.aktivalt != null && j.limit != null) ? ('Aktív eszközök: ' + j.aktivalt + ' / ' + j.limit) : '';
+  }
+
+  function kulcs() {
+    return mezo.value.trim().replace(/\s+/g, '');
+  }
+
+  el('bAktival').onclick = function () {
+    var k = kulcs();
+    if (!k) { kiir('Előbb írd vagy másold be a kulcsot.', 'figy'); return; }
+    var t = betolt();
+    if (t.peldany && t.kulcs === k) {
+      kiir('Ez a telefon már aktiválva van ezzel a kulccsal.', 'jo', 'Ha meg akarod nézni, nyomd meg az Ellenőrzést.');
+      return;
+    }
+    hiv({ muvelet: 'aktival', kulcs: k, eszkoz: t.eszkoz }).then(function (j) {
+      if (j.ok) {
+        t.kulcs = k; t.peldany = j.peldany; t.mikor = new Date().toISOString();
+        ment(t);
+        kiir('✓ Feloldva ezen a telefonon!', 'jo', szamlalo(j));
+      } else {
+        kiir(SZOVEG[j.uzenet] || ('Nincs kapcsolat a szerverrel. Van internet?'), 'rossz');
+      }
+    });
+  };
+
+  el('bEllenoriz').onclick = function () {
+    var t = betolt();
+    if (!t.peldany) { kiir(SZOVEG.hianyzo_peldany, 'figy'); return; }
+    hiv({ muvelet: 'ellenoriz', kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
+      if (j.ok) { kiir('✓ A kulcs érvényes, ez a telefon aktív.', 'jo', szamlalo(j)); }
+      else { kiir(SZOVEG[j.uzenet] || 'Nincs kapcsolat a szerverrel.', 'rossz', szamlalo(j)); }
+    });
+  };
+
+  el('bLevalaszt').onclick = function () {
+    var t = betolt();
+    if (!t.peldany) { kiir(SZOVEG.hianyzo_peldany, 'figy'); return; }
+    hiv({ muvelet: 'levalaszt', kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
+      if (j.ok || j.uzenet === 'mar_levalasztva') {
+        delete t.peldany; delete t.mikor;
+        ment(t);
+        kiir('A kulcs leválasztva erről a telefonról.', 'jo',
+             (szamlalo(j) ? szamlalo(j) + ' · ' : '') + 'Most egy másik eszközön aktiválhatod.');
+      } else {
+        kiir(SZOVEG[j.uzenet] || 'Nincs kapcsolat a szerverrel.', 'rossz');
+      }
+    });
+  };
+
+  // Induláskor: ha van tárolt aktiválás, mutassuk
+  var t0 = betolt();
+  if (t0.peldany) {
+    kiir('✓ Ez a telefon aktiválva van.', 'jo', 'Aktiválva: ' + new Date(t0.mikor).toLocaleString('hu-HU'));
+  }
+})();
+</script>
+</body>
+</html>
