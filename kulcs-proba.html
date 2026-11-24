@@ -29,15 +29,22 @@
   details { margin-top:10px; color:var(--halvany); font-size:13px; }
   pre { white-space:pre-wrap; word-break:break-all; background:#0f0d14; padding:10px; border-radius:8px; }
   .megj { color:var(--halvany); font-size:13px; }
+  a.vasarlas { display:block; text-align:center; padding:14px; font-size:17px; border-radius:10px; color:#fff; background:#3ecf8e; text-decoration:none; font-weight:600; }
 </style>
 </head>
 <body>
 <main>
   <h1>Kulcs-próba</h1>
-  <div class="verzio">kulcs-próba v1 · 2026-11-22 · TESZTMÓD – valódi pénz nem mozdul</div>
+  <div class="verzio">kulcs-próba v2 · 2026-11-24 · TESZTMÓD – valódi pénz nem mozdul</div>
 
   <div class="lap">
-    <label for="kulcs">Licenckulcs (a vásárlás után e-mailben érkezik)</label>
+    <a class="vasarlas" href="https://www.creem.io/test/payment/prod_13WlWpu637CYusW5EIF3e5">Megveszem – 5 $ (teszt)</a>
+    <div class="megj" style="margin-top:8px">Fizetés után ide jutsz vissza, és a kulcs magától aktiválódik.
+      A terhelésed CREEM.IO néven jelenik meg.</div>
+  </div>
+
+  <div class="lap">
+    <label for="kulcs">Licenckulcs – csak ha már megvan (például új telefonhoz). Másold be, ne gépeld.</label>
     <input id="kulcs" autocomplete="off" autocapitalize="characters" spellcheck="false"
            placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
     <div class="gombok">
@@ -62,8 +69,9 @@
 
 <script>
 (function () {
-  var CIM = 'https://www.brillidea.hu/wp-json/brillidea/v1/licenc';
-  var TAR = 'brl_kulcsproba_v1';
+  var CIM = 'https://www.brillidea.hu/wp-json/brillidea/v2/licenc';
+  var APP = 'kaleidoszkop';
+  var TAR = 'brl_kulcsproba_v2';
 
   var el = function (id) { return document.getElementById(id); };
   var mezo = el('kulcs');
@@ -97,7 +105,13 @@
     hianyzo_peldany: 'Ezen a telefonon még nem volt aktiválás.',
     ismeretlen_muvelet: 'Ismeretlen művelet.',
     hibas_keres: 'Hibás kérés.',
-    ismeretlen_hiba: 'Ismeretlen hiba.'
+    ismeretlen_hiba: 'Ismeretlen hiba.',
+    masik_termek: 'Ez a kulcs egy másik Brillidea-apphoz tartozik.',
+    alairas_hibas: 'A visszatérési adatok nem hitelesek. Ha fizettél, használd az e-mailben kapott kulcsot.',
+    fizetes_nem_teljes: 'A fizetés még nem fejeződött be. Várj egy percet, és töltsd újra az oldalt.',
+    nincs_licenc: 'A fizetéshez nem találtunk kulcsot. Nézd meg az e-mailedet (a spam mappát is).',
+    hianyzo_fizetes: 'Hiányoznak a fizetés adatai.',
+    nincs_kapcsolat: 'Nincs kapcsolat a szerverrel. Van internet?'
   };
 
   function kiir(szoveg, osztaly, reszlet) {
@@ -141,7 +155,7 @@
       kiir('Ez a telefon már aktiválva van ezzel a kulccsal.', 'jo', 'Ha meg akarod nézni, nyomd meg az Ellenőrzést.');
       return;
     }
-    hiv({ muvelet: 'aktival', kulcs: k, eszkoz: t.eszkoz }).then(function (j) {
+    hiv({ muvelet: 'aktival', app: APP, kulcs: k, eszkoz: t.eszkoz }).then(function (j) {
       if (j.ok) {
         t.kulcs = k; t.peldany = j.peldany; t.mikor = new Date().toISOString();
         ment(t);
@@ -155,7 +169,7 @@
   el('bEllenoriz').onclick = function () {
     var t = betolt();
     if (!t.peldany) { kiir(SZOVEG.hianyzo_peldany, 'figy'); return; }
-    hiv({ muvelet: 'ellenoriz', kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
+    hiv({ muvelet: 'ellenoriz', app: APP, kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
       if (j.ok) { kiir('✓ A kulcs érvényes, ez a telefon aktív.', 'jo', szamlalo(j)); }
       else { kiir(SZOVEG[j.uzenet] || 'Nincs kapcsolat a szerverrel.', 'rossz', szamlalo(j)); }
     });
@@ -164,7 +178,7 @@
   el('bLevalaszt').onclick = function () {
     var t = betolt();
     if (!t.peldany) { kiir(SZOVEG.hianyzo_peldany, 'figy'); return; }
-    hiv({ muvelet: 'levalaszt', kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
+    hiv({ muvelet: 'levalaszt', app: APP, kulcs: t.kulcs, peldany: t.peldany }).then(function (j) {
       if (j.ok || j.uzenet === 'mar_levalasztva') {
         delete t.peldany; delete t.mikor;
         ment(t);
@@ -176,7 +190,26 @@
     });
   };
 
-  // Induláskor: ha van tárolt aktiválás, mutassuk
+  // Induláskor 1: visszaérkezés a fizetésből – a kulcs átvétele gépelés nélkül
+  var q = location.search;
+  if (/[?&]checkout_id=/.test(q)) {
+    var tq = betolt();
+    hiv({ muvelet: 'atvesz', app: APP, eszkoz: tq.eszkoz, visszateres: q.slice(1) }).then(function (j) {
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
+      if (j.ok) {
+        tq.kulcs = j.kulcs; tq.peldany = j.peldany; tq.mikor = new Date().toISOString();
+        ment(tq);
+        mezo.value = j.kulcs || '';
+        kiir('✓ Köszönjük a vásárlást! Feloldva ezen a telefonon.', 'jo',
+             szamlalo(j) + ' · A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.');
+      } else {
+        kiir(SZOVEG[j.uzenet] || 'Ismeretlen hiba.', 'rossz');
+      }
+    });
+    return;
+  }
+
+  // Induláskor 2: ha van tárolt aktiválás, mutassuk
   var t0 = betolt();
   if (t0.peldany) {
     kiir('✓ Ez a telefon aktiválva van.', 'jo', 'Aktiválva: ' + new Date(t0.mikor).toLocaleString('hu-HU'));
