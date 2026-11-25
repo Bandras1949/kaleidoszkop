@@ -21,7 +21,7 @@
       halozat: 'Nincs internetkapcsolat. Próbáld újra később.', tul_sok_keres: 'Túl sok próbálkozás. Várj néhány percet.', _: 'Valami nem sikerült. Írj nekünk: info@brillidea.hu' },
     tabla: { cim: 'Ingyenes vagy teljes?', fej: ['', 'Ingyenes', 'Teljes'], sor: [
       ['Üzemmódok', 'váltakozó bemutató', 'mind az 5, szabadon választva'], ['Beállítások', '–', 'több mint 50'], ['Formák és tárgyak', 'véletlenszerűen', '10 spirálforma, 31 tárgy – te választod'],
-      ['Színek és sebesség', 'rögzített', 'te állítod'], ['Zene', 'folyamatos', 'dalválasztás, ki/be'], ['Új minták', 'a bemutatóban feltűnnek', 'mind a tiéd, beállíthatók'], ['Ár', 'ingyenes', '5 $ egyszer · mindkét app: 7 $']] },
+      ['Színek és sebesség', 'rögzített', 'te állítod'], ['Zene', '1 beépített dal', '10 dal közül választható, kikapcsolható'], ['Kép mentése, megosztása', '–', 'bármelyik minta, egy koppintással'], ['Új minták', '–', 'rendszeres időközönként, külön díj nélkül'], ['Ár', 'ingyenes', '5 $ egyszer · mindkét app: 7 $']] },
     vesz: 'Megveszem →', osszeh: 'Összehasonlítás' } : {
     splash: 'Full version · Both apps together, discounted', banner: 'Like it? See the full version →',
     free: 'This is the free version. The full version unlocks every setting, and new patterns arrive at regular intervals, at no extra cost.',
@@ -38,7 +38,7 @@
       halozat: 'No internet connection. Please try again later.', tul_sok_keres: 'Too many attempts. Please wait a few minutes.', _: 'Something went wrong. Write to us: info@brillidea.hu' },
     tabla: { cim: 'Free or full?', fej: ['', 'Free', 'Full'], sor: [
       ['Modes', 'alternating demo', 'all 5, your choice'], ['Settings', '–', '50+'], ['Shapes and objects', 'at random', '10 spiral shapes, 31 objects – you choose'],
-      ['Colours and speed', 'fixed', 'yours to set'], ['Music', 'continuous', 'choose a track, on/off'], ['New patterns', 'show up in the demo', 'all yours, adjustable'], ['Price', 'free', '$5 once · both apps: $7']] },
+      ['Colours and speed', 'fixed', 'yours to set'], ['Music', '1 built-in track', 'choose from 10 tracks, can be switched off'], ['Save and share images', '–', 'any pattern, with one tap'], ['New patterns', '–', 'at regular intervals, at no extra cost'], ['Price', 'free', '$5 once · both apps: $7']] },
     vesz: 'Buy now →', osszeh: 'Compare' };
   const MANDALA = 'https://mandala.brillidea.hu/';   // közvetlenül a Mandala próbaváltozatába
   // ---- FIZETÉS: Creem, a brillidea.hu-s közvetítőn át (a Creem titkos kulcsa csak a közvetítőben van) ----
