@@ -13,7 +13,7 @@
     mi: 'Mi van a teljes változatban?', van: 'Már van kulcsod?', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, ne gépeld (az O és a 0 könnyen összekeverhető).',
     akteszk: 'aktív eszközök', csomag: 'Kaleidoszkóp + Mandala csomag', masol: 'Kulcs másolása', masolva: 'Kimásolva ✓',
     lev: 'Kulcs leválasztása erről a telefonról', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
-    folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben',
+    folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben', ikon: 'Ha az ikonról használod az appot, ott nyisd meg a 🔑 gombot, és illeszd be a kulcsot.',
     leveve: 'A kulcsot leválasztottad erről a telefonról. Most egy másik eszközön aktiválhatod.', lezarva: 'A kulcs ezen a telefonon már nem aktív, ezért visszaállt az ingyenes változat.',
     atvHiba: 'A feloldás most nem sikerült. A kulcsot e-mailben is megkaptad (nézd meg a spam mappát is) – másold be ide:',
     u: { limit_elerve: 'Ez a kulcs már 3 eszközön aktív. Egy régi eszközön előbb válaszd le, vagy írj nekünk: info@brillidea.hu', ismeretlen_kulcs: 'Ilyen kulcs nincs. Másold be pontosan az e-mailből.',
@@ -30,7 +30,7 @@
     mi: 'What do I get in the full version?', van: 'Already have a key?', akt: 'Activate on this device', masold: 'Paste it from the e-mail – don’t type it (O and 0 are easy to mix up).',
     akteszk: 'active devices', csomag: 'Kaleidoscope + Mandala bundle', masol: 'Copy key', masolva: 'Copied ✓',
     lev: 'Release the key from this device', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
-    folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK',
+    folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK', ikon: 'If you use the app from its home-screen icon, open 🔑 there and paste the key.',
     leveve: 'The key has been released from this device. You can now activate it on another one.', lezarva: 'The key is no longer active on this device, so the free version is back.',
     atvHiba: 'Unlocking didn’t work this time. You have also received the key by e-mail (check spam too) – paste it here:',
     u: { limit_elerve: 'This key is already active on 3 devices. Release it on an old one first, or write to us: info@brillidea.hu', ismeretlen_kulcs: 'No such key. Paste it exactly from the e-mail.',
@@ -152,9 +152,13 @@
          <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div>
          <details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="hb"></div>`)
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
-    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><button type="button">${T.rendben}</button></div>`);
-    const koszMutat = (cim, szoveg, kicsi, gomb) => { kosz.querySelector('b').textContent = cim || ''; kosz.querySelector('.kt').innerHTML = (szoveg ? `<p>${szoveg}</p>` : '') + (kicsi ? `<small>${kicsi}</small>` : ''); kosz.querySelector('button').style.display = gomb === false ? 'none' : ''; kosz.classList.add('on'); };
-    kosz.querySelector('button').addEventListener('click', () => kosz.classList.remove('on'));
+    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><button type="button" class="kr">${T.rendben}</button></div>`);
+    // iPhone/iPad: a kezdőképernyőről indított app külön tárolót kap – ott a kulcsot be kell illeszteni
+    const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const IKONROL = !!(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches));
+    const koszMutat = (cim, szoveg, kicsi, gomb, ikon) => { kosz.querySelector('b').textContent = cim || ''; kosz.querySelector('.kt').innerHTML = (szoveg ? `<p>${szoveg}</p>` : '') + (kicsi ? `<small>${kicsi}</small>` : ''); kosz.querySelector('.kr').style.display = gomb === false ? 'none' : ''; kosz.querySelector('.ki').style.display = ikon && IOS && !IKONROL ? '' : 'none'; kosz.classList.add('on'); };
+    kosz.querySelector('.kr').addEventListener('click', () => kosz.classList.remove('on'));
+    kosz.querySelector('.km').addEventListener('click', async e => { const b = e.currentTarget, L = lget(); if (!L) return; try { await navigator.clipboard.writeText(L.kulcs); b.textContent = T.masolva; } catch (x) { b.textContent = L.kulcs; } });
     const hb = msg => { const h = pan.querySelector('.hb'); if (h) h.textContent = msg || ''; };
     const ny = el(`<div class="ka-ny"><button type="button" data-l="hu" class="${HU ? 'on' : ''}">HU</button><button type="button" data-l="en" class="${HU ? '' : 'on'}">EN</button></div>`);
     ny.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === LANG) return; try { localStorage.setItem('appok-nyelv', b.dataset.l); } catch (e) {} location.replace(location.pathname + '?r=' + Date.now()); }));
@@ -278,7 +282,7 @@
     }
     // üzenet az újratöltés után
     const uz = sget('kaleido-uzenet');
-    if (uz === 'vasarlas') koszMutat(T.koszi, T.feloldva, T.email);
+    if (uz === 'vasarlas') koszMutat(T.koszi, T.feloldva, T.email, true, true);
     else if (uz === 'kezi') koszMutat(T.full + ' ✓', T.feloldva);
     else if (uz === 'leveve') koszMutat(T.key, T.leveve);
     else if (uz === 'lezarva') koszMutat(T.key, T.lezarva);
