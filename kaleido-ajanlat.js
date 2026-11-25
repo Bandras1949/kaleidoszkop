@@ -10,14 +10,14 @@
     free: 'Ez az ingyenes változat. A teljes változatban minden beállítás a tiéd, és rendszeres időközönként új minták jelennek meg, külön díj nélkül.',
     key: 'Licenckulcs', full: 'Teljes változat', close: 'Bezár', zene: 'Koppints: zene be ♪', mandala: 'Ízelítő: MANDALA →',
     vk: 'Kaleidoszkóp – 5 $', vcs: 'Mindkét app – 7 $', egysz: 'Egyszeri vásárlás, legfeljebb 3 eszközön. A „Mindkét app” a Mandalát is feloldja. A bankod forintban terheli, a kivonaton CREEM.IO néven jelenik meg.',
-    mi: 'Mi van a teljes változatban?', van: 'Már van kulcsod?', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, ne gépeld (az O és a 0 könnyen összekeverhető).',
+    mi: 'Mi van a teljes változatban?', van: 'Már van kulcsod?', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, vagy gépeld be a 25 karaktert – a kötőjeleket a mező magától beteszi. Figyelj: az O betű és a 0 szám könnyen összekeverhető.',
     akteszk: 'aktív eszközök', csomag: 'Kaleidoszkóp + Mandala csomag', masol: 'Kulcs másolása', masolva: 'Kimásolva ✓',
-    lev: 'Kulcs leválasztása erről a telefonról', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
+    lev: 'Kulcs leválasztása erről a telefonról', mIs: 'Mandala is? – 5 $ →', mFel: 'Mandala feloldása is →', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
     folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben', ikon: 'Ha az ikonról használod az appot, ott nyisd meg a 🔑 gombot, és illeszd be a kulcsot.',
     leveve: 'A kulcsot leválasztottad erről a telefonról. Most egy másik eszközön aktiválhatod.', lezarva: 'A kulcs ezen a telefonon már nem aktív, ezért visszaállt az ingyenes változat.',
     atvHiba: 'A feloldás most nem sikerült. A kulcsot e-mailben is megkaptad (nézd meg a spam mappát is) – másold be ide:',
     u: { limit_elerve: 'Ez a kulcs már 3 eszközön aktív. Egy régi eszközön előbb válaszd le, vagy írj nekünk: info@brillidea.hu', ismeretlen_kulcs: 'Ilyen kulcs nincs. Másold be pontosan az e-mailből.',
-      hibas_kulcs_formatum: 'A kulcs formája nem jó. Másold be az e-mailből, ne gépeld.', masik_termek: 'Ez a kulcs nem a Kaleidoszkóphoz tartozik.', visszavont_vagy_lejart: 'Ezt a kulcsot visszavonták.',
+      hibas_kulcs_formatum: 'A kulcs 25 karakterből áll (5 × 5). Nézd meg, hiányzik-e belőle valami.', masik_termek: 'Ez a kulcs nem a Kaleidoszkóphoz tartozik.', visszavont_vagy_lejart: 'Ezt a kulcsot visszavonták.',
       halozat: 'Nincs internetkapcsolat. Próbáld újra később.', tul_sok_keres: 'Túl sok próbálkozás. Várj néhány percet.', _: 'Valami nem sikerült. Írj nekünk: info@brillidea.hu' },
     tabla: { cim: 'Ingyenes vagy teljes?', fej: ['', 'Ingyenes', 'Teljes'], sor: [
       ['Üzemmódok', 'váltakozó bemutató', 'mind az 5, szabadon választva'], ['Beállítások', '–', 'több mint 50'], ['Formák és tárgyak', 'véletlenszerűen', '10 spirálforma, 31 tárgy – te választod'],
@@ -27,14 +27,14 @@
     free: 'This is the free version. The full version unlocks every setting, and new patterns arrive at regular intervals, at no extra cost.',
     key: 'License key', full: 'Full version', close: 'Close', zene: 'Tap for music ♪', mandala: 'A taste of MANDALA →',
     vk: 'Kaleidoscope – $5', vcs: 'Both apps – $7', egysz: 'One-time purchase, up to 3 devices. "Both apps" also unlocks Mandala. Shown as CREEM.IO on your statement.',
-    mi: 'What do I get in the full version?', van: 'Already have a key?', akt: 'Activate on this device', masold: 'Paste it from the e-mail – don’t type it (O and 0 are easy to mix up).',
+    mi: 'What do I get in the full version?', van: 'Already have a key?', akt: 'Activate on this device', masold: 'Paste it from the e-mail, or type the 25 characters – the dashes are added for you. Careful: the letter O and the number 0 are easy to mix up.',
     akteszk: 'active devices', csomag: 'Kaleidoscope + Mandala bundle', masol: 'Copy key', masolva: 'Copied ✓',
-    lev: 'Release the key from this device', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
+    lev: 'Release the key from this device', mIs: 'Mandala too? – $5 →', mFel: 'Unlock Mandala too →', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
     folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK', ikon: 'If you use the app from its home-screen icon, open 🔑 there and paste the key.',
     leveve: 'The key has been released from this device. You can now activate it on another one.', lezarva: 'The key is no longer active on this device, so the free version is back.',
     atvHiba: 'Unlocking didn’t work this time. You have also received the key by e-mail (check spam too) – paste it here:',
     u: { limit_elerve: 'This key is already active on 3 devices. Release it on an old one first, or write to us: info@brillidea.hu', ismeretlen_kulcs: 'No such key. Paste it exactly from the e-mail.',
-      hibas_kulcs_formatum: 'The key format is wrong. Paste it from the e-mail – don’t type it.', masik_termek: 'This key does not belong to Kaleidoscope.', visszavont_vagy_lejart: 'This key has been revoked.',
+      hibas_kulcs_formatum: 'The key has 25 characters (5 × 5). Check whether something is missing.', masik_termek: 'This key does not belong to Kaleidoscope.', visszavont_vagy_lejart: 'This key has been revoked.',
       halozat: 'No internet connection. Please try again later.', tul_sok_keres: 'Too many attempts. Please wait a few minutes.', _: 'Something went wrong. Write to us: info@brillidea.hu' },
     tabla: { cim: 'Free or full?', fej: ['', 'Free', 'Full'], sor: [
       ['Modes', 'alternating demo', 'all 5, your choice'], ['Settings', '–', '50+'], ['Shapes and objects', 'at random', '10 spiral shapes, 31 objects – you choose'],
@@ -44,7 +44,8 @@
   // ---- FIZETÉS: Creem, a brillidea.hu-s közvetítőn át (a Creem titkos kulcsa csak a közvetítőben van) ----
   const KOZV = 'https://www.brillidea.hu/wp-json/brillidea/v2/licenc', APP = 'kaleidoszkop', TAR = 'kaleido-licenc';
   const CREEM_MOD = 'teszt';   // élesítéskor: 'eles' – és az éles termékazonosítók ide
-  const TERMEK = { teszt: { k: 'prod_13WlWpu637CYusW5EIF3e5', cs: 'prod_k5WHVYq5PA4yIJXaMQmZK' }, eles: { k: '', cs: '' } }[CREEM_MOD];
+  const TERMEK = { teszt: { k: 'prod_13WlWpu637CYusW5EIF3e5', m: 'prod_1HZPeZI5XoCxWGPDj0fhPs', cs: 'prod_k5WHVYq5PA4yIJXaMQmZK' }, eles: { k: '', m: '', cs: '' } }[CREEM_MOD];
+  const MANDALA_KULCSSAL = k => MANDALA + '#kulcs=' + encodeURIComponent(k);   // csomagkulcs átadása a Mandalának (a # utáni rész nem megy fel a szerverre)
   const VASAR = id => 'https://www.creem.io/' + (CREEM_MOD === 'teszt' ? 'test/' : '') + 'payment/' + id;
   const lget = () => { try { const L = JSON.parse(localStorage.getItem(TAR) || 'null'); return L && L.kulcs && L.peldany ? L : null; } catch (e) { return null; } };
   const lset = L => { try { localStorage.setItem(TAR, JSON.stringify(L)); } catch (e) {} };
@@ -147,16 +148,19 @@
     const pan = el(`<div class="ka-pan"><h3>${HU ? 'KALEIDOSZKÓP' : 'KALEIDOSCOPE'}</h3>` + (premium
       ? `<div class="ka-ok2">✓ ${T.full}${csomagE ? ' · ' + T.csomag : ` · ${T.akteszk}: <span class="ka-akt">${LIC.aktivalt != null && LIC.limit ? LIC.aktivalt + '/' + LIC.limit : '…'}</span>`}</div>
          <div class="ka-kulcs">${LIC.kulcs}</div><div class="gs"><button type="button" class="ka-masol">${T.masol}</button></div>
-         <div class="gs" style="margin-top:8px"><button type="button" class="ka-lev">${T.lev}</button></div><div class="ka-meg">${T.levMeg}</div><div class="hb"></div>`
+         <div class="gs" style="margin-top:8px"><button type="button" class="ka-lev">${T.lev}</button></div><div class="ka-meg">${T.levMeg}</div>
+         ${csomagE ? `<div class="gs" style="margin-top:8px"><a href="${MANDALA_KULCSSAL(LIC.kulcs)}" target="_blank" rel="noopener">${T.mFel}</a></div>` : LIC.termek === TERMEK.k ? `<div class="gs" style="margin-top:8px"><a href="${VASAR(TERMEK.m)}">${T.mIs}</a></div>` : ''}<div class="hb"></div>`
       : `<div>${T.free}</div><div class="gs ka-vesz"><a class="fo" href="${VASAR(TERMEK.k)}">${T.vk}</a><a href="${VASAR(TERMEK.cs)}">${T.vcs}</a></div><div class="ka-meg">${T.egysz}</div>
          <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div>
          <details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="hb"></div>`)
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
-    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><button type="button" class="kr">${T.rendben}</button></div>`);
+    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><div class="kmf" style="display:none"><a class="kml" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;color:#E0C25A">${T.mFel}</a></div><button type="button" class="kr">${T.rendben}</button></div>`);
     // iPhone/iPad: a kezdőképernyőről indított app külön tárolót kap – ott a kulcsot be kell illeszteni
     const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const IKONROL = !!(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches));
-    const koszMutat = (cim, szoveg, kicsi, gomb, ikon) => { kosz.querySelector('b').textContent = cim || ''; kosz.querySelector('.kt').innerHTML = (szoveg ? `<p>${szoveg}</p>` : '') + (kicsi ? `<small>${kicsi}</small>` : ''); kosz.querySelector('.kr').style.display = gomb === false ? 'none' : ''; kosz.querySelector('.ki').style.display = ikon && IOS && !IKONROL ? '' : 'none'; kosz.classList.add('on'); };
+    const koszMutat = (cim, szoveg, kicsi, gomb, ikon) => { kosz.querySelector('b').textContent = cim || ''; kosz.querySelector('.kt').innerHTML = (szoveg ? `<p>${szoveg}</p>` : '') + (kicsi ? `<small>${kicsi}</small>` : ''); kosz.querySelector('.kr').style.display = gomb === false ? 'none' : ''; kosz.querySelector('.ki').style.display = ikon && IOS && !IKONROL ? '' : 'none';
+      const L2 = lget(), cs2 = L2 && L2.termek === TERMEK.cs && gomb !== false; kosz.querySelector('.kmf').style.display = cs2 ? '' : 'none'; if (cs2) kosz.querySelector('.kml').href = MANDALA_KULCSSAL(L2.kulcs);   // csomag: a Mandala is egy koppintással
+      kosz.classList.add('on'); };
     kosz.querySelector('.kr').addEventListener('click', () => kosz.classList.remove('on'));
     kosz.querySelector('.km').addEventListener('click', async e => { const b = e.currentTarget, L = lget(); if (!L) return; try { await navigator.clipboard.writeText(L.kulcs); b.textContent = T.masolva; } catch (x) { b.textContent = L.kulcs; } });
     const hb = msg => { const h = pan.querySelector('.hb'); if (h) h.textContent = msg || ''; };
@@ -239,10 +243,14 @@
     const kb = btn.querySelector('.ka-k'); if (kb) kb.addEventListener('click', () => { pan.classList.toggle('on'); show(); });
     const ment = (j, kulcs) => lset({ kulcs: j.kulcs || kulcs, peldany: j.peldany, app: APP, termek: j.termek || '', aktivalt: j.aktivalt, limit: j.limit, ell: Date.now() });
     // kézi aktiválás (kulcs az e-mailből)
+    // a kulcsmező gépelés közben formáz: nagybetű, csak betű és szám, 5-ösével kötőjel (XXXXX-XXXXX-…)
+    const kForm = v => (v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 25).replace(/(.{5})(?=.)/g, '$1-');
+    const kIn = pan.querySelector('.ka-in');
+    if (kIn) { kIn.maxLength = 29; kIn.addEventListener('input', () => { const u = kForm(kIn.value); if (u !== kIn.value) { kIn.value = u; try { kIn.setSelectionRange(u.length, u.length); } catch (e) {} } }); }
     const okB = pan.querySelector('.ka-ok');
     if (okB) okB.addEventListener('click', async () => {
-      const v = (pan.querySelector('.ka-in').value || '').trim().toUpperCase().replace(/\s+/g, '');
-      if (!/^[A-Z0-9]{4,}(-[A-Z0-9]{4,})+$/.test(v)) { hb(T.u.hibas_kulcs_formatum); return; }
+      const v = kForm(pan.querySelector('.ka-in').value);
+      if (!/^[A-Z0-9]{5}(-[A-Z0-9]{5}){4}$/.test(v)) { hb(T.u.hibas_kulcs_formatum); return; }
       okB.disabled = true; hb(T.folyamat);
       const j = await hiv('aktival', { kulcs: v }); okB.disabled = false;
       if (j.ok && j.peldany) { ment(j, v); sset('kaleido-uzenet', 'kezi'); ujra(); } else hb(hibaSz(j));
