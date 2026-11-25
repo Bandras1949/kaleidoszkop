@@ -9,8 +9,8 @@
     splash: 'Teljes változat · Mindkettő együtt kedvezménnyel', banner: 'Tetszik? Nézd meg a teljes változatot →',
     free: 'Ez az ingyenes változat. A teljes változatban minden beállítás a tiéd, és rendszeres időközönként új minták jelennek meg, külön díj nélkül.',
     key: 'Licenckulcs', full: 'Teljes változat', close: 'Bezár', zene: 'Koppints: zene be ♪', mandala: 'Ízelítő: MANDALA →',
-    vk: 'Kaleidoszkóp – 5 $', vcs: 'Mindkét app – 7 $', egysz: 'Egyszeri vásárlás, legfeljebb 3 eszközön. A „Mindkét app” a Mandalát is feloldja. A bankod forintban terheli, a kivonaton CREEM.IO néven jelenik meg.',
-    mi: 'Mi van a teljes változatban?', van: 'Már van kulcsod?', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, vagy gépeld be a 25 karaktert – a kötőjeleket a mező magától beteszi. Figyelj: az O betű és a 0 szám könnyen összekeverhető.',
+    hamarosan: 'A teljes változat hamarosan megvásárolható.', vk: 'Kaleidoszkóp – 5 $', vcs: 'Mindkét app – 7 $', egysz: 'Egyszeri vásárlás, legfeljebb 3 eszközön. A „Mindkét app” a Mandalát is feloldja. A bankod forintban terheli, a kivonaton CREEM.IO néven jelenik meg.',
+    mi: 'Mi van a teljes változatban?', van: '🔑 Már van kulcsod? Ide írd be →', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, vagy gépeld be a 25 karaktert – a kötőjeleket a mező magától beteszi. Figyelj: az O betű és a 0 szám könnyen összekeverhető.',
     akteszk: 'aktív eszközök', csomag: 'Kaleidoszkóp + Mandala csomag', masol: 'Kulcs másolása', masolva: 'Kimásolva ✓',
     lev: 'Kulcs leválasztása erről a telefonról', mIs: 'Mandala is? – 5 $ →', mFel: 'Mandala feloldása is →', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
     folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben', ikon: 'Az ikonról indított app külön tárolja a feloldást. Ha onnan is használnád:', ikonL: ['Koppints a „Kulcs másolása” gombra.', 'Nyisd meg az appot az ikonról.', 'Koppints a 🔑 gombra → „Már van kulcsod?” → illeszd be a kulcsot → „Aktiválás”.'],
@@ -26,8 +26,8 @@
     splash: 'Full version · Both apps together, discounted', banner: 'Like it? See the full version →',
     free: 'This is the free version. The full version unlocks every setting, and new patterns arrive at regular intervals, at no extra cost.',
     key: 'License key', full: 'Full version', close: 'Close', zene: 'Tap for music ♪', mandala: 'A taste of MANDALA →',
-    vk: 'Kaleidoscope – $5', vcs: 'Both apps – $7', egysz: 'One-time purchase, up to 3 devices. "Both apps" also unlocks Mandala. Shown as CREEM.IO on your statement.',
-    mi: 'What do I get in the full version?', van: 'Already have a key?', akt: 'Activate on this device', masold: 'Paste it from the e-mail, or type the 25 characters – the dashes are added for you. Careful: the letter O and the number 0 are easy to mix up.',
+    hamarosan: 'The full version will be available to buy soon.', vk: 'Kaleidoscope – $5', vcs: 'Both apps – $7', egysz: 'One-time purchase, up to 3 devices. "Both apps" also unlocks Mandala. Shown as CREEM.IO on your statement.',
+    mi: 'What do I get in the full version?', van: '🔑 Already have a key? Enter it here →', akt: 'Activate on this device', masold: 'Paste it from the e-mail, or type the 25 characters – the dashes are added for you. Careful: the letter O and the number 0 are easy to mix up.',
     akteszk: 'active devices', csomag: 'Kaleidoscope + Mandala bundle', masol: 'Copy key', masolva: 'Copied ✓',
     lev: 'Release the key from this device', mIs: 'Mandala too? – $5 →', mFel: 'Unlock Mandala too →', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
     folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK', ikon: 'The app opened from its home-screen icon keeps its own unlock. To use it there too:', ikonL: ['Tap “Copy key”.', 'Open the app from its icon.', 'Tap 🔑 → “Already have a key?” → paste the key → “Activate”.'],
@@ -46,6 +46,8 @@
   const CREEM_MOD = 'teszt';   // élesítéskor: 'eles' – és az éles termékazonosítók ide
   const TERMEK = { teszt: { k: 'prod_13WlWpu637CYusW5EIF3e5', m: 'prod_1HZPeZI5XoCxWGPDj0fhPs', cs: 'prod_k5WHVYq5PA4yIJXaMQmZK' }, eles: { k: '', m: '', cs: '' } }[CREEM_MOD];
   const MANDALA_KULCSSAL = k => MANDALA + '#kulcs=' + encodeURIComponent(k);   // csomagkulcs átadása a Mandalának (a # utáni rész nem megy fel a szerverre)
+  // TESZTMÓDBAN a vásárlásgombokat csak az látja, aki egyszer ?teszt-tel nyitotta meg az appot (a nyilvánosság „hamarosan”-t lát)
+  const VESZ_LATHATO = CREEM_MOD !== 'teszt' || (() => { try { if (/[?&]teszt\b/.test(location.search)) localStorage.setItem('brl-teszt', '1'); return localStorage.getItem('brl-teszt') === '1'; } catch (e) { return false; } })();
   const VASAR = id => 'https://www.creem.io/' + (CREEM_MOD === 'teszt' ? 'test/' : '') + 'payment/' + id;
   const lget = () => { try { const L = JSON.parse(localStorage.getItem(TAR) || 'null'); return L && L.kulcs && L.peldany ? L : null; } catch (e) { return null; } };
   const lset = L => { try { localStorage.setItem(TAR, JSON.stringify(L)); } catch (e) {} };
@@ -79,8 +81,10 @@
   .ka-pan .ka-meg{font-size:14px;color:rgba(251,250,247,.7);margin-top:8px;line-height:1.35}
   .ka-pan .ka-vesz{margin-top:12px}
   .ka-pan .ka-mi{margin-top:8px;font-size:15px}.ka-pan .ka-mi a{color:#E0C25A}
-  .ka-pan details{margin-top:10px;padding-top:8px;border-top:1px solid rgba(224,194,90,.25)}
-  .ka-pan summary{cursor:pointer;color:#E0C25A;font-size:15px}
+  .ka-pan details{margin-top:8px}
+  .ka-pan summary{cursor:pointer;list-style:none;display:block;text-align:center;padding:9px 8px;border-radius:9px;border:1px solid #E0C25A;background:rgba(224,194,90,.1);color:#E0C25A;font:600 15px 'Cormorant Garamond',Georgia,serif}
+  .ka-pan summary::-webkit-details-marker{display:none}
+  .ka-pan details[open] summary{margin-bottom:4px}
   .ka-pan .ka-kulcs{margin:10px 0 6px;padding:8px;border-radius:8px;background:rgba(0,0,0,.4);font:600 14px/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;word-break:break-all;user-select:all;-webkit-user-select:all;text-align:center}
   .ka-pan .ka-lev{border-color:#C98A8A !important;color:#E8A0A0 !important}
   .ka-pan .ka-ok2{color:#9BE0A8}
@@ -152,9 +156,9 @@
          <div class="ka-kulcs">${LIC.kulcs}</div><div class="gs"><button type="button" class="ka-masol">${T.masol}</button></div>
          <div class="gs" style="margin-top:8px"><button type="button" class="ka-lev">${T.lev}</button></div><div class="ka-meg">${T.levMeg}</div>
 <div class="hb"></div>`
-      : `<div>${T.free}</div><div class="gs ka-vesz"><a class="fo" href="${VASAR(TERMEK.k)}">${T.vk}</a><a href="${VASAR(TERMEK.cs)}">${T.vcs}</a></div><div class="ka-meg">${T.egysz}</div>
-         <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div>
-         <details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="hb"></div>`)
+      : !VESZ_LATHATO ? `<div>${T.free}</div><div class="ka-meg" style="color:#E0C25A;font-size:16px">${T.hamarosan}</div><div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div><div class="hb"></div>`
+      : `<div>${T.free}</div><div class="gs ka-vesz"><a class="fo" href="${VASAR(TERMEK.k)}">${T.vk}</a><a href="${VASAR(TERMEK.cs)}">${T.vcs}</a></div><details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="ka-meg">${T.egysz}</div>
+         <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div><div class="hb"></div>`)
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
     const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><ol class="kol">${T.ikonL.map(x => `<li>${x}</li>`).join('')}</ol><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><div class="kmf" style="display:none"><a class="kml" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;color:#E0C25A">${T.mFel}</a></div><button type="button" class="kr">${T.rendben}</button></div>`);
     // iPhone/iPad: a kezdőképernyőről indított app külön tárolót kap – ott a kulcsot be kell illeszteni

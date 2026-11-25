@@ -8,8 +8,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="FIREWORKS – live fireworks on your screen">
 <meta property="og:description" content="A free gift from the Visions series. Tap to open.">
-<meta property="og:url" content="https://bandras1949.github.io/kaleidoszkop/fireworks.html">
-<meta property="og:image" content="https://bandras1949.github.io/kaleidoszkop/fireworks-card.png">
+<meta property="og:url" content="https://kaleidoszkop.brillidea.hu/fireworks.html">
+<meta property="og:image" content="https://kaleidoszkop.brillidea.hu/fireworks-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -40,12 +40,12 @@ h1{margin:0;font:600 clamp(44px,13vw,100px)/1 Cinzel,Georgia,serif;letter-spacin
   <div class="sub">live fireworks on your screen</div>
   <div class="gift">A GIFT FROM THE VISIONS SERIES</div>
 </header>
-<a class="open" href="https://bandras1949.github.io/kaleidoszkop/tuzijatek.html?lang=en" data-page="tuzijatek.html">Open FIREWORKS →</a>
+<a class="open" href="https://kaleidoszkop.brillidea.hu/tuzijatek.html?lang=en" data-page="tuzijatek.html">Open FIREWORKS →</a>
 <nav class="apps" aria-label="Apps by András Bánky">
   <h2>APPS BY ANDRÁS BÁNKY</h2>
   <div class="row">
-    <a class="pill" href="https://bandras1949.github.io/kaleidoszkop/"><b>KALEIDOSCOPE</b><i>· free to try</i></a>
-    <a class="pill" href="https://bandras1949.github.io/mandala/"><b>MANDALA</b><i>· trial version</i></a>
+    <a class="pill" href="https://kaleidoszkop.brillidea.hu/"><b>KALEIDOSCOPE</b><i>· free to try</i></a>
+    <a class="pill" href="https://mandala.brillidea.hu/"><b>MANDALA</b><i>· trial version</i></a>
   </div>
 </nav>
 <div class="copy">© András Bánky</div>
@@ -55,7 +55,7 @@ h1{margin:0;font:600 clamp(44px,13vw,100px)/1 Cinzel,Georgia,serif;letter-spacin
   var l = null; try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'hu' || q === 'en') l = q; } catch (e) {}
   if (!l) { try { var m = localStorage.getItem('appok-nyelv'); if (m === 'hu' || m === 'en') l = m; } catch (e) {} }
   if (!l) l = (navigator.language || 'en').toLowerCase().indexOf('hu') === 0 ? 'hu' : 'en';
-  var o = document.querySelector('a.open'); o.href = 'https://bandras1949.github.io/kaleidoszkop/' + o.dataset.page + '?lang=' + l;
+  var o = document.querySelector('a.open'); o.href = 'https://kaleidoszkop.brillidea.hu/' + o.dataset.page + '?lang=' + l;
   if (l !== 'hu') return;
   document.documentElement.lang = 'hu'; document.title = 'TŰZIJÁTÉK – ajándék a Látomások sorozatból · © Bánky András';
   var t = function (sel, txt) { var e = document.querySelector(sel); if (e) e.textContent = txt; };

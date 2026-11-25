@@ -1,6 +1,6 @@
 // LÁTOMÁSOK – közös keret: nyitókép, HU/EN, ajánló (Kaleidoszkóp, Mandala, mindkettő), kör végi sáv, zárókép, szigorú hangkezelés. © Bánky András
 (function () {
-  const G = 'https://bandras1949.github.io/', K = G + 'kaleidoszkop/', M = G + 'mandala/', A = G + 'appok/';
+  const K = 'https://kaleidoszkop.brillidea.hu/', M = 'https://mandala.brillidea.hu/', A = K;   // 2026-11-25: saját domain; az ajánlat a Kaleidoszkóp 🔑 paneljén van
   const S = {
     hu: { tap: 'Koppints az indításhoz', load: 'Betöltés…', fekvo: 'Fordítsd el a telefont – fekve a legszebb.', on: 'Hang be', off: 'Hang ki · koppintás: vissza',
       cont: 'Koppints a folytatáshoz', again: 'Koppints az újrakezdéshez', head: 'Bánky András alkalmazásai',
