@@ -13,7 +13,7 @@
     mi: 'Mi van a teljes változatban?', van: 'Már van kulcsod?', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, vagy gépeld be a 25 karaktert – a kötőjeleket a mező magától beteszi. Figyelj: az O betű és a 0 szám könnyen összekeverhető.',
     akteszk: 'aktív eszközök', csomag: 'Kaleidoszkóp + Mandala csomag', masol: 'Kulcs másolása', masolva: 'Kimásolva ✓',
     lev: 'Kulcs leválasztása erről a telefonról', mIs: 'Mandala is? – 5 $ →', mFel: 'Mandala feloldása is →', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
-    folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben', ikon: 'Ha az ikonról használod az appot, ott nyisd meg a 🔑 gombot, és illeszd be a kulcsot.',
+    folyamat: 'Feloldás folyamatban…', koszi: 'Köszönjük a vásárlást!', feloldva: 'Feloldva ezen a telefonon.', email: 'A kulcsot e-mailben is elküldtük. Ha nem látod, nézd meg a spam mappát.', rendben: 'Rendben', ikon: 'Az ikonról indított app külön tárolja a feloldást. Ha onnan is használnád:', ikonL: ['Koppints a „Kulcs másolása” gombra.', 'Nyisd meg az appot az ikonról.', 'Koppints a 🔑 gombra → „Már van kulcsod?” → illeszd be a kulcsot → „Aktiválás”.'],
     leveve: 'A kulcsot leválasztottad erről a telefonról. Most egy másik eszközön aktiválhatod.', lezarva: 'A kulcs ezen a telefonon már nem aktív, ezért visszaállt az ingyenes változat.',
     atvHiba: 'A feloldás most nem sikerült. A kulcsot e-mailben is megkaptad (nézd meg a spam mappát is) – másold be ide:',
     u: { limit_elerve: 'Ez a kulcs már 3 eszközön aktív. Egy régi eszközön előbb válaszd le, vagy írj nekünk: info@brillidea.hu', ismeretlen_kulcs: 'Ilyen kulcs nincs. Másold be pontosan az e-mailből.',
@@ -30,7 +30,7 @@
     mi: 'What do I get in the full version?', van: 'Already have a key?', akt: 'Activate on this device', masold: 'Paste it from the e-mail, or type the 25 characters – the dashes are added for you. Careful: the letter O and the number 0 are easy to mix up.',
     akteszk: 'active devices', csomag: 'Kaleidoscope + Mandala bundle', masol: 'Copy key', masolva: 'Copied ✓',
     lev: 'Release the key from this device', mIs: 'Mandala too? – $5 →', mFel: 'Unlock Mandala too →', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
-    folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK', ikon: 'If you use the app from its home-screen icon, open 🔑 there and paste the key.',
+    folyamat: 'Unlocking…', koszi: 'Thank you for your purchase!', feloldva: 'Unlocked on this device.', email: 'We have also e-mailed you the key. If you can’t see it, check your spam folder.', rendben: 'OK', ikon: 'The app opened from its home-screen icon keeps its own unlock. To use it there too:', ikonL: ['Tap “Copy key”.', 'Open the app from its icon.', 'Tap 🔑 → “Already have a key?” → paste the key → “Activate”.'],
     leveve: 'The key has been released from this device. You can now activate it on another one.', lezarva: 'The key is no longer active on this device, so the free version is back.',
     atvHiba: 'Unlocking didn’t work this time. You have also received the key by e-mail (check spam too) – paste it here:',
     u: { limit_elerve: 'This key is already active on 3 devices. Release it on an old one first, or write to us: info@brillidea.hu', ismeretlen_kulcs: 'No such key. Paste it exactly from the e-mail.',
@@ -87,7 +87,8 @@
   .ka-kosz{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,calc(100vw - 40px));box-sizing:border-box;padding:22px 20px 18px;border-radius:18px;background:rgba(15,15,15,.94);border:1px solid #E0C25A;color:#FBFAF7;font:500 17px/1.4 'Cormorant Garamond',Georgia,serif;text-align:center;z-index:2147483002;display:none;box-shadow:0 10px 40px rgba(0,0,0,.6)}
   .ka-kosz.on{display:block}
   .ka-kosz b{display:block;font:600 15px Cinzel,Georgia,serif;letter-spacing:.08em;color:#E0C25A;margin-bottom:8px}
-  .ka-kosz p{margin:6px 0}.ka-kosz small{display:block;font-size:14px;color:rgba(251,250,247,.7);margin-top:8px}
+  .ka-kosz p{margin:6px 0}
+  .ka-kosz ol.kol{text-align:left;margin:8px 0 0;padding-left:22px;font-size:14px;line-height:1.35;color:rgba(251,250,247,.85)}.ka-kosz ol.kol li{margin:3px 0}.ka-kosz small{display:block;font-size:14px;color:rgba(251,250,247,.7);margin-top:8px}
   .ka-kosz button{margin-top:14px;padding:8px 26px;border-radius:10px;border:1px solid #E0C25A;background:#E0C25A;color:#0f0f0f;font:600 15px 'Cormorant Garamond',Georgia,serif;cursor:pointer}
   .ka-tur table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.25}
   .ka-tur th{font:600 11px Cinzel,Georgia,serif;letter-spacing:.08em;color:#E0C25A;text-align:left;padding:2px 4px 6px}
@@ -147,14 +148,15 @@
     const csomagE = premium && LIC.termek && LIC.termek === TERMEK.cs;
     const pan = el(`<div class="ka-pan"><h3>${HU ? 'KALEIDOSZKÓP' : 'KALEIDOSCOPE'}</h3>` + (premium
       ? `<div class="ka-ok2">✓ ${T.full}${csomagE ? ' · ' + T.csomag : ` · ${T.akteszk}: <span class="ka-akt">${LIC.aktivalt != null && LIC.limit ? LIC.aktivalt + '/' + LIC.limit : '…'}</span>`}</div>
+         ${csomagE ? `<div class="gs" style="margin-top:10px"><a class="fo" href="${MANDALA_KULCSSAL(LIC.kulcs)}" target="_blank" rel="noopener">${T.mFel}</a></div>` : LIC.termek === TERMEK.k ? `<div class="gs" style="margin-top:10px"><a class="fo" href="${VASAR(TERMEK.m)}">${T.mIs}</a></div>` : ''}
          <div class="ka-kulcs">${LIC.kulcs}</div><div class="gs"><button type="button" class="ka-masol">${T.masol}</button></div>
          <div class="gs" style="margin-top:8px"><button type="button" class="ka-lev">${T.lev}</button></div><div class="ka-meg">${T.levMeg}</div>
-         ${csomagE ? `<div class="gs" style="margin-top:8px"><a href="${MANDALA_KULCSSAL(LIC.kulcs)}" target="_blank" rel="noopener">${T.mFel}</a></div>` : LIC.termek === TERMEK.k ? `<div class="gs" style="margin-top:8px"><a href="${VASAR(TERMEK.m)}">${T.mIs}</a></div>` : ''}<div class="hb"></div>`
+<div class="hb"></div>`
       : `<div>${T.free}</div><div class="gs ka-vesz"><a class="fo" href="${VASAR(TERMEK.k)}">${T.vk}</a><a href="${VASAR(TERMEK.cs)}">${T.vcs}</a></div><div class="ka-meg">${T.egysz}</div>
          <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div>
          <details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="hb"></div>`)
       + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
-    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><div class="kmf" style="display:none"><a class="kml" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;color:#E0C25A">${T.mFel}</a></div><button type="button" class="kr">${T.rendben}</button></div>`);
+    const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><small>${T.ikon}</small><ol class="kol">${T.ikonL.map(x => `<li>${x}</li>`).join('')}</ol><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></div><div class="kmf" style="display:none"><a class="kml" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;color:#E0C25A">${T.mFel}</a></div><button type="button" class="kr">${T.rendben}</button></div>`);
     // iPhone/iPad: a kezdőképernyőről indított app külön tárolót kap – ott a kulcsot be kell illeszteni
     const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const IKONROL = !!(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches));
