@@ -9,7 +9,7 @@
     splash: 'Teljes változat · Mindkettő együtt kedvezménnyel', banner: 'Tetszik? Nézd meg a teljes változatot →',
     free: 'Ez az ingyenes változat. A teljes változatban minden beállítás a tiéd, és rendszeres időközönként új minták jelennek meg, külön díj nélkül.',
     key: 'Licenckulcs', full: 'Teljes változat', close: 'Bezár', zene: 'Koppints: zene be ♪', mandala: 'Ízelítő: MANDALA →',
-    hamarosan: 'A teljes változat hamarosan megvásárolható.', vk: 'Kaleidoszkóp – 5 $', vcs: 'Mindkét app – 7 $', egysz: 'Egyszeri vásárlás, legfeljebb 3 eszközön. A „Mindkét app” a Mandalát is feloldja. A bankod forintban terheli, a kivonaton CREEM.IO néven jelenik meg.',
+    hamarosan: 'A teljes változat hamarosan megvásárolható.', jogi: ['Árak', 'Feltételek', 'Adatvédelem'], vk: 'Kaleidoszkóp – 5 $', vcs: 'Mindkét app – 7 $', egysz: 'Egyszeri vásárlás, legfeljebb 3 eszközön. A „Mindkét app” a Mandalát is feloldja. A bankod forintban terheli, a kivonaton CREEM.IO néven jelenik meg.',
     mi: 'Mi van a teljes változatban?', van: '🔑 Már van kulcsod? Ide írd be →', akt: 'Aktiválás ezen a telefonon', masold: 'Másold be az e-mailből, vagy gépeld be a 25 karaktert – a kötőjeleket a mező magától beteszi. Figyelj: az O betű és a 0 szám könnyen összekeverhető.',
     akteszk: 'aktív eszközök', csomag: 'Kaleidoszkóp + Mandala csomag', masol: 'Kulcs másolása', masolva: 'Kimásolva ✓',
     lev: 'Kulcs leválasztása erről a telefonról', mIs: 'Mandala is? – 5 $ →', mFel: 'Mandala feloldása is →', levBiztos: 'Biztosan? Koppints újra', levMeg: 'Új telefonra: itt válaszd le, az újon másold be a kulcsot.',
@@ -26,7 +26,7 @@
     splash: 'Full version · Both apps together, discounted', banner: 'Like it? See the full version →',
     free: 'This is the free version. The full version unlocks every setting, and new patterns arrive at regular intervals, at no extra cost.',
     key: 'License key', full: 'Full version', close: 'Close', zene: 'Tap for music ♪', mandala: 'A taste of MANDALA →',
-    hamarosan: 'The full version will be available to buy soon.', vk: 'Kaleidoscope – $5', vcs: 'Both apps – $7', egysz: 'One-time purchase, up to 3 devices. "Both apps" also unlocks Mandala. Shown as CREEM.IO on your statement.',
+    hamarosan: 'The full version will be available to buy soon.', jogi: ['Pricing', 'Terms', 'Privacy'], vk: 'Kaleidoscope – $5', vcs: 'Both apps – $7', egysz: 'One-time purchase, up to 3 devices. "Both apps" also unlocks Mandala. Shown as CREEM.IO on your statement.',
     mi: 'What do I get in the full version?', van: '🔑 Already have a key? Enter it here →', akt: 'Activate on this device', masold: 'Paste it from the e-mail, or type the 25 characters – the dashes are added for you. Careful: the letter O and the number 0 are easy to mix up.',
     akteszk: 'active devices', csomag: 'Kaleidoscope + Mandala bundle', masol: 'Copy key', masolva: 'Copied ✓',
     lev: 'Release the key from this device', mIs: 'Mandala too? – $5 →', mFel: 'Unlock Mandala too →', levBiztos: 'Sure? Tap again', levMeg: 'New phone? Release it here, then paste the key on the new one.',
@@ -78,6 +78,9 @@
   .ka-pan .gs .fo{background:#E0C25A;color:#0f0f0f}
   .ka-pan .al{margin-top:12px;padding-top:10px;border-top:1px solid rgba(224,194,90,.25);text-align:center;font-size:15px}
   .ka-pan .al a{color:#E0C25A}
+  .ka-jogi{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 0px);text-align:center;font:400 12px/1.6 'Cormorant Garamond',Georgia,serif;color:rgba(251,250,247,.6);z-index:2147483000;display:none;padding:2px 8px}
+  .ka-jogi a{color:rgba(224,194,90,.85);text-decoration:none;margin:0 4px}
+  .ka-pan .ka-jl{margin-top:8px;font-size:13px;color:rgba(251,250,247,.6)}.ka-pan .ka-jl a{color:rgba(224,194,90,.85);text-decoration:none;margin:0 3px}
   .ka-pan .ka-meg{font-size:14px;color:rgba(251,250,247,.7);margin-top:8px;line-height:1.35}
   .ka-pan .ka-vesz{margin-top:12px}
   .ka-pan .ka-mi{margin-top:8px;font-size:15px}.ka-pan .ka-mi a{color:#E0C25A}
@@ -99,7 +102,7 @@
   .ka-tur td{padding:4px;border-top:1px solid rgba(224,194,90,.18);vertical-align:top}
   .ka-tur td:first-child{color:rgba(251,250,247,.65);font-style:italic}
   .ka-tur td:last-child{color:#E0C25A}
-  .ka-spl{position:fixed;left:8vw;right:8vw;bottom:calc(env(safe-area-inset-bottom) + 14px);text-align:center;font:italic 500 clamp(15px,2vw,20px) 'Cormorant Garamond',Georgia,serif;color:#E0C25A;text-decoration:underline;text-underline-offset:4px;z-index:2147483000;display:none}
+  .ka-spl{position:fixed;left:8vw;right:8vw;bottom:calc(env(safe-area-inset-bottom) + 30px);text-align:center;font:italic 500 clamp(15px,2vw,20px) 'Cormorant Garamond',Georgia,serif;color:#E0C25A;text-decoration:underline;text-underline-offset:4px;z-index:2147483000;display:none}
   .ka-ban{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 70px);transform:translateX(-50%);max-width:calc(100vw - 220px);min-width:min(260px,calc(100vw - 40px));padding:10px 18px;border-radius:24px;background:rgba(15,15,15,.72);border:1px solid #E0C25A;color:#FBFAF7;font:italic 500 clamp(16px,2vw,20px)/1.3 'Cormorant Garamond',Georgia,serif;text-align:center;text-decoration:none;opacity:0;pointer-events:none;transition:opacity 1.6s ease;z-index:2147483000}
   .ka-ban.on{opacity:1;pointer-events:auto}
   .ka-zn{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 16px);transform:translateX(-50%);padding:6px 14px;border-radius:16px;background:rgba(15,15,15,.6);color:#FBFAF7;font:italic 500 15px 'Cormorant Garamond',Georgia,serif;white-space:nowrap;pointer-events:none;z-index:2147483000;opacity:0;transition:opacity .8s}
@@ -149,6 +152,9 @@
     const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
     const el = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); const n = d.firstChild; document.body.appendChild(n); return n; };
     const btn = el(`<div class="ka-btn"><button type="button" class="ka-k">🔑 ${HU ? 'Kaleidoszkóp' : 'Kaleidoscope'}${premium ? ' ✓' : ''}</button><a href="${MANDALA}" target="_blank" rel="noopener">MANDALA</a></div>`);
+    const JL = HU ? '?lang=hu' : '?lang=en';
+    const JOGI = `<a href="arak.html${JL}" target="_blank" rel="noopener">${T.jogi[0]}</a>·<a href="feltetelek.html${JL}" target="_blank" rel="noopener">${T.jogi[1]}</a>·<a href="adatvedelem.html${JL}" target="_blank" rel="noopener">${T.jogi[2]}</a>·<a href="mailto:info@brillidea.hu">info@brillidea.hu</a>`;
+    const jogi = el(`<div class="ka-jogi">${JOGI}</div>`);
     const csomagE = premium && LIC.termek && LIC.termek === TERMEK.cs;
     const pan = el(`<div class="ka-pan"><h3>${HU ? 'KALEIDOSZKÓP' : 'KALEIDOSCOPE'}</h3>` + (premium
       ? `<div class="ka-ok2">✓ ${T.full}${csomagE ? ' · ' + T.csomag : ` · ${T.akteszk}: <span class="ka-akt">${LIC.aktivalt != null && LIC.limit ? LIC.aktivalt + '/' + LIC.limit : '…'}</span>`}</div>
@@ -159,7 +165,7 @@
       : !VESZ_LATHATO ? `<div>${T.free}</div><div class="ka-meg" style="color:#E0C25A;font-size:16px">${T.hamarosan}</div><div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div><div class="hb"></div>`
       : `<div>${T.free}</div><div class="gs ka-vesz"><a class="fo" href="${VASAR(TERMEK.k)}">${T.vk}</a><a href="${VASAR(TERMEK.cs)}">${T.vcs}</a></div><details class="ka-van"><summary>${T.van}</summary><div class="ka-meg ka-atv" style="display:none"></div><input class="ka-in" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="gs"><button type="button" class="fo ka-ok">${T.akt}</button></div><div class="ka-meg">${T.masold}</div></details><div class="ka-meg">${T.egysz}</div>
          <div class="ka-mi"><a href="#" class="ka-tura">${T.mi}</a></div><div class="hb"></div>`)
-      + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a></div></div>`);
+      + `<div class="al"><a href="${MANDALA}" target="_blank" rel="noopener">${T.mandala}</a><div class="ka-jl">${JOGI}</div></div></div>`);
     const kosz = el(`<div class="ka-kosz"><b></b><div class="kt"></div><div class="ki" style="display:none"><details><summary style="cursor:pointer;color:#E0C25A;font-size:15px;margin-top:10px;list-style:none">${T.ikonQ}</summary><small>${T.ikon}</small><ol class="kol">${T.ikonL.map(x => `<li>${x}</li>`).join('')}</ol><button type="button" class="km" style="background:transparent;color:#E0C25A">${T.masol}</button></details></div><div class="kmf" style="display:none"><a class="kml" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;color:#E0C25A">${T.mFel}</a></div><button type="button" class="kr">${T.rendben}</button></div>`);
     // iPhone/iPad: a kezdőképernyőről indított app külön tárolót kap – ott a kulcsot be kell illeszteni
     const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -245,7 +251,7 @@
       [gear, tur].forEach(n => ['pointerdown', 'pointerup', 'click'].forEach(ev => n.addEventListener(ev, e => e.stopPropagation())));
       try { if (!localStorage.getItem('kaleido-tura')) gear.classList.add('pul'); } catch (e) {}
     }
-    [btn, pan, spl, ban, ny, kosz].forEach(n => n && ['pointerdown', 'pointerup', 'click'].forEach(ev => n.addEventListener(ev, stop)));
+    [btn, pan, spl, ban, ny, kosz, jogi].forEach(n => n && ['pointerdown', 'pointerup', 'click'].forEach(ev => n.addEventListener(ev, stop)));
     const kb = btn.querySelector('.ka-k'); if (kb) kb.addEventListener('click', () => { pan.classList.toggle('on'); show(); });
     const ment = (j, kulcs) => lset({ kulcs: j.kulcs || kulcs, peldany: j.peldany, app: APP, termek: j.termek || '', aktivalt: j.aktivalt, limit: j.limit, ell: Date.now() });
     // kézi aktiválás (kulcs az e-mailből)
@@ -305,7 +311,7 @@
     relabel(); let rq = 0; new MutationObserver(() => { if (!rq) rq = requestAnimationFrame(() => { rq = 0; relabel(); }); }).observe(document.body, { childList: true, subtree: true, characterData: true });   // a felület újrarajzolásakor azonnal
     setInterval(() => {   // ha a környezet (pl. a fejlesztői vászon) újraépíti az oldalt, az elemek visszakerülnek
       if (!st.isConnected) document.head.appendChild(st);
-      [btn, pan, spl, ban, ny, kosz].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
+      [btn, pan, spl, ban, ny, kosz, jogi].forEach(n => { if (n && !n.isConnected) document.body.appendChild(n); });
       ny.style.display = splashOn() ? 'flex' : 'none';
       if (!vr.isConnected) document.body.appendChild(vr); vr.style.display = splashOn() && window.__kVer ? 'block' : 'none';
       if (!zn.isConnected) document.body.appendChild(zn);
@@ -314,7 +320,7 @@
       const ad = !!document.querySelector('.fpad');   // hirdetés közben semmi nem látszik és nem kattintható
       [btn, pan, spl, ban].forEach(n => { if (n) n.style.visibility = ad ? 'hidden' : ''; }); if (ad) pan.classList.remove('on');
       if (gear) { if (!gear.isConnected) document.body.appendChild(gear); if (!tur.isConnected) document.body.appendChild(tur); gear.style.display = splashOn() || ad || document.querySelector('div[title="Beállítások"]') ? 'none' : 'flex';   /* ha a valódi ⚙ látszik (pl. ?beallitas), a lakatos nem kell */ if (ad && tur.classList.contains('on')) tur.classList.remove('on'); }
-      const so = splashOn(); if (spl) spl.style.display = so ? 'block' : 'none'; const gearPanel = !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]'); btn.classList.toggle('on', !so && !gearPanel && !(tur && tur.classList.contains('on'))); if (gearPanel && !pan.dataset.kenyszer) pan.classList.remove('on');   // a gombok a nyitókép után mindig látszanak
+      const so = splashOn(); if (spl) spl.style.display = so ? 'block' : 'none'; jogi.style.display = so ? 'block' : 'none'; const gearPanel = !!document.querySelector('div[style*="max-height:74%"],div[style*="max-height: 74%"]'); btn.classList.toggle('on', !so && !gearPanel && !(tur && tur.classList.contains('on'))); if (gearPanel && !pan.dataset.kenyszer) pan.classList.remove('on');   // a gombok a nyitókép után mindig látszanak
     }, 400);
     window.KAjanlat = { premium, nyit: () => { pan.dataset.kenyszer = '1'; pan.classList.add('on'); show(); friss(); }, cycle() { if (!ban || splashOn()) return; ban.classList.add('on'); clearTimeout(ban.t); ban.t = setTimeout(() => ban.classList.remove('on'), 10000); } };
     // linkek: új lapon; ha a környezet nem enged új lapot, ugyanitt; a fejlesztői vásznon a projekt saját példányai

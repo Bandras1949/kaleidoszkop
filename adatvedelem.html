@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="hu"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brillidea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37;--ink:#0b0b0c;--ivory:#FBFAF7}
+*{box-sizing:border-box}html,body{margin:0;background:#0b0b0c;color:var(--ivory)}
+body{font:400 18px/1.55 'Cormorant Garamond',Georgia,serif;padding:24px 18px 60px}
+main{max-width:720px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.nyelv button{font:600 13px Cinzel,Georgia,serif;letter-spacing:.06em;padding:6px 12px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;margin-left:6px}
+.nyelv button.on{background:var(--gold);color:var(--ink)}
+.marka{font:600 13px Cinzel,Georgia,serif;letter-spacing:.14em;color:var(--gold);text-decoration:none}
+h1{font:600 26px/1.25 Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--gold);margin:6px 0 4px}
+h2{font:600 16px Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--gold);margin:26px 0 6px}
+.hataly{color:rgba(251,250,247,.6);font-size:15px}
+a{color:var(--gold)}
+table{width:100%;border-collapse:collapse;margin:8px 0}
+td,th{text-align:left;padding:8px 6px;border-bottom:1px solid rgba(212,175,55,.25);vertical-align:top}
+th{font:600 13px Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--gold)}
+td.ar{white-space:nowrap;color:var(--gold);font-weight:600}
+ul{padding-left:20px}li{margin:4px 0}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid rgba(212,175,55,.3);font-size:15px;color:rgba(251,250,247,.7);text-align:center;line-height:1.8}
+footer a{margin:0 6px}
+section[lang]{display:none}section[lang].on{display:block}
+</style></head>
+<body><main>
+<header><a class="marka" href="https://kaleidoszkop.brillidea.hu/">BRILLIDEA</a><div class="nyelv"><button data-l="hu">HU</button><button data-l="en">EN</button></div></header>
+<section lang="hu">
+<h1>Adatvédelmi tájékoztató</h1><div class="hataly">Hatályos: 2026. november 26.</div>
+<h2>1. Adatkezelő</h2>
+<p>Brillidea Szoftver Fejlesztő és Kereskedelmi Kft., 1118 Budapest, Otthon utca 20., adószám: 26150253-2-43, e-mail: <a href="mailto:info@brillidea.hu">info@brillidea.hu</a>.</p>
+<h2>2. Röviden</h2>
+<ul>
+<li>Nincs felhasználói fiók és regisztráció.</li>
+<li>Nem használunk reklámkövetést, látogatottság-mérést (analitikát) és nyomkövető sütiket.</li>
+<li>A beállításaidat és a feloldást a saját eszközöd böngészője tárolja, nem mi.</li>
+</ul>
+<h2>3. Ami az eszközödön marad</h2>
+<p>Az appok a böngésző helyi tárolójában (localStorage) tárolják: a beállításaidat és a nyelvet, valamint teljes változat esetén a licenckulcsot, az aktiválás azonosítóját és egy véletlenszerű eszköznevet (például „eszkoz-ab12cd”). Ezek az adatok a böngésző adatainak törlésével eltávolíthatók.</p>
+<h2>4. Licenc-ellenőrzés</h2>
+<p>Aktiváláskor, leválasztáskor és időnként (legfeljebb hetente) az app a licenckulcsot, az aktiválás azonosítóját és a véletlenszerű eszköznevet elküldi a brillidea.hu szerverén futó közvetítőnek, amely továbbítja a Creemnek ellenőrzésre. A közvetítő ezeket nem tárolja. A túlterhelés elleni védelemhez az IP-címed egyirányúan kódolt (visszafejthetetlen) változatát 10 percig megőrzi. Jogalap: a vásárolt szolgáltatás teljesítése (szerződés).</p>
+<h2>5. Vásárlás</h2>
+<p>A fizetést a Creem (creem.io, Tallinn, Észtország) kezeli önálló adatkezelőként: ő kéri be és kezeli a nevedet, e-mail-címedet, számlázási és fizetési adataidat a saját adatvédelmi tájékoztatója szerint (<a href="https://www.creem.io" rel="noopener">creem.io</a>). Bankkártyaadataidat mi nem látjuk. A Creemtől megkapjuk a rendelés adatait (név, e-mail-cím, ország, termék, összeg), hogy az ügyfélszolgálatot, a visszatérítést és a könyvelést el tudjuk látni. Ezeket a számviteli törvény szerinti ideig (8 év) őrizzük meg.</p>
+<h2>6. Ha írsz nekünk</h2>
+<p>Az <a href="mailto:info@brillidea.hu">info@brillidea.hu</a> címre küldött leveleket a kérdésed megválaszolásához használjuk, és az ügy lezárása után legfeljebb 2 évig őrizzük meg.</p>
+<h2>7. Külső szolgáltatások</h2>
+<ul>
+<li><b>GitHub Pages</b> (GitHub, Inc.) – az appok tárhelye; a látogatáskor a szerver a szokásos technikai adatokat (pl. IP-cím) kezelheti.</li>
+<li><b>Google Fonts</b> (Google) – betűtípusok; a betöltéskor az IP-címed a Google-hoz kerül.</li>
+<li><b>unpkg</b> – programkönyvtár letöltése a Kaleidoszkóphoz.</li>
+<li><b>Forpsi</b> – a brillidea.hu tárhelye (licenc-közvetítő) és e-mail-szolgáltatása.</li>
+<li><b>Creem</b> – fizetés, számlázás, licenckulcsok.</li>
+</ul>
+<h2>8. Jogaid</h2>
+<p>Kérheted a rólad kezelt adatokhoz való hozzáférést, azok helyesbítését, törlését vagy kezelésük korlátozását, tiltakozhatsz az adatkezelés ellen, és kérheted az adatok hordozhatóságát. Ehhez írj az <a href="mailto:info@brillidea.hu">info@brillidea.hu</a> címre. Panaszt tehetsz a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (<a href="https://naih.hu" rel="noopener">naih.hu</a>) vagy a lakóhelyed szerinti adatvédelmi hatóságnál.</p>
+</section>
+<section lang="en">
+<h1>Privacy Policy</h1><div class="hataly">Effective: 26 November 2026</div>
+<h2>1. Controller</h2>
+<p>Brillidea Szoftver Fejlesztő és Kereskedelmi Kft., Otthon utca 20., 1118 Budapest, Hungary; tax number: 26150253-2-43; e-mail: <a href="mailto:info@brillidea.hu">info@brillidea.hu</a>.</p>
+<h2>2. In short</h2>
+<ul>
+<li>No user accounts, no registration.</li>
+<li>No ad tracking, no analytics, no tracking cookies.</li>
+<li>Your settings and your unlock are stored by your own device's browser, not by us.</li>
+</ul>
+<h2>3. What stays on your device</h2>
+<p>The apps use your browser's local storage (localStorage) for your settings and language and, for the full version, the license key, the activation ID and a random device name (such as "eszkoz-ab12cd"). Clearing your browser data removes them.</p>
+<h2>4. License checks</h2>
+<p>When you activate or release a key, and from time to time (at most weekly), the app sends the license key, the activation ID and the random device name to a relay running on the brillidea.hu server, which passes them to Creem for verification. The relay does not store them. To protect against overload it keeps a one-way hashed (irreversible) form of your IP address for 10 minutes. Legal basis: performing the service you bought (contract).</p>
+<h2>5. Purchases</h2>
+<p>Payments are handled by Creem (creem.io, Tallinn, Estonia) as an independent controller: Creem collects and processes your name, e-mail address, billing and payment details under its own privacy policy (<a href="https://www.creem.io" rel="noopener">creem.io</a>). We never see your card details. Creem shares the order details with us (name, e-mail, country, product, amount) so that we can provide support, refunds and accounting. We keep these for the period required by Hungarian accounting law (8 years).</p>
+<h2>6. If you write to us</h2>
+<p>E-mails sent to <a href="mailto:info@brillidea.hu">info@brillidea.hu</a> are used to answer your question and kept for up to 2 years after the matter is closed.</p>
+<h2>7. Third-party services</h2>
+<ul>
+<li><b>GitHub Pages</b> (GitHub, Inc.) – hosting of the apps; the server may process the usual technical data (e.g. IP address) when you visit.</li>
+<li><b>Google Fonts</b> (Google) – fonts; your IP address reaches Google when they load.</li>
+<li><b>unpkg</b> – delivers a program library used by Kaleidoscope.</li>
+<li><b>Forpsi</b> – hosting of brillidea.hu (the license relay) and e-mail.</li>
+<li><b>Creem</b> – payments, invoicing, license keys.</li>
+</ul>
+<h2>8. Your rights</h2>
+<p>You can ask for access to, correction or deletion of your data, or restriction of its processing; you can object to processing and ask for data portability. Write to <a href="mailto:info@brillidea.hu">info@brillidea.hu</a>. You can also lodge a complaint with the Hungarian data protection authority (NAIH, <a href="https://naih.hu" rel="noopener">naih.hu</a>) or the authority in your country.</p>
+</section>
+<footer>
+<a href="arak.html">Árak · Pricing</a> · <a href="feltetelek.html">Feltételek · Terms</a> · <a href="adatvedelem.html">Adatvédelem · Privacy</a><br>
+<a href="mailto:info@brillidea.hu">info@brillidea.hu</a><br>
+Brillidea Szoftver Fejlesztő és Kereskedelmi Kft. · 1118 Budapest, Otthon utca 20. · Adószám / Tax no.: 26150253-2-43<br>
+<a href="https://kaleidoszkop.brillidea.hu/">Kaleidoszkóp</a> · <a href="https://mandala.brillidea.hu/">Mandala</a> · <a href="https://brillidea.hu/">brillidea.hu</a>
+</footer>
+</main><script>
+(function(){var q=new URLSearchParams(location.search).get('lang');var l=q||((navigator.language||'').toLowerCase().indexOf('hu')===0?'hu':'en');
+function set(x){document.querySelectorAll('section[lang]').forEach(function(s){s.classList.toggle('on',s.lang===x)});document.querySelectorAll('.nyelv button').forEach(function(b){b.classList.toggle('on',b.dataset.l===x)});document.documentElement.lang=x;document.title=document.querySelector('section[lang="'+x+'"] h1').textContent+' – Brillidea'}
+document.querySelectorAll('.nyelv button').forEach(function(b){b.onclick=function(){set(b.dataset.l)}});set(l==='hu'?'hu':'en')})();
+</script></body></html>
