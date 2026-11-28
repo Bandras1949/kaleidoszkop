@@ -43,12 +43,12 @@
   const MANDALA = 'https://mandala.brillidea.hu/';   // közvetlenül a Mandala próbaváltozatába
   // ---- FIZETÉS: Creem, a brillidea.hu-s közvetítőn át (a Creem titkos kulcsa csak a közvetítőben van) ----
   const KOZV = 'https://www.brillidea.hu/wp-json/brillidea/v2/licenc', APP = 'kaleidoszkop', TAR = 'kaleido-licenc';
-  const CREEM_MOD = 'teszt';   // élesítéskor: 'eles' – és az éles termékazonosítók ide
-  const TERMEK = { teszt: { k: 'prod_13WlWpu637CYusW5EIF3e5', m: 'prod_1HZPeZI5XoCxWGPDj0fhPs', cs: 'prod_k5WHVYq5PA4yIJXaMQmZK' }, eles: { k: '', m: '', cs: '' } }[CREEM_MOD];
+  const CREEM_MOD = 'eles';    // élesítéskor: 'eles' – és az éles termékazonosítók ide
+  const TERMEK = { teszt: { k: 'prod_13WlWpu637CYusW5EIF3e5', m: 'prod_1HZPeZI5XoCxWGPDj0fhPs', cs: 'prod_k5WHVYq5PA4yIJXaMQmZK' }, eles: { k: 'prod_3EDMdhRKORLiFJlHYvbtWn', m: 'prod_3RkhZAI41D2Ksh9NNs0cnS', cs: 'prod_4nKjzsQUtJqLSsNyyRpWso' } }[CREEM_MOD];
   const MANDALA_KULCSSAL = k => MANDALA + '#kulcs=' + encodeURIComponent(k);   // csomagkulcs átadása a Mandalának (a # utáni rész nem megy fel a szerverre)
   // TESZTMÓDBAN a vásárlásgombokat csak az látja, aki egyszer ?teszt-tel nyitotta meg az appot (a nyilvánosság „hamarosan”-t lát)
   const VESZ_LATHATO = CREEM_MOD !== 'teszt' || (() => { try { if (/[?&]teszt\b/.test(location.search)) localStorage.setItem('brl-teszt', '1'); return localStorage.getItem('brl-teszt') === '1'; } catch (e) { return false; } })();
-  const VASAR = id => 'https://www.creem.io/' + (CREEM_MOD === 'teszt' ? 'test/' : '') + 'payment/' + id;
+  const VASAR = id => CREEM_MOD === 'teszt' ? 'https://www.creem.io/test/payment/' + id : 'https://www.creem.io/product/' + id;
   const lget = () => { try { const L = JSON.parse(localStorage.getItem(TAR) || 'null'); return L && L.kulcs && L.peldany ? L : null; } catch (e) { return null; } };
   const lset = L => { try { localStorage.setItem(TAR, JSON.stringify(L)); } catch (e) {} };
   const ldel = () => { try { localStorage.removeItem(TAR); localStorage.removeItem('kaleido-kulcs'); } catch (e) {} };
